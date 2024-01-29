@@ -1,0 +1,23 @@
+{
+  "name": "vite-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "@cornerstonejs/core": "^1.51.0",
+    "@cornerstonejs/dicom-image-loader": "^1.51.0",
+    "@cornerstonejs/streaming-image-volume-loader": "^1.51.0",
+    "@cornerstonejs/tools": "^1.51.0",
+    "dcmjs": "^0.30.1",
+    "dicom-parser": "^1.8.21",
+    "dicomweb-client": "^0.10.4"
+  }
+}
