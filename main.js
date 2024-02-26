@@ -1,17 +1,21 @@
 import * as cornerstone from '@cornerstonejs/core';
-import { volumeLoader } from '@cornerstonejs/core';
+import { volumeLoader, utilities } from '@cornerstonejs/core';
 import {
     addTool,
     BidirectionalTool,
     RectangleROITool,
+    RectangleScissorsTool,
     PanTool,
     ZoomTool,
     StackScrollMouseWheelTool,
     VolumeRotateMouseWheelTool,
+    TrackballRotateTool,
     ToolGroupManager,
     Enums as csToolsEnums,
     init as csToolsInit,
     annotation as csAnnotations,
+    utilities as csUtilities,
+    segmentation,
 } from '@cornerstonejs/tools';
 import dicomParser from 'dicom-parser';
 import { api } from 'dicomweb-client';
@@ -51,8 +55,16 @@ async function runFunction() {
     // disable right-click on this element
     element2.oncontextmenu = (e) => e.preventDefault();
 
+    // element for 3d view
+    const element3 = document.createElement('div');
+    element3.style.width = '500px';
+    element3.style.height = '500px';
+    // disable right-click on this element
+    element3.oncontextmenu = (e) => e.preventDefault();
+
     viewportGrid.appendChild(element1);
     viewportGrid.appendChild(element2);
+    viewportGrid.appendChild(element3);
 
     content.appendChild(viewportGrid);
 
@@ -70,6 +82,7 @@ async function runFunction() {
 
     const viewportId1 = 'CT_CORONAL';
     const viewportId2 = 'CT_SAGITTAL';
+    const viewportId3 = 'CT_3D';
 
     const viewportInput = [
       {
@@ -89,30 +102,42 @@ async function runFunction() {
           orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
         },
       },
+      {
+        viewportId: viewportId3,
+        element: element3,
+        type: cornerstone.Enums.ViewportType.VOLUME_3D,
+        defaultOptions: {
+          orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+        },
+      },
     ];
 
     renderingEngine.setViewports(viewportInput);
 
     addTool(RectangleROITool);
+    addTool(RectangleScissorsTool);
     addTool(StackScrollMouseWheelTool);
     //addTool(VolumeRotateMouseWheelTool);
     addTool(PanTool);
     addTool(ZoomTool);
+    addTool(TrackballRotateTool);
 
     const toolGroupId = 'myToolGroup';
     const toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
     toolGroup.addTool(StackScrollMouseWheelTool.toolName);
     // toolGroup.addTool(VolumeRotateMouseWheelTool.toolName);
-    toolGroup.addTool(RectangleROITool.toolName, {
-        getTextLines: () => {}
-    });
+    // toolGroup.addTool(RectangleROITool.toolName, {
+    //     getTextLines: () => {}
+    // });
+    toolGroup.addTool(RectangleScissorsTool.toolName);
     toolGroup.addTool(PanTool.toolName);
     toolGroup.addTool(ZoomTool.toolName);
 
     toolGroup.addViewport(viewportId1, renderingEngineId);
     toolGroup.addViewport(viewportId2, renderingEngineId);
+    // toolGroup.addViewport(viewportId3, renderingEngineId);
 
-    toolGroup.setToolActive(RectangleROITool.toolName, {
+    toolGroup.setToolActive(RectangleScissorsTool.toolName, {
         bindings: [
             {
                 mouseButton: csToolsEnums.MouseBindings.Primary,
@@ -136,6 +161,21 @@ async function runFunction() {
 
     toolGroup.setToolActive(StackScrollMouseWheelTool.toolName);
 
+    // -----------------------------------------------------------------------
+    // second toolGroup, for the 3d view
+    // -----------------------------------------------------------------------
+
+    const toolGroupId2 = 'my3dToolGroup';
+    const toolGroup2 = ToolGroupManager.createToolGroup(toolGroupId2);
+    toolGroup2.addTool(TrackballRotateTool.toolName);
+    toolGroup2.addViewport(viewportId3, renderingEngineId);
+    toolGroup2.setToolActive(TrackballRotateTool.toolName, {
+        bindings: [
+            {
+                mouseButton: csToolsEnums.MouseBindings.Primary,
+            },
+        ]
+    });
 
     // Set the volume to load
     volume.load();
@@ -145,18 +185,61 @@ async function runFunction() {
       [
           { 
               volumeId,
-              callback: ({ volumeActor }) => {
-                  volumeActor
-                    .getProperty()
-                    .getRGBTransferFunction(0)
-                    .setMappingRange(-180, 220);
-              },
-              blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+              // callback: ({ volumeActor }) => {
+              //     volumeActor
+              //       .getProperty()
+              //       .getRGBTransferFunction(0)
+              //       .setMappingRange(-180, 220);
+              // },
+              // blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
               slabThickness: 0.1,
           }
       ],
       [viewportId1, viewportId2]
     );
+
+    cornerstone.setVolumesForViewports(renderingEngine, [{ volumeId }], [viewportId3]).then(
+        () => {
+            const viewport = renderingEngine
+                .getViewport(viewportId3);
+            const volumeActor = viewport
+                .getDefaultActor().actor;
+
+            utilities.applyPreset(
+                volumeActor,
+                cornerstone.CONSTANTS.VIEWPORT_PRESETS.find((preset) => preset.name === 'CT-Soft-Tissue')
+            );
+
+            viewport.render();
+        }
+    );
+
+
+    const newSegmentationId = 'newseg1';
+
+    // --- segmentation stuff? ---
+    // segmentation.addSegmentations([
+    //   {
+    //     segmentationId: newSegmentationId,
+    //     representation: {
+    //       type: csToolsEnums.SegmentationRepresentations.Labelmap,
+    //       data: {
+    //         imageIdReferenceMap: new Map([['currentid', 'newid']]),
+    //       },
+    //     },
+    //   },
+    // ]);
+
+    // const uid = await segmentation.addSegmentationRepresentations(
+    //   toolGroupId,
+    //   [
+    //     {
+    //       segmentationId: newSegmentationId,
+    //       type: csToolsEnums.SegmentationRepresentations.Labelmap,
+    //     },
+    //   ]
+    // );
+
 
     // Render the image
     renderingEngine.renderViewports([viewportId1, viewportId2]);
@@ -184,6 +267,8 @@ async function runFunction() {
         rectangleROIs.forEach((roi) => {
             console.log(roi);
         });
+
+        console.log(csUtilities.segmentation);
     }
 
     window.doStuff = function() {
@@ -1940,7 +2025,277 @@ function getTestImageIds1() {//{{{
         'wadouri:/dicom/1-115.dcm',
     ];
 }//}}}
-
+function getTestImageIds3() {//{{{
+    return [
+        'wadouri:/dicom4/02ee66a26c489821f3c7d34a1d8b610a.dcm',
+        'wadouri:/dicom4/046e70bcd3a521f1bbec586448e6df3e.dcm',
+        'wadouri:/dicom4/06101f94dd2acf3fe1ed1e99e7f21b2f.dcm',
+        'wadouri:/dicom4/068dd0e657735a8593a22aa082c22a84.dcm',
+        'wadouri:/dicom4/076e0c2f210d890bd174cf2e181c6061.dcm',
+        'wadouri:/dicom4/07808d276e3c5aa7a8ab550d7dc47dbf.dcm',
+        'wadouri:/dicom4/091de443e2c8db9dec91033c2d9752c6.dcm',
+        'wadouri:/dicom4/0a54ad813c4270575b6bf2f7998a8584.dcm',
+        'wadouri:/dicom4/0ad2beb3d8d0552b129fe2beafddd0f3.dcm',
+        'wadouri:/dicom4/0adc2c32bc2f7ead05a5b49a95b17bba.dcm',
+        'wadouri:/dicom4/0c1fe352e4284e9241b3a9b382d7777b.dcm',
+        'wadouri:/dicom4/0c541e2f3e8b2750a8da0b09d49caf02.dcm',
+        'wadouri:/dicom4/0ce2e42dfa0f38920768544a9a0d869f.dcm',
+        'wadouri:/dicom4/0d3acd326f6c2b817c1f37d91166cee4.dcm',
+        'wadouri:/dicom4/0e0ffc6b0f45edf7372f09bdf7d3308f.dcm',
+        'wadouri:/dicom4/1049289789cbdf95537543b860f85d7e.dcm',
+        'wadouri:/dicom4/1081f559c8bfc42717935412cca9f7e9.dcm',
+        'wadouri:/dicom4/10ad1505ff5f6c70e0f151fbef02ae0e.dcm',
+        'wadouri:/dicom4/114ebc2f040dce6e7a0e16b4d2d67f04.dcm',
+        'wadouri:/dicom4/117a922316fe8c94895245d2b932c983.dcm',
+        'wadouri:/dicom4/11ceb964d54fe4d24566d2c431626943.dcm',
+        'wadouri:/dicom4/120cced93fbc6ad5ba5ca3a85ec73eae.dcm',
+        'wadouri:/dicom4/123e071df4da524603abfcbb1b06a9c9.dcm',
+        'wadouri:/dicom4/1396197d19e4961a169520a247818dae.dcm',
+        'wadouri:/dicom4/13c514d0fc2b5d31aac06fa902f08da3.dcm',
+        'wadouri:/dicom4/14205eefca90e2feb0e29763a1adb322.dcm',
+        'wadouri:/dicom4/146d384e2868eaccc98176773ace9171.dcm',
+        'wadouri:/dicom4/14e049b78e2cdded4d79ca237ccd26f0.dcm',
+        'wadouri:/dicom4/16bc7c8e6ee16e8c21e038d46e563d0c.dcm',
+        'wadouri:/dicom4/181194dec1c33421bc4d4475948f450f.dcm',
+        'wadouri:/dicom4/1ddffa5aa62a23629a9e018ff5f8cc9c.dcm',
+        'wadouri:/dicom4/1e46c4bd029cbba14f6d1b12cdd85f42.dcm',
+        'wadouri:/dicom4/1f98938520e443117eca1e505a2b96a2.dcm',
+        'wadouri:/dicom4/1fa7cc69543c99535648308eb3d0e26d.dcm',
+        'wadouri:/dicom4/1fa84083e205ae8c745f5bbafc87bbe8.dcm',
+        'wadouri:/dicom4/2012bc32f8ebc180991dec10f7e9338b.dcm',
+        'wadouri:/dicom4/206adc05bf94e1638772d208053b00cc.dcm',
+        'wadouri:/dicom4/20bff90f0d39bdae9685e08db710f746.dcm',
+        'wadouri:/dicom4/21f227480f4fa32160cf2aa1517f9b3f.dcm',
+        'wadouri:/dicom4/23438d518b21f6f8929ffb68a0667d96.dcm',
+        'wadouri:/dicom4/235be51ec2345e8940a375cd3c68917b.dcm',
+        'wadouri:/dicom4/2397a4e65b40260dd83896c2e7bdef75.dcm',
+        'wadouri:/dicom4/24b6fae63886bcf78cfa1941571abe56.dcm',
+        'wadouri:/dicom4/255a56541cdaf4d745c2cec79114210d.dcm',
+        'wadouri:/dicom4/264cc8f6bbc1005f42605270a446d9ae.dcm',
+        'wadouri:/dicom4/2717db433ed27e8aa0dce04a28a20a94.dcm',
+        'wadouri:/dicom4/2729116d09f30d51a26b98036b99d1fd.dcm',
+        'wadouri:/dicom4/28e441d8c30400756f21b5ab989bacb7.dcm',
+        'wadouri:/dicom4/2931cd5d304866a202b396962e8c2ce0.dcm',
+        'wadouri:/dicom4/2a43e2c93299a48d2038fe70f25cecb0.dcm',
+        'wadouri:/dicom4/2c2d315674286d902c3fb1931219b85b.dcm',
+        'wadouri:/dicom4/2c7395f7626613e66c1ff69ce5924703.dcm',
+        'wadouri:/dicom4/2c8e13290bb23945dbb6d84b622d5d6f.dcm',
+        'wadouri:/dicom4/2df2c65c0bb7106b9a33206188c329aa.dcm',
+        'wadouri:/dicom4/2f74ba703e378d59393085214b7988ae.dcm',
+        'wadouri:/dicom4/2f8f8403d7db2117447005a4371339e4.dcm',
+        'wadouri:/dicom4/2ff554a6dd108a69f439bbe00e46b0fe.dcm',
+        'wadouri:/dicom4/30273e310df80821b9ed979a8ede49a7.dcm',
+        'wadouri:/dicom4/303e86676e8e82959db5f56231e77398.dcm',
+        'wadouri:/dicom4/30b4cdff31dfbf54c49544c7ec1a4641.dcm',
+        'wadouri:/dicom4/30b4f94ffe7a5e0dd142df2abdd9b56c.dcm',
+        'wadouri:/dicom4/311a4cc949d0909c70fb0d213cb9d94e.dcm',
+        'wadouri:/dicom4/319f4a2b168b288d454dd98eeb091959.dcm',
+        'wadouri:/dicom4/32ceb67030b75bd1808e32ba4ba3c4ed.dcm',
+        'wadouri:/dicom4/332d3eaab64bebae22ba5ca40322a794.dcm',
+        'wadouri:/dicom4/33478f939ad2b9083b3dfe917395871d.dcm',
+        'wadouri:/dicom4/34d32e2c86dd77aa091056353fd1488b.dcm',
+        'wadouri:/dicom4/380058dea0e9199cbbf867ddf4921165.dcm',
+        'wadouri:/dicom4/38114eb93aa46d6c7925b607a3e07acb.dcm',
+        'wadouri:/dicom4/3a1fcfbc2ad859c47531d1722fc3b958.dcm',
+        'wadouri:/dicom4/3b23d31c44c6b4d70c931041aa5096c0.dcm',
+        'wadouri:/dicom4/3c185c447f8f08742aeeb500b66601c2.dcm',
+        'wadouri:/dicom4/3d18c2f98fb554e12aaccb6792b131cb.dcm',
+        'wadouri:/dicom4/3d30a1531a29ae63500bf49a5b1c70d5.dcm',
+        'wadouri:/dicom4/3d5ebf69a5a1e0172f085625d3dfb7e6.dcm',
+        'wadouri:/dicom4/3d9fc0781ae5e3015af207aa1437d4e5.dcm',
+        'wadouri:/dicom4/3dbef5820ae71a18102871ae8c4f1b27.dcm',
+        'wadouri:/dicom4/3e8c6d2ae784d47e25066911a2624391.dcm',
+        'wadouri:/dicom4/3f57e44a46537c3da409213b9c7be1bb.dcm',
+        'wadouri:/dicom4/4011953c9892a0a73b0dca032fb9f559.dcm',
+        'wadouri:/dicom4/4092ca135bc34a35a0982c89ebd5f0a9.dcm',
+        'wadouri:/dicom4/414aff385f50a75b0c99169a26d835bd.dcm',
+        'wadouri:/dicom4/4409fd59d5fcbd9a30a4a4e2d5b47d41.dcm',
+        // 'wadouri:/dicom4/444f72529242ea0661ed9ee52ad16166.dcm',
+        'wadouri:/dicom4/4651d3551d24a2f12c22df2e63db0026.dcm',
+        'wadouri:/dicom4/46771a1530b3a4aa749f0030ec66150f.dcm',
+        'wadouri:/dicom4/474f542119da4d421ecd404977b1065d.dcm',
+        'wadouri:/dicom4/489f0ba430a4cf9efc9bd61d2b2718c0.dcm',
+        'wadouri:/dicom4/4af364fba8c962baaa50e9597c574c03.dcm',
+        'wadouri:/dicom4/4b5371c393294ddca514ad023043a38d.dcm',
+        'wadouri:/dicom4/4c2f0af150ba9e549ae3b440ed0a6de9.dcm',
+        'wadouri:/dicom4/4d7c7e1b6a48d79281a8ca3b9092875c.dcm',
+        'wadouri:/dicom4/4e3ffe02f2e892c00093ede1240c02f6.dcm',
+        'wadouri:/dicom4/4f17404a6d9a38c2bef3cb7268720def.dcm',
+        'wadouri:/dicom4/4f3cd3af8c6c036e73a9bc485e43f641.dcm',
+        'wadouri:/dicom4/5048c2d1c5450c0a5f9213a9498d6d75.dcm',
+        'wadouri:/dicom4/50deb82a27ffc08051ad816d58b0f6bd.dcm',
+        'wadouri:/dicom4/518decc81cca229f051067b62b049156.dcm',
+        'wadouri:/dicom4/51b8cf94d15b7304500b4bcb97160c9f.dcm',
+        'wadouri:/dicom4/51be1c1f2dc628d9828adf6a618a1391.dcm',
+        'wadouri:/dicom4/5202ac0c80462d70f130f0be81348c3d.dcm',
+        'wadouri:/dicom4/524afca627ef660d5f9bb664cadb1dce.dcm',
+        'wadouri:/dicom4/52596d5e06e9533b1f1c184344db54bc.dcm',
+        'wadouri:/dicom4/53b7d7e51c3aabb4c23349a9f2db5386.dcm',
+        'wadouri:/dicom4/53fbd0a61197c3c7a2163ae7e376f582.dcm',
+        'wadouri:/dicom4/54026d0ea87e8b770a9c7808caf7f36a.dcm',
+        'wadouri:/dicom4/54eb84d5a80a370eb289209dac3193f7.dcm',
+        'wadouri:/dicom4/5608f7878031b6ba10c4ad8143681a1d.dcm',
+        'wadouri:/dicom4/56c4c20b0a2337e8f8f8dbf8c188214f.dcm',
+        'wadouri:/dicom4/579a63459650ff42aa249e784c472903.dcm',
+        'wadouri:/dicom4/57e861ac0c3a3aa24b51305346019738.dcm',
+        'wadouri:/dicom4/597bd0b3580b2154e1588bf42e0a2c44.dcm',
+        'wadouri:/dicom4/5afecfc68ccda42dcc5c364752957922.dcm',
+        'wadouri:/dicom4/5baffbd940192c327e6b1b6446880dbc.dcm',
+        'wadouri:/dicom4/5dd54592e57039cab832542abd78f249.dcm',
+        'wadouri:/dicom4/605abff5ab537e2631b4ad8d7cb8ba26.dcm',
+        'wadouri:/dicom4/60e3ff1caa5e35738abf3bbb8b4a5391.dcm',
+        'wadouri:/dicom4/62539df9b42cac45e8f420dba68e9ae1.dcm',
+        'wadouri:/dicom4/631f2bcdf18fc19d00f493b3723b2e14.dcm',
+        'wadouri:/dicom4/632a1d1c6673b5bed636099aedeb6c2d.dcm',
+        'wadouri:/dicom4/64f4903bb146eb8e74d2dac82f1edf57.dcm',
+        'wadouri:/dicom4/6547c80b06b39b3529379893826442c3.dcm',
+        'wadouri:/dicom4/65b8a6952b1129b84f62c2cf68223bd0.dcm',
+        'wadouri:/dicom4/661586086bbfb64dfa2423599db620da.dcm',
+        'wadouri:/dicom4/66551bd3d1abc822e15d1c1832c78f90.dcm',
+        'wadouri:/dicom4/66e53bed7cfccd0f9925c198ccaf67f4.dcm',
+        'wadouri:/dicom4/67c2b3a94c520539241cdcfce8e7959b.dcm',
+        'wadouri:/dicom4/6a11019fc7b28aa450c12ceef187c62e.dcm',
+        'wadouri:/dicom4/6c5f60a10dcd74de6f59c2cf5f245a5d.dcm',
+        'wadouri:/dicom4/6c88a35ffb2fe3d42f113b3e4621aa28.dcm',
+        'wadouri:/dicom4/6d4ed19a12bb944adb1d3f73f71ad54f.dcm',
+        'wadouri:/dicom4/6f3878b050b1fd40b467884bab2a473a.dcm',
+        'wadouri:/dicom4/6f53394926d424a23c78e7e0a4882f22.dcm',
+        'wadouri:/dicom4/6fe3fe98d23a0de109a485b2c358aa36.dcm',
+        'wadouri:/dicom4/7145675251ffd63fd191000c5f1b622c.dcm',
+        'wadouri:/dicom4/72c1a11dcf23c72661df15c224541b31.dcm',
+        'wadouri:/dicom4/73196bf50507e54cb61636367079eb30.dcm',
+        'wadouri:/dicom4/755b550a3894f8c9663d62e65871b168.dcm',
+        'wadouri:/dicom4/756b9667f922a3cf427819cb5e68c0c5.dcm',
+        'wadouri:/dicom4/797b49478cbb524359fc11f663706dcb.dcm',
+        'wadouri:/dicom4/7a4ff29d3ba80a733829694062232957.dcm',
+        'wadouri:/dicom4/7bc8df0b6227c76b68cd3d8a38873957.dcm',
+        'wadouri:/dicom4/7bcec098e74733bb3853ebe3a37b5113.dcm',
+        'wadouri:/dicom4/7f2d94b1181c2278b9b2137afe5e7e0d.dcm',
+        'wadouri:/dicom4/7fe2da48a2834a48dea3b900f0fb82c7.dcm',
+        'wadouri:/dicom4/81851f1e43aaa1591a95dbafe0c7cbd2.dcm',
+        'wadouri:/dicom4/830aa3571f487f6080bc18098dea1008.dcm',
+        'wadouri:/dicom4/830b11ae23c6b6dc1506971ce0ddaa3e.dcm',
+        'wadouri:/dicom4/832e8330ae4f6cdfe81bc2086a8f000d.dcm',
+        'wadouri:/dicom4/84bad01297ee0bcfff54769e1be909e3.dcm',
+        'wadouri:/dicom4/8696e542d67183517867235c52b91190.dcm',
+        'wadouri:/dicom4/8749f35b45fbfb1195e1dcee3914b3e5.dcm',
+        'wadouri:/dicom4/8879e9eddca6e6c13932e6230908e7a8.dcm',
+        'wadouri:/dicom4/88b010fb4192b0fc68900700f110d2aa.dcm',
+        'wadouri:/dicom4/8b3c9f289634e8d75928f9b845d92e0a.dcm',
+        'wadouri:/dicom4/8b5d2b4de3727ab0f8f37837032be7fd.dcm',
+        'wadouri:/dicom4/8f65e4c3409f19ffabbd603332b756da.dcm',
+        'wadouri:/dicom4/924cb19c10902d9c8b9b420bf33bc3fb.dcm',
+        'wadouri:/dicom4/955ee69f86b390444e33954d0f870ecf.dcm',
+        'wadouri:/dicom4/95728c8f20511948fcd263696111ef2e.dcm',
+        'wadouri:/dicom4/958dc03a3f0d1b3c59ab5e096efaee26.dcm',
+        'wadouri:/dicom4/95b4b105b226f84c1b6d84573e718930.dcm',
+        'wadouri:/dicom4/96304aac8091ce5d919cad177e15cdc9.dcm',
+        'wadouri:/dicom4/978153ab21a12728941cfa54dc8293dd.dcm',
+        'wadouri:/dicom4/988c8303f1cc36cd5d6c61491dd2a36f.dcm',
+        'wadouri:/dicom4/98fba259d35c1deccacb8bae10b7c06e.dcm',
+        'wadouri:/dicom4/99975bedb3a8cc046e974390d734e83a.dcm',
+        'wadouri:/dicom4/9a9dc19fcbd24722942cb1472fe09ed4.dcm',
+        'wadouri:/dicom4/9b1eb472462ddb9a4a45d14d29688067.dcm',
+        'wadouri:/dicom4/9bfde4bc2b9620e49a36d51bfc1b628c.dcm',
+        'wadouri:/dicom4/9ce6ef0351928ed0165d6228f733f3d9.dcm',
+        'wadouri:/dicom4/9d382b2bd9221de37b8a332712c18bfe.dcm',
+        'wadouri:/dicom4/9dccb79416ac9c7c548170f68793aaad.dcm',
+        'wadouri:/dicom4/9e92a4a817fce70b5c7b08bb9094d3f1.dcm',
+        'wadouri:/dicom4/9ed416de272cdc9e05df43687eb59901.dcm',
+        'wadouri:/dicom4/9f364c907f28170700650d45946d3401.dcm',
+        'wadouri:/dicom4/a13fc1441064f1d18afa742908e8bc07.dcm',
+        'wadouri:/dicom4/a54921dd59236f696465e68f2d1edf30.dcm',
+        'wadouri:/dicom4/a5831c842110b27a0732131a7dc37dec.dcm',
+        'wadouri:/dicom4/a5b4b0472aaa848060451bcf555b6232.dcm',
+        'wadouri:/dicom4/a6d1cbf2560b48bb6d53e96a7ced8223.dcm',
+        'wadouri:/dicom4/aa3062ef862cc6dc42eb7af60cb44a89.dcm',
+        'wadouri:/dicom4/adaaf0c2eae99c9ddbd094e4db7af5b8.dcm',
+        'wadouri:/dicom4/aea0e817ebf3fc6a1e3484e924f19f2c.dcm',
+        'wadouri:/dicom4/af71df283cc720a4ab48af840090a0f9.dcm',
+        'wadouri:/dicom4/afb56c73640a4053155810206548cceb.dcm',
+        'wadouri:/dicom4/afbbcc77e919fb33ee1dc513546d075d.dcm',
+        'wadouri:/dicom4/afc47bdaa5341da10a8829e186997c70.dcm',
+        'wadouri:/dicom4/b0343ccaaf2dbd966a24fd10d3534122.dcm',
+        'wadouri:/dicom4/b5cde89747520fd6acb2fe5f03332bcc.dcm',
+        'wadouri:/dicom4/b7ad4a3456609376ecc6e11317054527.dcm',
+        'wadouri:/dicom4/b7b739a344bb8fa2db792e7e20ed4f33.dcm',
+        'wadouri:/dicom4/b7b815f7fefe11e3ef755b8eafcd72a7.dcm',
+        'wadouri:/dicom4/bb254bd0400431bda2e8b0d90948815d.dcm',
+        'wadouri:/dicom4/bc268804c98fdcf119a2f8931a287e9b.dcm',
+        'wadouri:/dicom4/be2c16ff396dbf9d034b48fe12ce6b13.dcm',
+        'wadouri:/dicom4/be35ee8e87d3c6cd68038aeb51466d1c.dcm',
+        'wadouri:/dicom4/bfdaad791d9488c2479a2fabf2e964fa.dcm',
+        'wadouri:/dicom4/c04e60d0509b9ffb8fce4991610a59a5.dcm',
+        'wadouri:/dicom4/c07d2a22820c90c8d7b3b23a9a820835.dcm',
+        'wadouri:/dicom4/c1297771267298f177eaaeaf49523ed6.dcm',
+        'wadouri:/dicom4/c27c76a5b927a79262094e5e5c515179.dcm',
+        'wadouri:/dicom4/c3d115ad8fdca21f624f41846423e401.dcm',
+        'wadouri:/dicom4/c5f496af1a1c97e628064373f813347c.dcm',
+        'wadouri:/dicom4/c67083c2157e97963de1fd938612e208.dcm',
+        'wadouri:/dicom4/c6b1ff286f55b6da9667ff246b724392.dcm',
+        'wadouri:/dicom4/c6beb1cad89778ee0588479f23156a99.dcm',
+        'wadouri:/dicom4/c6e7fc8c2dd4ca21ecb377d914684c9d.dcm',
+        'wadouri:/dicom4/c7dc4e2ac67a92701e545fdb32dbda30.dcm',
+        'wadouri:/dicom4/c9a2ac1ebe061a53272baf44fe6cb50e.dcm',
+        'wadouri:/dicom4/c9d855dc1ee7fbcc8d4e4430169e18fb.dcm',
+        'wadouri:/dicom4/ca9ac4aa5755b9099bd6114f1a578922.dcm',
+        'wadouri:/dicom4/cbbc7b9ea23b0cc6c980a29a10e035ca.dcm',
+        'wadouri:/dicom4/cf647c0ba0e70984d23c2dfa16726bbc.dcm',
+        'wadouri:/dicom4/cfeda29e52ca5c73e6d71f74540f7776.dcm',
+        'wadouri:/dicom4/d0ec81b5e774841c6740d124eb1381c0.dcm',
+        'wadouri:/dicom4/d23510754e1b658d4f8c3ba73a9c257a.dcm',
+        'wadouri:/dicom4/d29d6653a8e4b84f8fde819dec916769.dcm',
+        'wadouri:/dicom4/d5469f5df6f7158751f095f38e9e7ce3.dcm',
+        'wadouri:/dicom4/d5680382bbefc3ec5a48014b9556b30b.dcm',
+        'wadouri:/dicom4/d6e5cda0158bc3dadc7ec02a38e647f0.dcm',
+        'wadouri:/dicom4/d70df7a6a351fe26d041d962a09ef5f7.dcm',
+        'wadouri:/dicom4/d8a1d09dea4593d8f2e1cdc6172413bc.dcm',
+        'wadouri:/dicom4/d9b2f3b5759ac9723ef96fc849cf9330.dcm',
+        'wadouri:/dicom4/d9bf59f1f17e575123d3b9d90c89a600.dcm',
+        'wadouri:/dicom4/da2bc586f15a5baf1f75067dca667854.dcm',
+        'wadouri:/dicom4/db89ad246dff79cc57975cbcdde6f45f.dcm',
+        'wadouri:/dicom4/dc65b66606db09562c4232c4a07580db.dcm',
+        'wadouri:/dicom4/dcd8d67d904ffa9d586d4b8365f4bade.dcm',
+        'wadouri:/dicom4/dd1d93682e8087ab9e9a4ca628242dee.dcm',
+        'wadouri:/dicom4/de43a6c77387aeeb6d170c16465eab31.dcm',
+        'wadouri:/dicom4/dfd1ded7fb8fda28cf99b77d029e2bfc.dcm',
+        'wadouri:/dicom4/e08f61739d994c44772d55c6b3a0bd8f.dcm',
+        'wadouri:/dicom4/e133a1890eaf88bc0a2408572f5f5a39.dcm',
+        'wadouri:/dicom4/e3dc7d0f5a6b86a8ca598257b5ad6762.dcm',
+        'wadouri:/dicom4/e47e4ce9075f6cf9a8f595fc94f29e9b.dcm',
+        'wadouri:/dicom4/e59deb6c16336cdb979e12e50cbc7789.dcm',
+        'wadouri:/dicom4/e5bf85645e353057f388cef5ff056d31.dcm',
+        'wadouri:/dicom4/e5c8fa1ec4b2b1be60dc3a51f63e74fa.dcm',
+        'wadouri:/dicom4/e750cd31c0edd57f50a82b8cfacff444.dcm',
+        'wadouri:/dicom4/e86195bab0324a1ccf87f84404a426cf.dcm',
+        'wadouri:/dicom4/ec3790880b29f4dcf7fa8699678650d3.dcm',
+        'wadouri:/dicom4/ecca14fcd9cc85a84643564c1f1d928b.dcm',
+        'wadouri:/dicom4/edec3317a370fb32c901428de01cde73.dcm',
+        'wadouri:/dicom4/ee54e53d2222a7f35195c4a451ec2d0f.dcm',
+        'wadouri:/dicom4/ee68e513a554cc7aba5e7de5c4106009.dcm',
+        'wadouri:/dicom4/eecfc56c162290f03d34fc2c73d595ae.dcm',
+        'wadouri:/dicom4/eee1c11189c3dcac9315e51a9e99b4ca.dcm',
+        'wadouri:/dicom4/ef45dfc4bef765cdd582dbd08e6438fb.dcm',
+        'wadouri:/dicom4/f03c9efe6437c5cf49a0d7ce636c149b.dcm',
+        'wadouri:/dicom4/f2c94f8d4d2634451c3aa71498fbb06c.dcm',
+        'wadouri:/dicom4/f37df30fc050e6cd1b4262d11650af69.dcm',
+        'wadouri:/dicom4/f3c0bb474ab60174f1d2a08e117656fc.dcm',
+        'wadouri:/dicom4/f6b368a31bab8006244e5c72d4f89372.dcm',
+        'wadouri:/dicom4/f79e78cd40e875f984aa3a214a33ff15.dcm',
+        'wadouri:/dicom4/f7b1069b0233529638083d000e6eedc7.dcm',
+        'wadouri:/dicom4/f82f5fc30df5bf00d91740c542a869c7.dcm',
+        'wadouri:/dicom4/f9389e0ee6d7bc1d668c41f5dc81d760.dcm',
+        'wadouri:/dicom4/f945b00de3a3bce16402c3da6c8d2f1d.dcm',
+        'wadouri:/dicom4/fab56e6d4037f27947e6ba52f3a36592.dcm',
+        'wadouri:/dicom4/fafdba2a8a02401dfd1aca5d90d0787c.dcm',
+        'wadouri:/dicom4/fb32995a9614389ec3af42a2e8c80b02.dcm',
+        'wadouri:/dicom4/fdc28173acac99eff1709653a5eb8926.dcm',
+        'wadouri:/dicom4/ff683c7285ecbcd588cf238ef9bffb31.dcm',
+        'wadouri:/dicom4/ff6ce9cdf8f049c97b4c32e4834c0299.dcm',
+        'wadouri:/dicom4/ff85b5de4b428107841e991803d12345.dcm',
+    ];
+}//}}}
 
 runFunction();
 
+// vim: ts=4 sw=4 expandtab foldmethod=marker
