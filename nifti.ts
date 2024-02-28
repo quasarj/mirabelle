@@ -12,50 +12,42 @@ import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-l
 //import setCtTransferFunctionForVolumeActor from './setCtTransferFunctionForVolumeActor';
 
 
-const size = '500px';
-const windowWidth = 600;
-const windowCenter = 300;
-const lower = windowCenter - windowWidth / 2.0;
-const upper = windowCenter + windowWidth / 2.0;
-
-function setTransferFunctionForVolumeActor({ volumeActor }) {
-    volumeActor
-        .getProperty()
-        .getRGBTransferFunction(0)
-        .setMappingRange(lower, upper);
-}
-
-
-const content = document.getElementById('content');
-const viewportGrid = document.createElement('div');
-viewportGrid.style.display = 'flex';
-viewportGrid.style.display = 'flex';
-viewportGrid.style.flexDirection = 'row';
-
-const element1 = document.createElement('div');
-const element2 = document.createElement('div');
-const element3 = document.createElement('div');
-element1.style.width = size;
-element1.style.height = size;
-element2.style.width = size;
-element2.style.height = size;
-element3.style.width = size;
-element3.style.height = size;
-
-viewportGrid.appendChild(element1);
-viewportGrid.appendChild(element2);
-viewportGrid.appendChild(element3);
-
-content.appendChild(viewportGrid);
-
-const viewportId1 = 'CT_NIFTI_AXIAL';
-const viewportId2 = 'CT_NIFTI_SAGITTAL';
-const viewportId3 = 'CT_NIFTI_CORONAL';
-
 async function setup() {
     await csInit();
     await csTools3dInit();
 
+    const size = '500px';
+    //const windowWidth = 600;
+    //const windowCenter = 300;
+    //const lower = windowCenter - windowWidth / 2.0;
+    //const upper = windowCenter + windowWidth / 2.0;
+
+    const content = document.getElementById('content');
+    const viewportGrid = document.createElement('div');
+    viewportGrid.style.display = 'flex';
+    viewportGrid.style.display = 'flex';
+    viewportGrid.style.flexDirection = 'row';
+
+    const element1 = document.createElement('div');
+    const element2 = document.createElement('div');
+    const element3 = document.createElement('div');
+    element1.style.width = size;
+    element1.style.height = size;
+    element2.style.width = size;
+    element2.style.height = size;
+    element3.style.width = size;
+    element3.style.height = size;
+
+    viewportGrid.appendChild(element1);
+    viewportGrid.appendChild(element2);
+    viewportGrid.appendChild(element3);
+
+    content.appendChild(viewportGrid);
+
+    const viewportId1 = 'CT_NIFTI_AXIAL';
+    const viewportId2 = 'CT_NIFTI_SAGITTAL';
+    const viewportId3 = 'CT_NIFTI_CORONAL';
+    
     volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
 
     const niftiURL = getNiftiVolume();
@@ -97,7 +89,18 @@ async function setup() {
 
     setVolumesForViewports(
         renderingEngine,
-        [{ volumeId, callback: setTransferFunctionForVolumeActor }],
+        [
+            {
+                volumeId,
+                //callback: setTransferFunctionForVolumeActor
+                //callback: ({ volumeActor }) => {
+                //    volumeActor
+                //        .getProperty()
+                //        .getRGBTransferFunction(0)
+                //        .setMappingRange(lower, upper);
+                //},
+                slabThickness: 0.1,
+            }],
         viewportInputArray.map((v) => v.viewportId)
     );
 
