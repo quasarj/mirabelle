@@ -6,7 +6,25 @@ import {
     volumeLoader,
     setVolumesForViewports,
 } from '@cornerstonejs/core';
-import { init as csTools3dInit } from '@cornerstonejs/tools';
+import {
+    addTool,
+    BidirectionalTool,
+    RectangleROITool,
+    RectangleScissorsTool,
+    PanTool,
+    ZoomTool,
+    StackScrollMouseWheelTool,
+    VolumeRotateMouseWheelTool,
+    TrackballRotateTool,
+    ToolGroupManager,
+    Enums as csToolsEnums,
+    //init as csToolsInit,
+    init as csTools3dInit,
+    annotation as csAnnotations,
+    utilities as csUtilities,
+    segmentation,
+} from '@cornerstonejs/tools';
+//import { init as csTools3dInit } from '@cornerstonejs/tools';
 import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
 //import { setCtTransferFunctionForVolumeActor } from './setCtTransferFunctionForVolumeActor';
 //import setCtTransferFunctionForVolumeActor from './setCtTransferFunctionForVolumeActor';
@@ -23,8 +41,8 @@ async function setup() {
     //const upper = windowCenter + windowWidth / 2.0;
 
     const content = document.getElementById('content');
+
     const viewportGrid = document.createElement('div');
-    viewportGrid.style.display = 'flex';
     viewportGrid.style.display = 'flex';
     viewportGrid.style.flexDirection = 'row';
 
@@ -65,6 +83,7 @@ async function setup() {
             element: element1,
             defaultOptions: {
                 orientation: Enums.OrientationAxis.AXIAL,
+                VOILUTFunction: Enums.VOILUTFunctionType.LINEAR,
             },
         },
         {
@@ -73,6 +92,7 @@ async function setup() {
             element: element2,
             defaultOptions: {
                 orientation: Enums.OrientationAxis.SAGITTAL,
+                VOILUTFunction: Enums.VOILUTFunctionType.LINEAR,
             },
         },
         {
@@ -81,11 +101,57 @@ async function setup() {
             element: element3,
             defaultOptions: {
                 orientation: Enums.OrientationAxis.CORONAL,
+                VOILUTFunction: Enums.VOILUTFunctionType.LINEAR,
             },
         },
     ];
 
     renderingEngine.setViewports(viewportInputArray);
+
+    // Tool setup
+    // --------------------------------
+    addTool(RectangleROITool);
+    addTool(RectangleScissorsTool);
+    addTool(StackScrollMouseWheelTool);
+    addTool(PanTool);
+    addTool(ZoomTool);
+    addTool(TrackballRotateTool);
+
+    const toolGroupId = 'myToolGroup';
+    const toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
+    toolGroup.addTool(StackScrollMouseWheelTool.toolName);
+    toolGroup.addTool(RectangleScissorsTool.toolName);
+    toolGroup.addTool(PanTool.toolName);
+    toolGroup.addTool(ZoomTool.toolName);
+
+    toolGroup.addViewport(viewportId1, renderingEngineId);
+    toolGroup.addViewport(viewportId2, renderingEngineId);
+    toolGroup.addViewport(viewportId3, renderingEngineId);
+
+    toolGroup.setToolActive(RectangleScissorsTool.toolName, {
+        bindings: [
+            {
+                mouseButton: csToolsEnums.MouseBindings.Primary,
+            },
+        ]
+    });
+    toolGroup.setToolActive(PanTool.toolName, {
+        bindings: [
+            {
+                mouseButton: csToolsEnums.MouseBindings.Auxiliary,
+            },
+        ]
+    });
+    toolGroup.setToolActive(ZoomTool.toolName, {
+        bindings: [
+            {
+                mouseButton: csToolsEnums.MouseBindings.Secondary,
+            },
+        ]
+    });
+
+    toolGroup.setToolActive(StackScrollMouseWheelTool.toolName);
+    // --------------------------------
 
     setVolumesForViewports(
         renderingEngine,
