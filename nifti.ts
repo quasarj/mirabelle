@@ -1,176 +1,210 @@
-import {
-    RenderingEngine,
-    Enums,
-    init as csInit,
-    Types,
-    volumeLoader,
-    setVolumesForViewports,
-} from '@cornerstonejs/core';
-import {
-    addTool,
-    BidirectionalTool,
-    RectangleROITool,
-    RectangleScissorsTool,
-    PanTool,
-    ZoomTool,
-    StackScrollMouseWheelTool,
-    VolumeRotateMouseWheelTool,
-    TrackballRotateTool,
-    ToolGroupManager,
-    Enums as csToolsEnums,
-    //init as csToolsInit,
-    init as csTools3dInit,
-    annotation as csAnnotations,
-    utilities as csUtilities,
-    segmentation,
-} from '@cornerstonejs/tools';
-//import { init as csTools3dInit } from '@cornerstonejs/tools';
+import * as cornerstone from '@cornerstonejs/core';
+import * as cornerstoneTools from '@cornerstonejs/tools';
 import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
-//import { setCtTransferFunctionForVolumeActor } from './setCtTransferFunctionForVolumeActor';
-//import setCtTransferFunctionForVolumeActor from './setCtTransferFunctionForVolumeActor';
 
+// ======== Set up page ======== //
+const size = '500px';
 
-async function setup() {
-    await csInit();
-    await csTools3dInit();
+const content = document.getElementById('content');
 
-    const size = '500px';
-    //const windowWidth = 600;
-    //const windowCenter = 300;
-    //const lower = windowCenter - windowWidth / 2.0;
-    //const upper = windowCenter + windowWidth / 2.0;
+const title = document.createElement('h1');
+title.innerText = "NIfTI Curation Tools";
+content.append(title);
 
-    const content = document.getElementById('content');
+const description = document.createElement('h2');
+description.innerText = "A visualization tool for NIfTI curation";
+content.append(description);
 
-    const viewportGrid = document.createElement('div');
-    viewportGrid.style.display = 'flex';
-    viewportGrid.style.flexDirection = 'row';
+const viewportGrid = document.createElement('div');
 
-    const element1 = document.createElement('div');
-    const element2 = document.createElement('div');
-    const element3 = document.createElement('div');
-    element1.style.width = size;
-    element1.style.height = size;
-    element2.style.width = size;
-    element2.style.height = size;
-    element3.style.width = size;
-    element3.style.height = size;
+viewportGrid.style.display = 'flex';
+viewportGrid.style.flexDirection = 'row';
 
-    viewportGrid.appendChild(element1);
-    viewportGrid.appendChild(element2);
-    viewportGrid.appendChild(element3);
+const element1 = document.createElement('div');
+const element2 = document.createElement('div');
+const element3 = document.createElement('div');
 
-    content.appendChild(viewportGrid);
+// Disable right click context menu
+element1.oncontextmenu = () => false;
+element2.oncontextmenu = () => false;
+element3.oncontextmenu = () => false;
 
-    const viewportId1 = 'CT_NIFTI_AXIAL';
-    const viewportId2 = 'CT_NIFTI_SAGITTAL';
-    const viewportId3 = 'CT_NIFTI_CORONAL';
+element1.style.width = size;
+element1.style.height = size;
+element2.style.width = size;
+element2.style.height = size;
+element3.style.width = size;
+element3.style.height = size;
+
+viewportGrid.appendChild(element1);
+viewportGrid.appendChild(element2);
+viewportGrid.appendChild(element3);
+
+content.appendChild(viewportGrid);
+
+// ============================= //
+
+async function run() {
+    await cornerstone.init();
+    await cornerstoneTools.init();
+
+    const volumeId = 'nifti:' + getNiftiVolume();
+
+    cornerstone.volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
+
+    const volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, {
+        type: 'image',
+    });
+
+    const viewportId1 = 'VP_AXIAL';
+    const viewportId2 = 'VP_SAGITTAL';
+    const viewportId3 = 'VP_CORONAL';
     
-    volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
-
-    const niftiURL = getNiftiVolume();
-    const volumeId = 'nifti:' + niftiURL;
-
-    const volume = await volumeLoader.createAndCacheVolume(volumeId);
-
     const renderingEngineId = 'myRenderingEngine';
-    const renderingEngine = new RenderingEngine(renderingEngineId);
+    const renderingEngine = new cornerstone.RenderingEngine(renderingEngineId);
 
     const viewportInputArray = [
         {
             viewportId: viewportId1,
-            type: Enums.ViewportType.ORTHOGRAPHIC,
+            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
             element: element1,
             defaultOptions: {
-                orientation: Enums.OrientationAxis.AXIAL,
-                VOILUTFunction: Enums.VOILUTFunctionType.LINEAR,
+                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                //VOILUTFunction: cornerstone.Enums.VOILUTFunctionType.LINEAR,
             },
         },
         {
             viewportId: viewportId2,
-            type: Enums.ViewportType.ORTHOGRAPHIC,
+            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
             element: element2,
             defaultOptions: {
-                orientation: Enums.OrientationAxis.SAGITTAL,
-                VOILUTFunction: Enums.VOILUTFunctionType.LINEAR,
+                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                //VOILUTFunction: cornerstone.Enums.VOILUTFunctionType.LINEAR,
             },
         },
         {
             viewportId: viewportId3,
-            type: Enums.ViewportType.ORTHOGRAPHIC,
+            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
             element: element3,
             defaultOptions: {
-                orientation: Enums.OrientationAxis.CORONAL,
-                VOILUTFunction: Enums.VOILUTFunctionType.LINEAR,
+                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                //VOILUTFunction: cornerstone.Enums.VOILUTFunctionType.LINEAR,
             },
         },
     ];
 
     renderingEngine.setViewports(viewportInputArray);
 
-    // Tool setup
-    // --------------------------------
-    addTool(RectangleROITool);
-    addTool(RectangleScissorsTool);
-    addTool(StackScrollMouseWheelTool);
-    addTool(PanTool);
-    addTool(ZoomTool);
-    addTool(TrackballRotateTool);
+    volume.load();
 
-    const toolGroupId = 'myToolGroup';
-    const toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
-    toolGroup.addTool(StackScrollMouseWheelTool.toolName);
-    toolGroup.addTool(RectangleScissorsTool.toolName);
-    toolGroup.addTool(PanTool.toolName);
-    toolGroup.addTool(ZoomTool.toolName);
+    await cornerstone.setVolumesForViewports(
+        renderingEngine,
+        [
+            {
+                volumeId: volumeId,
+                //callback: ({ volumeActor }) => {
+                //    volumeActor
+                //        .getProperty()
+                //        .getRGBTransferFunction(0)
+                //        .setMappingRange(-180, 220);
+                //},
+                //slabThickness: 0.1,
+            }
+        ],
+        viewportInputArray.map(v => v.viewportId)
+    );
+    
+    // Tools setup
+    // --------------------------------
+    const toolGroupId = 'defaultToolGroup';
+    const toolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(toolGroupId);
+
+    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+    cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+    cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+
+    toolGroup.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+    toolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+    toolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
+    toolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
 
     toolGroup.addViewport(viewportId1, renderingEngineId);
     toolGroup.addViewport(viewportId2, renderingEngineId);
     toolGroup.addViewport(viewportId3, renderingEngineId);
 
-    toolGroup.setToolActive(RectangleScissorsTool.toolName, {
+    toolGroup.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+    toolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+    toolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
         bindings: [
             {
-                mouseButton: csToolsEnums.MouseBindings.Primary,
+                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
             },
-        ]
+        ],
     });
-    toolGroup.setToolActive(PanTool.toolName, {
+    toolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
         bindings: [
             {
-                mouseButton: csToolsEnums.MouseBindings.Auxiliary,
+                mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
             },
-        ]
-    });
-    toolGroup.setToolActive(ZoomTool.toolName, {
-        bindings: [
-            {
-                mouseButton: csToolsEnums.MouseBindings.Secondary,
-            },
-        ]
+        ],
     });
 
-    toolGroup.setToolActive(StackScrollMouseWheelTool.toolName);
+    // Seg setup
     // --------------------------------
 
-    setVolumesForViewports(
-        renderingEngine,
-        [
-            {
-                volumeId,
-                //callback: setTransferFunctionForVolumeActor
-                //callback: ({ volumeActor }) => {
-                //    volumeActor
-                //        .getProperty()
-                //        .getRGBTransferFunction(0)
-                //        .setMappingRange(lower, upper);
-                //},
-                slabThickness: 0.1,
-            }],
-        viewportInputArray.map((v) => v.viewportId)
-    );
+    const segmentationId = 'nifti:' + getNiftiSeg();
 
+    //const segVolume = await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(volumeId, {
+    //    volumeId: segmentationId,
+    //});
+
+    const segVolume = await cornerstone.volumeLoader.createAndCacheVolume(segmentationId, {
+        type: 'labelmap',
+    });
+
+    // Add the segmentations to state
+    cornerstoneTools.segmentation.addSegmentations([
+        {
+            segmentationId,
+            representation: {
+                type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                data: {
+                    volumeId: segmentationId,
+                },
+            },
+        },
+    ]);
+
+    const toolGroupConfiguration = {
+        renderInactiveSegmentations: true,
+        representations: {
+            //https://www.cornerstonejs.org/api/tools/namespace/Types#LabelmapConfig
+            LABELMAP: {
+                renderFill: true,
+                renderOutline: true,
+                fillAlpha: 0.5,
+                //fillAlphaInactive: 0.5,
+                outlineOpacity: 1,
+                outlineWidthActive: 1,
+            },
+        },
+    }
+    cornerstoneTools.segmentation.config.setToolGroupSpecificConfig(toolGroupId, toolGroupConfiguration)
+
+    await cornerstoneTools.segmentation.addSegmentationRepresentations(toolGroupId, [
+        {
+            segmentationId,
+            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+        },
+    ]);
+
+    //cornerstoneTools.segmentation.getActiveSegmentationRepresentation(toolGroupId);
+
+    // --------------------------------
+        
     renderingEngine.render();
+    //renderingEngine.renderViewports([viewportId1, viewportId2, viewportId3]);
 }
 
 function getNiftiVolume() {//{{{
@@ -178,9 +212,9 @@ function getNiftiVolume() {//{{{
 }//}}}
 
 function getNiftiSeg() {//{{{
-    return '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz';
+    //return '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz';
+    return '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz';
 }//}}}
 
 
-
-setup();
+run();
