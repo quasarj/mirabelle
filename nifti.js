@@ -10,7 +10,7 @@ let elements = {
             PATH: '',
             NAME: '',
             INDEX: 0,
-        },        
+        },
         LIST: [],
         ACTIVE: [],
         VOLUME: {
@@ -34,7 +34,7 @@ let elements = {
             GROUP: null,
             PANEL: document.getElementById('vol_tools'),
             SYNC: "vol_voi_syncronizer"
-        },            
+        },
         GRID: document.createElement('div'),
         AXIAL: {
             ID: 'vol_axial',
@@ -56,7 +56,7 @@ let elements = {
             GROUP: null,
             PANEL: document.getElementById('mip_tools'),
             SYNC: "mip_voi_syncronizer"
-        },  
+        },
         GRID: document.createElement('div'),
         AXIAL: {
             ID: 'mip_axial',
@@ -78,7 +78,7 @@ let elements = {
             GROUP: null,
             PANEL: document.getElementById('t3d_tools'),
             SYNC: "t3d_voi_syncronizer"
-        }, 
+        },
         GRID: document.createElement('div'),
         CORONAL: {
             ID: 't3d_coronal',
@@ -176,7 +176,7 @@ function setup3dPanel() {
     elements.T3D.GRID.style.flexDirection = 'row';
     elements.T3D.GRID.style.width = '100%';
     elements.T3D.GRID.style.height = '100%';
-    
+
     elements.T3D.CORONAL.CONTENT.style.gridColumnStart = '1';
     elements.T3D.CORONAL.CONTENT.style.gridRowStart = '1';
 
@@ -323,7 +323,7 @@ function setupVolTools() {
         onClick: () => {
             elements.PAGE.RENDER.ENGINE.getViewports().forEach((viewport) => {
                 viewport.resetCamera(true, true, true, true);
-            });            
+            });
             elements.PAGE.RENDER.ENGINE.render();
         },
     });
@@ -478,7 +478,7 @@ function setup3dTools() {
     preset_panel.className = 'label-select-container'
 
     tool_panel.appendChild(preset_panel);
-    
+
     addDropDownToToolbar({
         id: 't3d_preset_dropdown',
         container: preset_panel,
@@ -645,7 +645,7 @@ async function removeOverlay(selectedIndex) {
 
     try {
         const segmentationId = 'nifti:' + elements.FILE.LIST[selectedIndex];
-        await cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(elements.VOL.TOOLS.ID)        
+        await cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(elements.VOL.TOOLS.ID)
         return true;
     } catch (error) {
         console.error(error);
@@ -661,7 +661,7 @@ function getFileInfo() {
     elements.FILE.CURRENT.PATH = getNiftiVolume();
     const fileParts = elements.FILE.CURRENT.PATH.split(/[/\\]/)
     elements.FILE.CURRENT.NAME = fileParts.pop();
-    
+
     elements.FILE.LIST = getNiftiList();
 
     elements.FILE.ACTIVE = elements.FILE.LIST.map(() => null);
@@ -808,17 +808,17 @@ async function run() {
         [elements.T3D.CORONAL.ID]
     ).then(() => {
         viewport.setProperties({
-            //preset: 'CT-Bone',
-            preset: 'MR-T2-Brain',
+            preset: 'CT-Bone',
+            //preset: 'MR-T2-Brain',
         });
         //viewport.render();
     });
-    
+
     setupTools();
 
     //const seg_path = getNiftiSeg()
     //addOverlay(seg_path);
-        
+
     elements.PAGE.RENDER.ENGINE.render();
 }
 
@@ -848,46 +848,23 @@ function getNiftiList() {
 
 
 
-function addButtonToToolbar({
-    id,
-    title,
-    container,
-    onClick,
-}: {
-    id?: string;
-    title: string;
-    container?: HTMLElement;
-    onClick: () => void;
-}) {
+function addButtonToToolbar({ id, title, container, onClick }) {
     const button = document.createElement('button');
 
     button.id = id;
     button.innerHTML = title;
     button.onclick = onClick;
 
-    container = container ?? document.getElementById('demo-toolbar');
+    container = container || document.getElementById('demo-toolbar');
     container.append(button);
 
     return button;
 }
 
-function addDropDownToToolbar({
-    id,
-    options,
-    container,
-    style,
-    onSelectedValueChange,
-    labelText,
-}: {
-    id?: string;
-    options: { values: number[] | string[]; defaultValue: number | string };
-    container?: HTMLElement;
-    style?: Record<string, any>;
-    onSelectedValueChange: (value: number | string) => void;
-    labelText?: string;
-}) {
+
+function addDropDownToToolbar({ id, options, container, style, onSelectedValueChange, labelText }) {
     const { values, defaultValue } = options;
-    container = container ?? document.getElementById('demo-toolbar');
+    container = container || document.getElementById('demo-toolbar');
 
     // Create label element if labelText is provided
     if (labelText) {
@@ -915,7 +892,7 @@ function addDropDownToToolbar({
     });
 
     select.onchange = (evt) => {
-        const selectElement = <HTMLSelectElement>evt.target;
+        const selectElement = evt.target;
         if (selectElement) {
             onSelectedValueChange(selectElement.value);
         }
@@ -924,19 +901,10 @@ function addDropDownToToolbar({
     container.append(select);
 }
 
-function addToggleButtonToToolbar({
-    id,
-    title,
-    container,
-    onClick,
-    defaultToggle = false,
-}: {
-    id?: string;
-    title: string;
-    container?: HTMLElement;
-    onClick: (toggle: boolean) => void;
-    defaultToggle?: boolean;
-}) {
+
+
+
+function addToggleButtonToToolbar({ id, title, container, onClick, defaultToggle = false }) {
     const button = document.createElement('button');
 
     const toggleOnBackgroundColor = '#fcfba9';
@@ -960,29 +928,15 @@ function addToggleButtonToToolbar({
         onClick.call(button, toggle);
     };
 
-    container = container ?? document.getElementById('demo-toolbar');
+    container = container || document.getElementById('demo-toolbar');
     container.append(button);
-};
+}
 
-function addSliderToToolbar({
-    id,
-    title,
-    range,
-    step,
-    defaultValue,
-    container,
-    onSelectedValueChange,
-    updateLabelOnChange,
-}: {
-    id?: string;
-    title: string;
-    range: number[];
-    step?: number;
-    defaultValue: number;
-    container?: HTMLElement;
-    onSelectedValueChange: (value: string) => void;
-    updateLabelOnChange?: (value: string, label: HTMLElement) => void;
-}) {
+
+
+
+
+function addSliderToToolbar({ id, title, range, step, defaultValue, container, onSelectedValueChange, updateLabelOnChange }) {
     const label = document.createElement('label');
     const input = document.createElement('input');
 
@@ -999,7 +953,7 @@ function addSliderToToolbar({
     input.min = String(range[0]);
     input.max = String(range[1]);
 
-    // add step before setting its value to make sure it works for step different than 1.
+    // Add step before setting its value to make sure it works for steps different than 1.
     // Example: range (0-1), step (0.1) and value (0.5)
     if (step) {
         input.step = String(step);
@@ -1008,7 +962,7 @@ function addSliderToToolbar({
     input.value = String(defaultValue);
 
     input.oninput = (evt) => {
-        const selectElement = <HTMLSelectElement>evt.target;
+        const selectElement = evt.target;
 
         if (selectElement) {
             onSelectedValueChange(selectElement.value);
@@ -1018,7 +972,7 @@ function addSliderToToolbar({
         }
     };
 
-    container = container ?? document.getElementById('demo-toolbar');
+    container = container || document.getElementById('demo-toolbar');
     container.append(label);
     container.append(input);
-};
+}
