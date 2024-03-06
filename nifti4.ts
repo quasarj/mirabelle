@@ -304,7 +304,7 @@ function setupVolTools() {
         getReferenceLineDraggableRotatable,
         getReferenceLineSlabThicknessControlsOn,
     });
-    elements.VOL.TOOLS.GROUP.setToolPassive(cornerstoneTools.CrosshairsTool.toolName);
+    //elements.VOL.TOOLS.GROUP.setToolPassive(cornerstoneTools.CrosshairsTool.toolName);
     //elements.VOL.TOOLS.GROUP.setToolEnabled(cornerstoneTools.CrosshairsTool.toolName);
 
     const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer(elements.VOL.TOOLS.SYNC);
@@ -312,6 +312,39 @@ function setupVolTools() {
     [elements.VOL.AXIAL.ID, elements.VOL.SAGITTAL.ID, elements.VOL.CORONAL.ID].forEach((viewport) => {
         volVOISyncronizer.add({ renderingEngineId: elements.PAGE.RENDER.ID, viewportId: viewport });
     });
+
+    const tool_panel = elements.VOL.TOOLS.PANEL;
+
+    const viewport = elements.PAGE.RENDER.ENGINE.getViewport(elements.VOL.AXIAL.ID);
+    addButtonToToolbar({
+        id: 'vol_reset_button',
+        container: tool_panel,
+        title: 'Reset Viewports',
+        onClick: () => {
+            elements.PAGE.RENDER.ENGINE.getViewports().forEach((viewport) => {
+                viewport.resetCamera(true, true, true, true);
+            });            
+            elements.PAGE.RENDER.ENGINE.render();
+        },
+    });
+
+    addToggleButtonToToolbar({
+        id: 'vol_crosshair_button',
+        container: tool_panel,
+        title: 'Toggle Crosshairs',
+        defaultToggle: false,
+        onClick: async (toggle) => {
+            const set_active = toggle;
+
+            if (set_active) {
+                elements.VOL.TOOLS.GROUP.setToolPassive(cornerstoneTools.CrosshairsTool.toolName);
+            }
+            else {
+                elements.VOL.TOOLS.GROUP.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+            }
+        },
+    });
+
 }
 
 function setupMipTools() {
@@ -366,6 +399,21 @@ function setupMipTools() {
     [elements.MIP.AXIAL.ID, elements.MIP.SAGITTAL.ID, elements.MIP.CORONAL.ID].forEach((viewport) => {
         mipVOISyncronizer.add({ renderingEngineId: elements.PAGE.RENDER.ID, viewportId: viewport });
     });
+
+    const tool_panel = elements.MIP.TOOLS.PANEL;
+
+    addButtonToToolbar({
+        id: 'mip_reset_button',
+        container: tool_panel,
+        title: 'Reset Viewports',
+        onClick: () => {
+            elements.PAGE.RENDER.ENGINE.getViewports().forEach((viewport) => {
+                viewport.resetCamera(true, true, true, true);
+                //viewport.reset();
+            });
+            elements.PAGE.RENDER.ENGINE.render();
+        },
+    });
 }
 
 function setup3dTools() {
@@ -408,6 +456,60 @@ function setup3dTools() {
             },
         ],
     });
+
+
+    const viewport = elements.PAGE.RENDER.ENGINE.getViewport(elements.T3D.CORONAL.ID);
+
+    const tool_panel = elements.T3D.TOOLS.PANEL;
+
+    addButtonToToolbar({
+        id: 't3d_reset_button',
+        container: tool_panel,
+        title: 'Reset Viewports',
+        onClick: () => {
+            elements.PAGE.RENDER.ENGINE.getViewports().forEach((viewport) => {
+                viewport.resetCamera(true, true, true, true);
+            });
+            elements.PAGE.RENDER.ENGINE.render();
+        },
+    });
+
+    const preset_panel = document.createElement('div');
+    preset_panel.className = 'label-select-container'
+
+    tool_panel.appendChild(preset_panel);
+    
+    addDropDownToToolbar({
+        id: 't3d_preset_dropdown',
+        container: preset_panel,
+        labelText: 'Preset: ',
+        options: {
+            values: cornerstone.CONSTANTS.VIEWPORT_PRESETS.map((preset) => preset.name),
+            defaultValue: 'CT-Bone',
+        },
+        onSelectedValueChange: (presetName) => {
+            viewport.setProperties({ preset: presetName });
+            viewport.render();
+        },
+    });
+
+    const alpha_panel = document.createElement('div');
+    preset_panel.className = 'label-slider-container'
+
+    tool_panel.appendChild(alpha_panel);
+
+    addSliderToToolbar({
+        id: 't3d_alpha_slider',
+        container: alpha_panel,
+        title: 'Volume Alpha',
+        range: [1, 10],
+        defaultValue: 1,
+        onSelectedValueChange: (value) => {
+            //setConfigValue('volumeAlpha', Number(value));
+        },
+    });
+
+
 }
 
 
@@ -743,3 +845,180 @@ function getNiftiList() {
     ];
 }
 
+
+
+
+function addButtonToToolbar({
+    id,
+    title,
+    container,
+    onClick,
+}: {
+    id?: string;
+    title: string;
+    container?: HTMLElement;
+    onClick: () => void;
+}) {
+    const button = document.createElement('button');
+
+    button.id = id;
+    button.innerHTML = title;
+    button.onclick = onClick;
+
+    container = container ?? document.getElementById('demo-toolbar');
+    container.append(button);
+
+    return button;
+}
+
+function addDropDownToToolbar({
+    id,
+    options,
+    container,
+    style,
+    onSelectedValueChange,
+    labelText,
+}: {
+    id?: string;
+    options: { values: number[] | string[]; defaultValue: number | string };
+    container?: HTMLElement;
+    style?: Record<string, any>;
+    onSelectedValueChange: (value: number | string) => void;
+    labelText?: string;
+}) {
+    const { values, defaultValue } = options;
+    container = container ?? document.getElementById('demo-toolbar');
+
+    // Create label element if labelText is provided
+    if (labelText) {
+        const label = document.createElement('label');
+        label.htmlFor = id;
+        label.innerText = labelText;
+        container.append(label);
+    }
+
+    const select = document.createElement('select');
+    select.id = id;
+
+    if (style) {
+        Object.assign(select.style, style);
+    }
+
+    values.forEach((value) => {
+        const optionElement = document.createElement('option');
+        optionElement.value = String(value);
+        optionElement.innerText = String(value);
+        if (value === defaultValue) {
+            optionElement.selected = true;
+        }
+        select.append(optionElement);
+    });
+
+    select.onchange = (evt) => {
+        const selectElement = <HTMLSelectElement>evt.target;
+        if (selectElement) {
+            onSelectedValueChange(selectElement.value);
+        }
+    };
+
+    container.append(select);
+}
+
+function addToggleButtonToToolbar({
+    id,
+    title,
+    container,
+    onClick,
+    defaultToggle = false,
+}: {
+    id?: string;
+    title: string;
+    container?: HTMLElement;
+    onClick: (toggle: boolean) => void;
+    defaultToggle?: boolean;
+}) {
+    const button = document.createElement('button');
+
+    const toggleOnBackgroundColor = '#fcfba9';
+    const toggleOffBackgroundColor = '#ffffff';
+
+    let toggle = !!defaultToggle;
+
+    function setBackgroundColor() {
+        button.style.backgroundColor = toggle
+            ? toggleOnBackgroundColor
+            : toggleOffBackgroundColor;
+    }
+
+    setBackgroundColor();
+
+    button.id = id;
+    button.innerHTML = title;
+    button.onclick = () => {
+        toggle = !toggle;
+        setBackgroundColor();
+        onClick.call(button, toggle);
+    };
+
+    container = container ?? document.getElementById('demo-toolbar');
+    container.append(button);
+};
+
+function addSliderToToolbar({
+    id,
+    title,
+    range,
+    step,
+    defaultValue,
+    container,
+    onSelectedValueChange,
+    updateLabelOnChange,
+}: {
+    id?: string;
+    title: string;
+    range: number[];
+    step?: number;
+    defaultValue: number;
+    container?: HTMLElement;
+    onSelectedValueChange: (value: string) => void;
+    updateLabelOnChange?: (value: string, label: HTMLElement) => void;
+}) {
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+
+    if (id) {
+        input.id = id;
+        label.id = `${id}-label`;
+    }
+
+    label.htmlFor = title;
+    label.innerText = title;
+
+    input.type = 'range';
+    input.name = title;
+    input.min = String(range[0]);
+    input.max = String(range[1]);
+
+    // add step before setting its value to make sure it works for step different than 1.
+    // Example: range (0-1), step (0.1) and value (0.5)
+    if (step) {
+        input.step = String(step);
+    }
+
+    input.value = String(defaultValue);
+
+    input.oninput = (evt) => {
+        const selectElement = <HTMLSelectElement>evt.target;
+
+        if (selectElement) {
+            onSelectedValueChange(selectElement.value);
+            if (updateLabelOnChange !== undefined) {
+                updateLabelOnChange(selectElement.value, label);
+            }
+        }
+    };
+
+    container = container ?? document.getElementById('demo-toolbar');
+    container.append(label);
+    container.append(input);
+};

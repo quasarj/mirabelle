@@ -39,6 +39,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
@@ -59,6 +60,49 @@ button:focus-visible {
     background-color: #f9f9f9;
   }*/
 }
+
+
+select, label {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.5;
+    /*color: #213547;*/ /* Adjust based on light or dark theme */
+    padding: 5px; /* Adjust padding as needed */
+    margin: 4px; /* Spacing around elements */
+    border-radius: 8px; /* Consistent with button border-radius */
+}
+
+.label-select-container {
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+}
+
+
+
+select {
+    border: 1px solid #ccc; /* Subtle border, adjust as needed */
+    background-color: #ffffff; /* Background, adjust for theme */
+}
+
+    select:focus {
+        border-color: #646cff; /* Focus state, similar to button:hover */
+        outline: none; /* Removes default focus outline */
+    }
+
+/* Adjust for dark mode as needed */
+@media (prefers-color-scheme: light) {
+    select, label {
+        color: #213547;
+        background-color: #ffffff;
+    }
+
+        select:hover {
+            border-color: #747bff; /* Similar hover effect as links */
+        }
+}
+
+
+
 
 
 
@@ -136,7 +180,7 @@ html, body {
     white-space: nowrap; /* Prevent word wrapping in the container */
 }
 
-#file_content, #vol_tools, #mip_tools, #t3d_tools {
+#file_content {
     flex-grow: 1;
     overflow-y: auto;
 }
@@ -159,6 +203,12 @@ html, body {
     border-bottom: 1px solid #ddd;
 }
 
+
+#vol_tools, #mip_tools, #t3d_tools {
+    display: flex;
+    flex-direction: column; /* Aligns children vertically */
+    padding: 10px;
+}
 
 
 #table_header {
@@ -187,85 +237,6 @@ html, body {
 #mark_panel {
     flex-grow: 0;
 }
-
-
-
-/*#table_header, #file_panel {
-    flex: 1;*/ /* This makes table_header and file_panel share the upper half equally */
-    /*overflow-y: auto;*/ /* Enables vertical scrolling if the content overflows */
-/*}
-
-#file_panel {
-    display: table;*/
-    /*flex-grow: 1;*/ /* Split space evenly */
-    /*overflow-y: auto;*/ /* Add scroll bar if content overflows */
-    /*overflow-x: auto;*/ /* Add scroll bar if content overflows */
-    /*align-items: center;*/ /* Center the content vertically */
-    /*justify-content: center;*/ /* Center the content horizontally */
-    /*border: 2px solid #000000;*/
-    /*width: 100%;*/ /* Optional: Adjust width as needed */
-/*}
-
-#file_panel li {
-    display: table-row;*/ /* Each list item is a row in the table */
-/*}
-
-#file_panel li:before {
-    content: none;*/ /* Remove the bullet points from list items */
-/*}
-
-#file_panel li div {
-    display: table-cell;*/ /* Treat child divs of list items as table cells */
-    /*padding: 10px;*/ /* Adjust padding for spacing */
-    /*border-bottom: 1px solid #ddd;*/ /* Optional: add a border for each row */
-/*}
-
-#table_header {
-    display: table;
-    width: 100%;
-    background-color: #f2f2f2;*/ /* Light grey background or any color of your choice */
-    /*text-align: center;*/ /* Center the content vertically */
-    /*vertical-align: middle;*/ /* Center the content vertically */
-    /*justify-content: center;*/ /* Center the content horizontally */
-    /*height: 50px;
-}
-
-.header_cell {
-    display: table-cell;
-    padding: 5px;
-    font-weight: bold;*/ /* Make header text bold */
-    /*border-bottom: 2px solid #000;*/ /* Optional: Add a bottom border to the header */
-    /*border-top: 2px solid #000;*/ /* Optional: Add a bottom border to the header */
-/*}
-
-
-
-
-#vol_tools, #mip_tools, #t3d_tools {
-    display: block;*/
-    /*flex-grow: 1;*/ /* Split space evenly */
-    /*flex: 1;
-    overflow-y: auto;*/ /* Add scroll bar if content overflows */
-    /*align-items: center;*/ /* Center the content vertically */
-    /*justify-content: center;*/ /* Center the content horizontally */
-    /*border: 2px solid #000000;*/
-/*}*/
-
-
-
-/*#viz_panel {
-    flex-grow: 1;
-}*/
-
-/*#vol_content, #mip_content, #t3d_content {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-
-#mark_panel {
-    flex-shrink: 0;
-}*/
-
 
 
 /* Bottom Panel */
