@@ -1,9 +1,39 @@
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
-//const { createVOISynchronizer } = cornerstoneTools.synchronizers;
 
-// All page elements
+// ============================= //
+// Data Functions
+// ============================= //
+
+// single image to mimic current visual review image
+function getNiftiVolume() {
+    return '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz';
+}
+
+// quick seg for testing, now selection from file list
+function getNiftiSeg() {
+    //return '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz';
+    return '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz';
+}
+
+// list of images to mimic posda file grouping
+function getNiftiList() {
+    return [
+        '/nifti/brain/BraTS-MET-00086-000-t1c.nii.gz',
+        '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz',
+        '/nifti/brain/BraTS-MET-00086-000-t2f.nii.gz',
+        '/nifti/brain/BraTS-MET-00086-000-t2w.nii.gz',
+        '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz',
+        '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz',
+    ];
+}
+
+// ============================= //
+// Page Elements
+// ============================= //
+
+// All page elements for organization
 let elements = {
     FILE: {
         CURRENT: {
@@ -97,6 +127,10 @@ const resizeObserver = new ResizeObserver(() => {
         renderingEngine.resize(true, false);
     }
 });
+
+// ============================= //
+// Page Functions
+// ============================= //
 
 function setupVolPanel() {
 
@@ -512,7 +546,6 @@ function setup3dTools() {
 
 }
 
-
 // ============================= //
 
 function setupFilePanel() {
@@ -824,29 +857,14 @@ async function run() {
 
 run();
 
-function getNiftiVolume() {
-    return '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz';
-}
-
-function getNiftiSeg() {
-    //return '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz';
-    return '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz';
-}
-
-
-function getNiftiList() {
-    return [
-        '/nifti/brain/BraTS-MET-00086-000-t1c.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-t2f.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-t2w.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz',
-    ];
-}
 
 
 
+
+
+// ============================= //
+// HTML Functions
+// ============================= //
 
 function addButtonToToolbar({ id, title, container, onClick }) {
     const button = document.createElement('button');
@@ -860,7 +878,6 @@ function addButtonToToolbar({ id, title, container, onClick }) {
 
     return button;
 }
-
 
 function addDropDownToToolbar({ id, options, container, style, onSelectedValueChange, labelText }) {
     const { values, defaultValue } = options;
@@ -901,9 +918,6 @@ function addDropDownToToolbar({ id, options, container, style, onSelectedValueCh
     container.append(select);
 }
 
-
-
-
 function addToggleButtonToToolbar({ id, title, container, onClick, defaultToggle = false }) {
     const button = document.createElement('button');
 
@@ -931,10 +945,6 @@ function addToggleButtonToToolbar({ id, title, container, onClick, defaultToggle
     container = container || document.getElementById('demo-toolbar');
     container.append(button);
 }
-
-
-
-
 
 function addSliderToToolbar({ id, title, range, step, defaultValue, container, onSelectedValueChange, updateLabelOnChange }) {
     const label = document.createElement('label');
