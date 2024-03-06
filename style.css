@@ -149,6 +149,10 @@ html, body {
     content: none;
 }
 
+#file_content li:hover {
+    cursor: pointer;
+}
+
 #file_content li div {
     display: table-cell;
     padding: 5px;
