@@ -4,7 +4,7 @@ import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-l
 //const { createVOISynchronizer } = cornerstoneTools.synchronizers;
 
 // All page elements
-const elements = {
+let elements = {
     FILE: {
         CURRENT: {
             PATH: '',
@@ -13,16 +13,25 @@ const elements = {
         },        
         LIST: [],
         ACTIVE: [],
+        VOLUME: {
+            ID: null,
+            OBJECT: null,
+            INPUT: null,
+            DIMENSIONS: null,
+            SLAB: null,
+        },
     },
     PAGE: {
         RENDER: {
             ID: 'nifti_render_engine',
+            ENGINE: null,
         },
     },
     VOL: {
         CONTENT: document.getElementById('vol_content'),
         TOOLS: {
             ID: 'vol_tool_group',
+            GROUP: null,
             PANEL: document.getElementById('vol_tools'),
             SYNC: "vol_voi_syncronizer"
         },            
@@ -44,6 +53,7 @@ const elements = {
         CONTENT: document.getElementById('mip_content'),
         TOOLS: {
             ID: 'mip_tool_group',
+            GROUP: null,
             PANEL: document.getElementById('mip_tools'),
             SYNC: "mip_voi_syncronizer"
         },  
@@ -65,6 +75,7 @@ const elements = {
         CONTENT: document.getElementById('t3d_content'),
         TOOLS: {
             ID: 't3d_tool_group',
+            GROUP: null,
             PANEL: document.getElementById('t3d_tools'),
             SYNC: "t3d_voi_syncronizer"
         }, 
@@ -242,22 +253,23 @@ function setupVolTools() {
     }
 
     // Tool group setup
-    const volToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(elements.VOL.TOOLS.ID);
-    volToolGroup.addViewport(elements.VOL.AXIAL.ID, elements.PAGE.RENDER.ID);
-    volToolGroup.addViewport(elements.VOL.SAGITTAL.ID, elements.PAGE.RENDER.ID);
-    volToolGroup.addViewport(elements.VOL.CORONAL.ID, elements.PAGE.RENDER.ID);
+    elements.VOL.TOOLS.GROUP = cornerstoneTools.ToolGroupManager.createToolGroup(elements.VOL.TOOLS.ID);
+    //const volToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(elements.VOL.TOOLS.ID);
+    elements.VOL.TOOLS.GROUP.addViewport(elements.VOL.AXIAL.ID, elements.PAGE.RENDER.ID);
+    elements.VOL.TOOLS.GROUP.addViewport(elements.VOL.SAGITTAL.ID, elements.PAGE.RENDER.ID);
+    elements.VOL.TOOLS.GROUP.addViewport(elements.VOL.CORONAL.ID, elements.PAGE.RENDER.ID);
 
     // Scroll Mouse Wheel
-    volToolGroup.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-    volToolGroup.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+    elements.VOL.TOOLS.GROUP.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+    elements.VOL.TOOLS.GROUP.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
 
     // Segmentation Display
-    volToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-    volToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+    elements.VOL.TOOLS.GROUP.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+    elements.VOL.TOOLS.GROUP.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
     // Window Level
-    volToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
-    volToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+    elements.VOL.TOOLS.GROUP.addTool(cornerstoneTools.WindowLevelTool.toolName);
+    elements.VOL.TOOLS.GROUP.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
@@ -266,8 +278,8 @@ function setupVolTools() {
     });
 
     // Pan
-    volToolGroup.addTool(cornerstoneTools.PanTool.toolName);
-    volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+    elements.VOL.TOOLS.GROUP.addTool(cornerstoneTools.PanTool.toolName);
+    elements.VOL.TOOLS.GROUP.setToolActive(cornerstoneTools.PanTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
@@ -276,8 +288,8 @@ function setupVolTools() {
     });
 
     // Zoom
-    volToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
-    volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+    elements.VOL.TOOLS.GROUP.addTool(cornerstoneTools.ZoomTool.toolName);
+    elements.VOL.TOOLS.GROUP.setToolActive(cornerstoneTools.ZoomTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
@@ -286,14 +298,14 @@ function setupVolTools() {
     });
 
     // Crosshairs
-    volToolGroup.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+    elements.VOL.TOOLS.GROUP.addTool(cornerstoneTools.CrosshairsTool.toolName, {
         getReferenceLineColor,
         getReferenceLineControllable,
         getReferenceLineDraggableRotatable,
         getReferenceLineSlabThicknessControlsOn,
     });
-    volToolGroup.setToolPassive(cornerstoneTools.CrosshairsTool.toolName);
-    //volToolGroup.setToolEnabled(cornerstoneTools.CrosshairsTool.toolName);
+    elements.VOL.TOOLS.GROUP.setToolPassive(cornerstoneTools.CrosshairsTool.toolName);
+    //elements.VOL.TOOLS.GROUP.setToolEnabled(cornerstoneTools.CrosshairsTool.toolName);
 
     const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer(elements.VOL.TOOLS.SYNC);
 
@@ -305,22 +317,23 @@ function setupVolTools() {
 function setupMipTools() {
 
     // Tool group setup
-    const mipToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(elements.MIP.TOOLS.ID);
-    mipToolGroup.addViewport(elements.MIP.AXIAL.ID, elements.PAGE.RENDER.ID);
-    mipToolGroup.addViewport(elements.MIP.SAGITTAL.ID, elements.PAGE.RENDER.ID);
-    mipToolGroup.addViewport(elements.MIP.CORONAL.ID, elements.PAGE.RENDER.ID);
+    elements.MIP.TOOLS.GROUP = cornerstoneTools.ToolGroupManager.createToolGroup(elements.MIP.TOOLS.ID);
+    //const mipToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(elements.MIP.TOOLS.ID);
+    elements.MIP.TOOLS.GROUP.addViewport(elements.MIP.AXIAL.ID, elements.PAGE.RENDER.ID);
+    elements.MIP.TOOLS.GROUP.addViewport(elements.MIP.SAGITTAL.ID, elements.PAGE.RENDER.ID);
+    elements.MIP.TOOLS.GROUP.addViewport(elements.MIP.CORONAL.ID, elements.PAGE.RENDER.ID);
 
     // Scroll Mouse Wheel
-    mipToolGroup.addTool(cornerstoneTools.VolumeRotateMouseWheelTool.toolName);
-    mipToolGroup.setToolActive(cornerstoneTools.VolumeRotateMouseWheelTool.toolName);
+    elements.MIP.TOOLS.GROUP.addTool(cornerstoneTools.VolumeRotateMouseWheelTool.toolName);
+    elements.MIP.TOOLS.GROUP.setToolActive(cornerstoneTools.VolumeRotateMouseWheelTool.toolName);
 
     // Segmentation Display
-    mipToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-    mipToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+    elements.MIP.TOOLS.GROUP.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+    elements.MIP.TOOLS.GROUP.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
     // Window Level
-    mipToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
-    mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+    elements.MIP.TOOLS.GROUP.addTool(cornerstoneTools.WindowLevelTool.toolName);
+    elements.MIP.TOOLS.GROUP.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
@@ -329,8 +342,8 @@ function setupMipTools() {
     });
 
     // Pan
-    mipToolGroup.addTool(cornerstoneTools.PanTool.toolName);
-    mipToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+    elements.MIP.TOOLS.GROUP.addTool(cornerstoneTools.PanTool.toolName);
+    elements.MIP.TOOLS.GROUP.setToolActive(cornerstoneTools.PanTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
@@ -339,25 +352,32 @@ function setupMipTools() {
     });
 
     // Zoom
-    mipToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
-    mipToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+    elements.MIP.TOOLS.GROUP.addTool(cornerstoneTools.ZoomTool.toolName);
+    elements.MIP.TOOLS.GROUP.setToolActive(cornerstoneTools.ZoomTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
             },
         ],
     });
+
+    const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer(elements.MIP.TOOLS.SYNC);
+
+    [elements.MIP.AXIAL.ID, elements.MIP.SAGITTAL.ID, elements.MIP.CORONAL.ID].forEach((viewport) => {
+        mipVOISyncronizer.add({ renderingEngineId: elements.PAGE.RENDER.ID, viewportId: viewport });
+    });
 }
 
 function setup3dTools() {
 
     // Tool group setup
-    const t3dToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(elements.T3D.TOOLS.ID);    
-    t3dToolGroup.addViewport(elements.T3D.CORONAL.ID, elements.PAGE.RENDER.ID);
+    elements.T3D.TOOLS.GROUP = cornerstoneTools.ToolGroupManager.createToolGroup(elements.T3D.TOOLS.ID);
+    //const t3dToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(elements.T3D.TOOLS.ID);    
+    elements.T3D.TOOLS.GROUP.addViewport(elements.T3D.CORONAL.ID, elements.PAGE.RENDER.ID);
 
     // Trackball Rotate
-    t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
-    t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
+    elements.T3D.TOOLS.GROUP.addTool(cornerstoneTools.TrackballRotateTool.toolName);
+    elements.T3D.TOOLS.GROUP.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
@@ -366,12 +386,12 @@ function setup3dTools() {
     });
 
     // Segmentation Display
-    t3dToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-    t3dToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+    elements.T3D.TOOLS.GROUP.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+    elements.T3D.TOOLS.GROUP.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
     // Pan
-    t3dToolGroup.addTool(cornerstoneTools.PanTool.toolName);
-    t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+    elements.T3D.TOOLS.GROUP.addTool(cornerstoneTools.PanTool.toolName);
+    elements.T3D.TOOLS.GROUP.setToolActive(cornerstoneTools.PanTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
@@ -380,8 +400,8 @@ function setup3dTools() {
     });
 
     // Zoom
-    t3dToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
-    t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+    elements.T3D.TOOLS.GROUP.addTool(cornerstoneTools.ZoomTool.toolName);
+    elements.T3D.TOOLS.GROUP.setToolActive(cornerstoneTools.ZoomTool.toolName, {
         bindings: [
             {
                 mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
@@ -553,21 +573,22 @@ async function run() {
 
     setupFilePanel();
 
-    const volumeId = 'nifti:' + elements.FILE.CURRENT.PATH;
+    //let volumeId = 'nifti:' + elements.FILE.CURRENT.PATH;
+    elements.FILE.VOLUME.ID = 'nifti:' + elements.FILE.CURRENT.PATH;
 
     cornerstone.volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
 
-    const volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, {
+    elements.FILE.VOLUME.OBJECT = await cornerstone.volumeLoader.createAndCacheVolume(elements.FILE.VOLUME.ID, {
         type: 'image',
     });
 
-    const renderingEngine = new cornerstone.RenderingEngine(elements.PAGE.RENDER.ID);
+    elements.PAGE.RENDER.ENGINE = new cornerstone.RenderingEngine(elements.PAGE.RENDER.ID);
 
     setupVolPanel();
     setupMipPanel();
     setup3dPanel();
 
-    const viewportInputArray = [
+    elements.FILE.VOLUME.INPUT = [
         {
             viewportId: elements.VOL.AXIAL.ID,
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
@@ -627,16 +648,16 @@ async function run() {
         },
     ];
 
-    renderingEngine.setViewports(viewportInputArray);
+    elements.PAGE.RENDER.ENGINE.setViewports(elements.FILE.VOLUME.INPUT);
 
-    volume.load();
+    elements.FILE.VOLUME.OBJECT.load();
 
     // Add volumes to volume viewports
     await cornerstone.setVolumesForViewports(
-        renderingEngine,
+        elements.PAGE.RENDER.ENGINE,
         [
             {
-                volumeId: volumeId,
+                volumeId: elements.FILE.VOLUME.ID,
                 //callback: ({ volumeActor }) => {
                 //    volumeActor
                 //        .getProperty()
@@ -650,34 +671,36 @@ async function run() {
         [elements.VOL.AXIAL.ID, elements.VOL.SAGITTAL.ID, elements.VOL.CORONAL.ID]
     );
 
-    const volumeDimensions = volume.dimensions;
+    elements.FILE.VOLUME.DIMENSIONS = elements.FILE.VOLUME.OBJECT.dimensions;
 
-    const slabThickness = Math.sqrt(
-        volumeDimensions[0] * volumeDimensions[0] +
-        volumeDimensions[1] * volumeDimensions[1] +
-        volumeDimensions[2] * volumeDimensions[2]
+    elements.FILE.VOLUME.SLAB = Math.sqrt(
+        elements.FILE.VOLUME.DIMENSIONS[0] * elements.FILE.VOLUME.DIMENSIONS[0] +
+        elements.FILE.VOLUME.DIMENSIONS[1] * elements.FILE.VOLUME.DIMENSIONS[1] +
+        elements.FILE.VOLUME.DIMENSIONS[2] * elements.FILE.VOLUME.DIMENSIONS[2]
     );
 
     // Add volumes to MIP viewports
     await cornerstone.setVolumesForViewports(
-        renderingEngine,
+        elements.PAGE.RENDER.ENGINE,
         [
+            //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
             {
-                volumeId: volumeId,
+                volumeId: elements.FILE.VOLUME.ID,
                 blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
-                slabThickness,
+                slabThickness: elements.FILE.VOLUME.SLAB,
             },
         ],
         [elements.MIP.AXIAL.ID, elements.MIP.SAGITTAL.ID, elements.MIP.CORONAL.ID]
     );
 
     // Add volumes to 3D viewports
-    const viewport = renderingEngine.getViewport(elements.T3D.CORONAL.ID);
+    const viewport = elements.PAGE.RENDER.ENGINE.getViewport(elements.T3D.CORONAL.ID);
     await cornerstone.setVolumesForViewports(
-        renderingEngine,
+        elements.PAGE.RENDER.ENGINE,
         [
+            //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
             {
-                volumeId
+                volumeId: elements.FILE.VOLUME.ID
             },
         ],
         [elements.T3D.CORONAL.ID]
@@ -694,19 +717,19 @@ async function run() {
     //const seg_path = getNiftiSeg()
     //addOverlay(seg_path);
         
-    renderingEngine.render();
+    elements.PAGE.RENDER.ENGINE.render();
 }
 
 run();
 
-function getNiftiVolume() {//{{{
+function getNiftiVolume() {
     return '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz';
-}//}}}
+}
 
-function getNiftiSeg() {//{{{
+function getNiftiSeg() {
     //return '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz';
     return '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz';
-}//}}}
+}
 
 
 function getNiftiList() {
