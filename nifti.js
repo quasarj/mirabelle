@@ -519,10 +519,27 @@ function setup3dTools() {
         labelText: 'Preset: ',
         options: {
             values: cornerstone.CONSTANTS.VIEWPORT_PRESETS.map((preset) => preset.name),
-            defaultValue: 'CT-Bone',
+            defaultValue: 'MR-Default',
         },
         onSelectedValueChange: (presetName) => {
             viewport.setProperties({ preset: presetName });
+            viewport.render();
+        },
+    });
+
+
+    addToggleButtonToToolbar({
+        id: 't3d_visibility_button',
+        container: tool_panel,
+        title: 'Toggle Visibility',
+        defaultToggle: true,
+        onClick: async (toggle) => {
+            const viewport = elements.PAGE.RENDER.ENGINE.getViewport(elements.T3D.CORONAL.ID);
+            const volumeActor = viewport.getDefaultActor().actor;
+            const visibility = toggle;
+            volumeActor.setVisibility(visibility);
+
+            viewport.resetCamera();
             viewport.render();
         },
     });
@@ -536,14 +553,30 @@ function setup3dTools() {
         id: 't3d_alpha_slider',
         container: alpha_panel,
         title: 'Volume Alpha',
-        range: [1, 10],
-        defaultValue: 1,
+        range: [1, 100],
+        defaultValue: 100,
         onSelectedValueChange: (value) => {
-            //setConfigValue('volumeAlpha', Number(value));
+            const mappedValue = Number(value) / 100.0;
+            setConfigValue('fillAlphaInactive', mappedValue);
+            const config = elements.FILE.OBJECT.config;
+            elements.PAGE.RENDER.ENGINE.renderViewports(elements.T3D.CORONAL.ID);
         },
     });
 
 
+}
+
+// ============================= //
+
+function setConfigValue(property, value) {
+    const config = segmentation.config.getGlobalConfig();
+
+    config.representations.LABELMAP[property] = value;
+    segmentation.config.setGlobalConfig(config);
+
+    const renderingEngine = getRenderingEngine(renderingEngineId);
+
+    renderingEngine.renderViewports([viewportId]);
 }
 
 // ============================= //
@@ -645,7 +678,7 @@ async function addOverlay(selectedIndex) {
             ]);
         }
 
-        const toolGroupConfiguration = {
+        const volGroupConfiguration = {
             renderInactiveSegmentations: false,
             representations: {
                 //https://www.cornerstonejs.org/api/tools/namespace/Types#LabelmapConfig
@@ -658,7 +691,7 @@ async function addOverlay(selectedIndex) {
                 },
             },
         }
-        cornerstoneTools.segmentation.config.setToolGroupSpecificConfig(elements.VOL.TOOLS.ID, toolGroupConfiguration)
+        cornerstoneTools.segmentation.config.setToolGroupSpecificConfig(elements.VOL.TOOLS.ID, volGroupConfiguration)
 
         await cornerstoneTools.segmentation.addSegmentationRepresentations(elements.VOL.TOOLS.ID, [
             {
@@ -666,13 +699,58 @@ async function addOverlay(selectedIndex) {
                 type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
             },
         ]);
+
+        //await cornerstoneTools.segmentation.addSegmentationRepresentations(elements.T3D.TOOLS.ID, [
+        //    {
+        //        segmentationId,
+        //        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+        //    },
+        //]);
+
+        const t3dGroupConfiguration = {
+            renderInactiveSegmentations: false,
+            representations: {
+                //https://www.cornerstonejs.org/api/tools/namespace/Types#LabelmapConfig
+                SURFACE: {
+                    renderFill: true,
+                    renderOutline: true,
+                    fillAlpha: 1,
+                    //outlineOpacity: 1,
+                    //outlineWidthActive: 1,
+                },
+            },
+        }
+        cornerstoneTools.segmentation.config.setToolGroupSpecificConfig(elements.T3D.TOOLS.ID, t3dGroupConfiguration)
+
+        await cornerstoneTools.segmentation.addSegmentationRepresentations(elements.T3D.TOOLS.ID, [
+            {
+                segmentationId,
+                type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
+                options: {
+                    polySeg: {
+                        enabled: true,
+                    },
+                },
+            },
+        ]);
+
+
+
         return true;
+        
 
     } catch (error) {
         console.error(error);
         return false;
     }
 }
+
+
+
+
+
+
+
 
 async function removeOverlay(selectedIndex) {
 
@@ -841,7 +919,7 @@ async function run() {
         [elements.T3D.CORONAL.ID]
     ).then(() => {
         viewport.setProperties({
-            preset: 'CT-Bone',
+            preset: 'MR-Default',
             //preset: 'MR-T2-Brain',
         });
         //viewport.render();

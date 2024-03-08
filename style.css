@@ -77,6 +77,10 @@ select, label {
     align-items: center; /* Aligns items vertically in the center */
 }
 
+.label-slider-container {
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+}
 
 
 select {
@@ -207,7 +211,8 @@ html, body {
 #vol_tools, #mip_tools, #t3d_tools {
     display: flex;
     flex-direction: column; /* Aligns children vertically */
-    padding: 10px;
+    /*padding: 10px;*/
+    margin: 10px;
 }
 
 
