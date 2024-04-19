@@ -1,3 +1,5 @@
 npm install
 
-npm run dev
+npx webpack
+
+npm run start
