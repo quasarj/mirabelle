@@ -1,6 +1,6 @@
 function SidePanel() {
   return (
-    <div className=" rounded-lg h-full flex flex-col gap-2 overflow-hidden">
+    <div className="w-72  rounded-lg h-full flex flex-col gap-2">
       <div className="flex-grow bg-gray-100 p-6 rounded-lg overflow-hidden">
         <div className="mb-2 text-lg font-semibold">Files</div>
         <ul className="h-full overflow-y-scroll">

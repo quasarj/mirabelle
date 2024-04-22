@@ -1,8 +1,21 @@
-function ReviewPanel() {
+function ReviewPanel({ showSidePanel, setShowSidePanel, showDescriptionPanel, setShowDescriptionPanel }) {
   return (
     <div className="relative w-full bg-white rounded-lg border-4 border-blue-600 p-2 flex flex-col gap-2 mx-2">
-        <button className="absolute -right-5 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-3 leading-none rounded-3xl w-min font-black">{">"}</button>
-        <button className="absolute -left-5 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-3 leading-none rounded-3xl w-min font-black">{"<"}</button>
+        <button
+        onClick={() => setShowSidePanel(!showSidePanel)}
+        className={`flex items-center justify-center w-10 h-10 leading-10 absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2 bg-blue-500 border-0 rounded-full p-2 transition-transform ${showSidePanel ? '' : 'rotate-180'}`}
+      
+      >
+        <span className="material-icons text-white">chevron_left</span>
+      </button>
+      <button
+        onClick={() => setShowDescriptionPanel(!showDescriptionPanel)}
+        className={`flex items-center justify-center absolute w-10 h-10 leading-10 top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2 bg-blue-500 rounded-full p-2 transition-transform ${showDescriptionPanel ? '' : 'rotate-180'}`}
+      
+      >
+        <span className="material-icons text-white">chevron_right</span>
+      </button>
+
       <div className="w-full flex justify-between items-center">
         <div className="flex gap-2">
           <button>Back</button>
