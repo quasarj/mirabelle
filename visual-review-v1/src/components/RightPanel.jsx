@@ -1,10 +1,9 @@
+import DescriptionPanel from "./DescriptionPanel";
+
 function RightPanel() {
   return (
-    <div id="rightPanelWrapper" className="w-72 rounded-lg h-full overflow-y-scroll">
-      <div id="descriptionPanel" className="bg-gray-100 p-6 rounded-lg">
-        <div className="w-full mb-2 font-semibold">Description</div>
-        <div className="w-full">Heres a 4-sentence random description about the current selection or feature being reviewed, description about the current selection or feature being reviewed,description about the current selection random description about the current selection or feature being reviewed, description about the current selection or feature being reviewed,description about the current selection or feature being reviewed,providing context or additional information as required.</div>
-      </div>
+    <div id="rightPanelWrapper" className="h-full overflow-y-scroll">
+      <DescriptionPanel />
     </div>
   );
 }
