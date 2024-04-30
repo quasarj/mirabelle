@@ -20,7 +20,7 @@ function App() {
     : 'grid-cols-1';
   
   return (
-    <div id="app" className={`grid grid-rows-[${topPanelVisibility ? 'auto,auto,1fr' : '1fr'}] gap-2 w-screen h-screen p-2`}>
+    <div id="app" className={`grid ${topPanelVisibility ? 'grid-rows-[auto,auto,1fr]' : 'grid-rows-[1fr]'} gap-2 w-screen h-screen p-2`}>
       {topPanelVisibility && <Header />}
       {topPanelVisibility && <TopPanel />}
       <div id="main" className={`h-full grid ${gridTemplate} rounded-lg gap-2 overflow-hidden`}>
