@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     mode: 'development',
-    entry: './src/nifti.js',
+    entry: './src/viewer.js',
     devtool: 'inline-source-map',
     devServer: {
         static: ['dist', 'public'],
