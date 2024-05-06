@@ -1,13 +1,12 @@
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
-import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
-//import dicomParser from 'dicom-parser';
-//import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
-//import {
-//    cornerstoneStreamingImageVolumeLoader,
-//    cornerstoneStreamingDynamicImageVolumeLoader,
-//} from '@cornerstonejs/streaming-image-volume-loader';
 
+import {
+    initVolumeLoader,
+    initCornerstoneDICOMImageLoader
+} from './utilities.js';
+
+//import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
 
 // ============================= //
 // Page Elements
@@ -22,19 +21,19 @@ let seriesUID = null;
 let timepointID = null;
 let groupID = null;
 
-
-let filePath = null;
-let fileName = null;
-let fileIndex = null;
-
+let file = null;
 let fileList = null;
-let fileActiveList = null;
+let groupList = null;
+
+let volumeId = null;
+let volume = null;
+
 
 // Adjusts the rendered size when the window size changes
 const resizeObserver = new ResizeObserver(() => {
     console.log('Size changed');
 
-    const renderingEngine = cornerstone.getRenderingEngine('nifti_render_engine');
+    const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
     if (renderingEngine) {
         renderingEngine.resize(true, false);
@@ -49,6 +48,7 @@ function setupVolPanel() {
 
     const volGrid = document.createElement('div')
     volGrid.id = 'vol_grid';
+
     const volAxialContent = document.createElement('div')
     volAxialContent.id = 'vol_axial';
     const volSagittalContent = document.createElement('div')
@@ -84,7 +84,6 @@ function setupVolPanel() {
         element.style.width = '100%';
         element.style.height = '100%';
         element.oncontextmenu = (e) => e.preventDefault();
-
         resizeObserver.observe(element);
     });
 
@@ -230,9 +229,9 @@ function setupVolTools() {
 
     // Tool group setup
     const volToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('vol_tool_group');
-    volToolGroup.addViewport('vol_axial', 'nifti_render_engine');
-    volToolGroup.addViewport('vol_sagittal', 'nifti_render_engine');
-    volToolGroup.addViewport('vol_coronal', 'nifti_render_engine');
+    volToolGroup.addViewport('vol_axial', 'viewer_render_engine');
+    volToolGroup.addViewport('vol_sagittal', 'viewer_render_engine');
+    volToolGroup.addViewport('vol_coronal', 'viewer_render_engine');
 
     // Scroll Mouse Wheel
     volToolGroup.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
@@ -285,12 +284,12 @@ function setupVolTools() {
     const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
 
     ['vol_axial', 'vol_sagittal', 'vol_coronal'].forEach((viewport) => {
-        volVOISyncronizer.add({ renderingEngineId: 'nifti_render_engine', viewportId: viewport });
+        volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
     });
 
     const tool_panel = document.getElementById('vol_tools');
 
-    const renderingEngine = cornerstone.getRenderingEngine('nifti_render_engine');
+    const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
     const viewport = renderingEngine.getViewport('vol_axial');
     addButtonToToolbar({
@@ -333,9 +332,9 @@ function setupMipTools() {
 
     // Tool group setup
     const mipToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('mip_tool_group');
-    mipToolGroup.addViewport('mip_axial', 'nifti_render_engine');
-    mipToolGroup.addViewport('mip_sagittal', 'nifti_render_engine');
-    mipToolGroup.addViewport('mip_coronal', 'nifti_render_engine');
+    mipToolGroup.addViewport('mip_axial', 'viewer_render_engine');
+    mipToolGroup.addViewport('mip_sagittal', 'viewer_render_engine');
+    mipToolGroup.addViewport('mip_coronal', 'viewer_render_engine');
 
     // Scroll Mouse Wheel
     mipToolGroup.addTool(cornerstoneTools.VolumeRotateMouseWheelTool.toolName);
@@ -378,12 +377,12 @@ function setupMipTools() {
     const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("mip_voi_syncronizer");
 
     ['mip_axial', 'mip_sagittal', 'mip_coronal'].forEach((viewport) => {
-        mipVOISyncronizer.add({ renderingEngineId: 'nifti_render_engine', viewportId: viewport });
+        mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
     });
 
     const tool_panel = document.getElementById('mip_tools');
 
-    const renderingEngine = cornerstone.getRenderingEngine('nifti_render_engine');
+    const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
     addButtonToToolbar({
         id: 'mip_reset_button',
@@ -405,7 +404,7 @@ function setup3dTools() {
 
     // Tool group setup
     const t3dToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('t3d_tool_group');
-    t3dToolGroup.addViewport('t3d_coronal', 'nifti_render_engine');
+    t3dToolGroup.addViewport('t3d_coronal', 'viewer_render_engine');
 
     // Trackball Rotate
     t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
@@ -441,7 +440,7 @@ function setup3dTools() {
         ],
     });
 
-    const renderingEngine = cornerstone.getRenderingEngine('nifti_render_engine');
+    const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
     const viewport = renderingEngine.getViewport('t3d_coronal');
 
@@ -522,417 +521,184 @@ function setup3dTools() {
 
 // ============================= //
 
-function setConfigValue(viewport, property, value) {
-    const config = cornerstoneTools.segmentation.config.getGlobalConfig();
-
-    config.representations.LABELMAP[property] = value;
-    cornerstoneTools.segmentation.config.setGlobalConfig(config);
-
-    const renderingEngine = cornerstone.getRenderingEngine('nifti_render_engine');
-
-    renderingEngine.renderViewports([viewport]);
-}
-
-// ============================= //
-
-function setupFilePanel() {
-
-    const filePanel = document.getElementById('file_content');
-    filePanel.innerHTML = '';
-    fileList.forEach((file, index) => {
-        const listItem = document.createElement('li');
-
-        const fileNameDiv = document.createElement('div');
-        const fileParts = file.split(/[/\\]/)
-        fileNameDiv.textContent = fileParts.pop();
-
-        if (file === filePath) {
-            listItem.style.backgroundColor = 'MediumAquaMarine';
-            fileIndex = index
-        }
-        else {
-            listItem.onclick = () => {
-                toggleFileOverlays(index);
-            };
-        }
-
-        listItem.appendChild(fileNameDiv);
-        filePanel.appendChild(listItem);
-    });
-}
-
-async function toggleFileOverlays(selectedIndex) {
-
-    console.log("==============");
-    console.log(fileActiveList);
-    console.log(selectedIndex);
-
-    const filePanel = document.getElementById('file_content');
-    const selectedItem = filePanel.children[selectedIndex];
-
-    let success = false;
-
-    if (fileActiveList[selectedIndex]) {
-        let success = removeOverlay(selectedIndex);
-        if (success) {
-            selectedItem.style.backgroundColor = '';
-            fileActiveList[selectedIndex] = false
-        }
-    }
-    else {
-        let success = addOverlay(selectedIndex);
-
-        if (success) {
-            selectedItem.style.backgroundColor = 'lightsalmon';
-            fileActiveList[selectedIndex] = true
-
-            console.log(fileActiveList);
-
-            Array.from(filePanel.children).forEach((child, index) => {
-                if (index !== selectedIndex && index !== fileIndex) {
-                    if (fileActiveList[index]) {
-                        removeOverlay(index);
-                        child.style.backgroundColor = '';
-                        fileActiveList[index] = false
-                    }
-                }
-            });
-        }
-    }
-
-    console.log(fileActiveList);
-    console.log("==============");
-
-    const renderingEngine = cornerstone.getRenderingEngine('nifti_render_engine');
-    renderingEngine.render();
-}
-
-async function addOverlay(selectedIndex) {
-
-    try {
-
-        const segmentationId = 'nifti:' + fileList[selectedIndex];
-
-        if (fileActiveList[selectedIndex] === null) {
-            const segVolume = await cornerstone.volumeLoader.createAndCacheVolume(segmentationId, {
-                type: 'labelmap',
-            });
-
-            // Add the segmentations to state
-            cornerstoneTools.segmentation.addSegmentations([
-                {
-                    segmentationId,
-                    representation: {
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        data: {
-                            volumeId: segmentationId,
-                        },
-                    },
-                },
-            ]);
-        }
-
-        const volGroupConfiguration = {
-            renderInactiveSegmentations: false,
-            representations: {
-                //https://www.cornerstonejs.org/api/tools/namespace/Types#LabelmapConfig
-                LABELMAP: {
-                    renderFill: true,
-                    renderOutline: true,
-                    fillAlpha: 0.5,
-                    outlineOpacity: 1,
-                    outlineWidthActive: 1,
-                },
-            },
-        }
-        cornerstoneTools.segmentation.config.setToolGroupSpecificConfig('vol_tool_group', volGroupConfiguration)
-
-        await cornerstoneTools.segmentation.addSegmentationRepresentations('vol_tool_group', [
-            {
-                segmentationId,
-                type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-            },
-        ]);
-
-        //await cornerstoneTools.segmentation.addSegmentationRepresentations('t3d_tool_group', [
-        //    {
-        //        segmentationId,
-        //        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-        //    },
-        //]);
-
-        const t3dGroupConfiguration = {
-            renderInactiveSegmentations: false,
-            representations: {
-                //https://www.cornerstonejs.org/api/tools/namespace/Types#LabelmapConfig
-                SURFACE: {
-                    renderFill: true,
-                    renderOutline: true,
-                    fillAlpha: 1,
-                    //outlineOpacity: 1,
-                    //outlineWidthActive: 1,
-                },
-            },
-        }
-        cornerstoneTools.segmentation.config.setToolGroupSpecificConfig('t3d_tool_group', t3dGroupConfiguration)
-
-        await cornerstoneTools.segmentation.addSegmentationRepresentations('t3d_tool_group', [
-            {
-                segmentationId,
-                type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
-                options: {
-                    polySeg: {
-                        enabled: true,
-                    },
-                },
-            },
-        ]);
-
-
-
-        return true;
-
-
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-}
-
-async function removeOverlay(selectedIndex) {
-
-    try {
-        const segmentationId = 'nifti:' + fileList[selectedIndex];
-        await cornerstoneTools.segmentation.removeSegmentationsFromToolGroup('vol_tool_group')
-        await cornerstoneTools.segmentation.removeSegmentationsFromToolGroup('t3d_tool_group')
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-}
-
-// ============================= //
-
 async function run() {
     await cornerstone.init();
     await cornerstoneTools.init();
+    await initVolumeLoader();
+    await initCornerstoneDICOMImageLoader();
+    await initViewer();
 
-    initViewer();
+    if (volume) {
+        const renderingEngine = new cornerstone.RenderingEngine('viewer_render_engine');
 
-    setupFilePanel();
+        if (viewerFunction == 'view') {
+            const volContent = setupVolPanel();
+            const mipContent = setupMipPanel();
+            const t3dContent = setup3dPanel();
 
-    //let volumeId = 'nifti:' + filePath;
-    const fileVolumeId = 'nifti:' + filePath;
+            const viewportInput = [
+                {
+                    viewportId: 'vol_axial',
+                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                    element: volContent["axial"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                    },
+                },
+                {
+                    viewportId: 'vol_sagittal',
+                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                    element: volContent["sagittal"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                    },
+                },
+                {
+                    viewportId: 'vol_coronal',
+                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                    element: volContent["coronal"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                    },
+                },
+                {
+                    viewportId: 'mip_axial',
+                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                    element: mipContent["axial"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                    },
+                },
+                {
+                    viewportId: 'mip_sagittal',
+                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                    element: mipContent["sagittal"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                    },
+                },
+                {
+                    viewportId: 'mip_coronal',
+                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                    element: mipContent["coronal"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                    },
+                },
+                {
+                    viewportId: 't3d_coronal',
+                    type: cornerstone.Enums.ViewportType.VOLUME_3D,
+                    element: t3dContent["coronal"],
+                    defaultOptions: {
+                        orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                    },
+                },
+            ];
 
-    cornerstone.volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
+            renderingEngine.setViewports(viewportInput);
 
-    const fileVolume = await cornerstone.volumeLoader.createAndCacheVolume(fileVolumeId, {
-        type: 'image',
-    });
+            volume.load();
 
-    const renderingEngine = new cornerstone.RenderingEngine('nifti_render_engine');
+            await cornerstone.setVolumesForViewports(
+                renderingEngine,
+                [
+                    {
+                        volumeId: volumeId,
+                    }
+                ],
+                ['vol_axial', 'vol_sagittal', 'vol_coronal']
+            );
 
-    const volContent = setupVolPanel();
-    const mipContent = setupMipPanel();
-    const t3dContent = setup3dPanel();
+            const volDimensions = volume.dimensions;
 
-    const fileInputArray = [
-        {
-            viewportId: 'vol_axial',
-            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: volContent["axial"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-            },
-        },
-        {
-            viewportId: 'vol_sagittal',
-            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: volContent["sagittal"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-            },
-        },
-        {
-            viewportId: 'vol_coronal',
-            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: volContent["coronal"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-            },
-        },
-        {
-            viewportId: 'mip_axial',
-            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: mipContent["axial"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-            },
-        },
-        {
-            viewportId: 'mip_sagittal',
-            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: mipContent["sagittal"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-            },
-        },
-        {
-            viewportId: 'mip_coronal',
-            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: mipContent["coronal"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-            },
-        },
-        {
-            viewportId: 't3d_coronal',
-            type: cornerstone.Enums.ViewportType.VOLUME_3D,
-            element: t3dContent["coronal"],
-            defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-            },
-        },
-    ];
+            const volSlab = Math.sqrt(
+                volDimensions[0] * volDimensions[0] +
+                volDimensions[1] * volDimensions[1] +
+                volDimensions[2] * volDimensions[2]
+            );
 
-    renderingEngine.setViewports(fileInputArray);
+            // Add volumes to MIP viewports
+            await cornerstone.setVolumesForViewports(
+                renderingEngine,
+                [
+                    //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                    {
+                        volumeId: volumeId,
+                        blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+                        slabThickness: volSlab,
+                    },
+                ],
+                ['mip_axial', 'mip_sagittal', 'mip_coronal']
+            );
 
-    fileVolume.load();
+            // Add volumes to 3D viewports
+            const viewport = renderingEngine.getViewport('t3d_coronal');
+            await cornerstone.setVolumesForViewports(
+                renderingEngine,
+                [
+                    //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                    {
+                        volumeId: volumeId
+                    },
+                ],
+                ['t3d_coronal']
+            ).then(() => {
+                viewport.setProperties({
+                    preset: 'MR-Default',
+                    //preset: 'MR-T2-Brain',
+                });
+            });
 
-    // Add volumes to volume viewports
-    await cornerstone.setVolumesForViewports(
-        renderingEngine,
-        [
-            {
-                volumeId: fileVolumeId,
-                //callback: ({ volumeActor }) => {
-                //    volumeActor
-                //        .getProperty()
-                //        .getRGBTransferFunction(0)
-                //        .setMappingRange(-180, 220);
-                //},
-                //slabThickness: 0.1,
-            }
-        ],
-        //viewportInputArray.map(v => v.viewportId)
-        ['vol_axial', 'vol_sagittal', 'vol_coronal']
-    );
+            renderingEngine.render();
 
-    const volDimensions = fileVolume.dimensions;
+            setupTools();            
+        }
+    }
 
-    const volSlab = Math.sqrt(
-        volDimensions[0] * volDimensions[0] +
-        volDimensions[1] * volDimensions[1] +
-        volDimensions[2] * volDimensions[2]
-    );
 
-    // Add volumes to MIP viewports
-    await cornerstone.setVolumesForViewports(
-        renderingEngine,
-        [
-            //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
-            {
-                volumeId: fileVolumeId,
-                blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
-                slabThickness: volSlab,
-            },
-        ],
-        ['mip_axial', 'mip_sagittal', 'mip_coronal']
-    );
+    ////const seg_path = getNiftiSeg()
+    ////addOverlay(seg_path);
 
-    // Add volumes to 3D viewports
-    const viewport = renderingEngine.getViewport('t3d_coronal');
-    await cornerstone.setVolumesForViewports(
-        renderingEngine,
-        [
-            //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
-            {
-                volumeId: fileVolumeId
-            },
-        ],
-        ['t3d_coronal']
-    ).then(() => {
-        viewport.setProperties({
-            preset: 'MR-Default',
-            //preset: 'MR-T2-Brain',
-        });
-        //viewport.render();
-    });
 
-    setupTools();
-
-    //const seg_path = getNiftiSeg()
-    //addOverlay(seg_path);
-
-    renderingEngine.render();
 }
 
-run();
-
-
-
-// ============================= //
-// Data Functions
-// ============================= //
-
-// single image to mimic current visual review image
-function getNiftiVolume() {
-    return '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz';
-}
-
-// quick seg for testing, now selection from file list
-function getNiftiSeg() {
-    //return '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz';
-    return '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz';
-}
-
-// list of images to mimic posda file grouping
-function getNiftiList() {
-    return [
-        '/nifti/brain/BraTS-MET-00086-000-t1c.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-t2f.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-t2w.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-seg.nii.gz',
-        '/nifti/brain/BraTS-MET-00086-000-seg_new.nii.gz',
-    ];
-}
-
-
-function initViewer() {
+async function initViewer() {
 
     parseURLParams();
     //getViewerConfig();
-    getFileList();
+    await getFileData();
 }
 
-/**
- * Extract the parameters from the URL in the browser
- */
 function parseURLParams() {
     const urlParams = new URLSearchParams(window.location.search);
 
     if (urlParams.size > 0) {
 
-        // function = ['visual_review','masking','overlay']
-        viewerFunction = urlParams.get('function');
+        // function = ['visual_review','masking','overlay','view']
+        viewerFunction = urlParams.get('function') || 'view';
 
-        // type = ['radiology','pathology','nifti']
-        viewerType = urlParams.get('type');
+        // type = ['dicom','nifti']
+        viewerType = urlParams.get('type') || 'dicom';
+        document.getElementById('type').value = viewerType || '';
 
         // file =
         fileID = urlParams.get('file');
+        document.getElementById('file').value = fileID || '';
 
         // series =
-        const seriesParam = urlParams.get('series');
-        if (seriesParam && seriesParam.includes(':')) {
-            const parts = seriesParam.split(':');
-            seriesUID = parts[0];
-            timepointID = parts[1];
-        } else {
-            seriesUID = seriesParam;
-        }
+        seriesUID = urlParams.get('series');
+        document.getElementById('series').value = seriesUID || '';
+        timepointID = urlParams.get('timepoint');
+        document.getElementById('timepoint').value = timepointID || '';
+
+        //const seriesParam = urlParams.get('series');
+        //if (seriesParam && seriesParam.includes(':')) {
+        //    const parts = seriesParam.split(':');
+        //    seriesUID = parts[0];
+        //    timepointID = parts[1];
+        //} else {
+        //    seriesUID = seriesParam;
+        //}
 
         // group =
         groupID = urlParams.get('group');
@@ -963,37 +729,44 @@ function parseURLParams() {
 //}
 
 
-function getFileList() {
+async function getFileData()
+{
+    // retrieve file data 
+    if (fileID) {
+        file = `/papi/v1/files/${fileID}/data`;
+        //file = `wadouri:/papi/v1/files/${fileID}/data`;
+        //file = '/nifti/brain/BraTS-MET-00086-000-t1n.nii.gz';
+    }
+    else if (seriesUID) {
 
-    // Get File
-    // Single file or Series
-    filePath = getNiftiVolume();
-    const fileParts = filePath.split(/[/\\]/)
-    fileName = fileParts.pop();
+        let response;
+        if (timepointID) {
+            response = await fetch(`/papi/v1/series/${seriesUID}:${timepointID}/files`);
+        } else {
+            response = await fetch(`/papi/v1/series/${seriesUID}/files`);   
+        }
+        
+        if (response.ok) {
+            const files = await response.json();
+            fileList = files.file_ids.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
+        }
+    }
 
-    fileList = getNiftiList();
-
-    fileActiveList = fileList.map(() => null);
-}
-
-
-
-/**
- * Get a list of imageIds from Posda for a given series
- * TODO: Add parameter for activity_id or activity_timepoint_id
- */
-
-// series, file, group, activity, activity_timepoint
-
-async function getFilesForSeries(series) {
-    const response = await fetch(`/papi/v1/series/${series}/files`);
-    const files = await response.json();
-
-    const newfiles = files.file_ids.map((file_id) => {
-        return "wadouri:/papi/v1/files/" + file_id + "/data";
-    });
-
-    return newfiles;
+    // create volume
+    if (file) {
+        if (viewerType == 'dicom') {
+            volumeId = 'cornerstoneStreamingImageVolume: newVolume';
+            volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: file });
+        }
+        else if (viewerType == 'nifti') {
+            volumeId = 'nifti:' + file;
+            volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
+        }
+    }
+    else if (fileList) {
+        volumeId = 'cornerstoneStreamingImageVolume: newVolume';
+        volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
+    }
 }
 
 
@@ -1121,3 +894,9 @@ function addSliderToToolbar({ id, title, range, step, defaultValue, container, o
     container.append(label);
     container.append(input);
 }
+
+
+
+
+
+run();
