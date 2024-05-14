@@ -10,7 +10,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       <button
         id="topPanelButton"
         onClick={() => setTopPanelVisibility(!topPanelVisibility)}
-        className={`box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-0 left-1/2 transform -translate-x-1/2 bg-blue-500 rounded-full p-1 transition-transform ${topPanelVisibility ? '-translate-y-3 rotate-90' : '-rotate-90 -translate-y-3'}`}
+        className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-0 left-1/2 transform -translate-x-1/2 bg-blue-500 rounded-full p-1 transition-transform ${topPanelVisibility ? '-translate-y-3 rotate-90' : '-rotate-90 -translate-y-3'}`}
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_left</span>
@@ -18,7 +18,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
         <button
         id="leftPanelButton"
         onClick={() => setLeftPanelVisibility(!leftPanelVisibility)}
-        className={`box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisibility ? '-translate-x-3' : 'rotate-180 -translate-x-3'}`}
+        className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisibility ? '-translate-x-3' : 'rotate-180 -translate-x-3'}`}
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_left</span>
@@ -26,7 +26,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       <button
         id="rightPanelButton"
         onClick={() => setRightPanelVisibility(!rightPanelVisibility)}
-        className={`box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-0 transform -translate-y-1/2 bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisibility ? 'translate-x-3' : 'rotate-180 translate-x-3'}`}
+        className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-0 transform -translate-y-1/2 bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisibility ? 'translate-x-3' : 'rotate-180 translate-x-3'}`}
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_right</span>
