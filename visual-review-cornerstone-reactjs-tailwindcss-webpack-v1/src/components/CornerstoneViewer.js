@@ -11,9 +11,10 @@ const CornerstoneViewer = () => {
     const containerRef = useRef(null);
 
     useEffect(() => {
+
         const seriesUID = '1.3.6.1.4.1.14519.5.2.1.1078.3273.284434159400355227660618151357';
         const timepointID = '6750';
-        let fileList = null;
+
         let volumeId = null;
         let volume = null;
 
@@ -68,7 +69,7 @@ const CornerstoneViewer = () => {
         async function getFileData() {
             const response = await fetch(`/papi/v1/series/${seriesUID}:${timepointID}/files`);
             const files = await response.json();
-            fileList = files.file_ids.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
+            let fileList = files.file_ids.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
             volumeId = 'cornerstoneStreamingImageVolume: newVolume';
             volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
         }
@@ -101,6 +102,7 @@ const CornerstoneViewer = () => {
             const renderingEngine = new cornerstone.RenderingEngine('viewer_render_engine');
 
             const container = containerRef.current;
+            console.log(container);
             container.style.display = 'grid';
             container.style.gridTemplateColumns = 'repeat(3, 1fr)';
             container.style.gridTemplateRows = 'repeat(3, 1fr)';
