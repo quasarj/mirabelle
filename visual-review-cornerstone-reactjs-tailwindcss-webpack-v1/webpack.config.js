@@ -29,10 +29,10 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader', 'postcss-loader']
       },
-      /* { 
+      { 
         test: /\.wasm/,
         type: 'asset/resource'
-      }, */
+      },
     ]
   },
   devServer: {

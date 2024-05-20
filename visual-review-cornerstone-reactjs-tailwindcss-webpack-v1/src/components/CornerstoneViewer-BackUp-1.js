@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import * as cornerstone from '@cornerstonejs/core';
-import * as cornerstoneTools from '@cornerstonejs/tools';
 import {
     cornerstoneStreamingImageVolumeLoader,
     cornerstoneStreamingDynamicImageVolumeLoader,
@@ -94,94 +93,8 @@ const CornerstoneViewer = () => {
             return panel;
         }
 
-        function setup3dViewportTools() {
-            
-            // Tool Group Setup
-            const t3dToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('t3d_tool_group');
-            t3dToolGroup.addViewport('t3d_coronal', 'viewer_render_engine');
-
-            // Trackball Rotate
-            cornerstoneTools.addTool(cornerstoneTools.TrackballRotateTool);
-
-            t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
-            t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
-                    },
-                ],
-            });
-
-            // Pan
-            cornerstoneTools.addTool(cornerstoneTools.PanTool);
-
-            t3dToolGroup.addTool(cornerstoneTools.PanTool.toolName);
-            t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-                    },
-                ],
-            });
-            
-            // Zoom
-            cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
-
-            t3dToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
-            t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
-                    },
-                ],
-            });
-
-            // Segmentation Display
-            cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-            
-            t3dToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            t3dToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
-        }
-
-        function setupVolViewportTools() {
-            
-            // Tool Group setup
-            const volToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('vol_tool_group');
-            volToolGroup.addViewport('vol_axial', 'viewer_render_engine');
-            volToolGroup.addViewport('vol_sagittal', 'viewer_render_engine');
-            volToolGroup.addViewport('vol_coronal', 'viewer_render_engine');
-
-            // Stack Scroll Tool
-            cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-
-            volToolGroup.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            volToolGroup.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-        }
-
-        function setupMipViewportTools() {
-
-            // Tool Group setup
-            const mipToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('mip_tool_group');
-            mipToolGroup.addViewport('mip_axial', 'viewer_render_engine');
-            mipToolGroup.addViewport('mip_sagittal', 'viewer_render_engine');
-            mipToolGroup.addViewport('mip_coronal', 'viewer_render_engine');
-
-            // Window Level
-            cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-
-            mipToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
-            mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
-                    },
-                ],
-            });
-        }
-
         async function run() {
             await cornerstone.init();
-            await cornerstoneTools.init();
             await initVolumeLoader();
             await initCornerstoneDICOMImageLoader();
             await getFileData();
@@ -189,7 +102,7 @@ const CornerstoneViewer = () => {
             const renderingEngine = new cornerstone.RenderingEngine('viewer_render_engine');
 
             const container = containerRef.current;
-            
+            console.log(container);
             container.style.display = 'grid';
             container.style.gridTemplateColumns = 'repeat(3, 1fr)';
             container.style.gridTemplateRows = 'repeat(3, 1fr)';
@@ -294,7 +207,7 @@ const CornerstoneViewer = () => {
             );
 
             const viewport = renderingEngine.getViewport('t3d_coronal');
-
+            
             await cornerstone.setVolumesForViewports(
                 renderingEngine,
                 [{ volumeId: volumeId }],
@@ -304,15 +217,6 @@ const CornerstoneViewer = () => {
             });
 
             renderingEngine.render();
-
-            // Setup 3D Viewport Tools
-            setup3dViewportTools();
-
-            // Setup Vol Viewport Tools
-            setupVolViewportTools();
-
-            // Setup Mip Viewport Tools
-            setupMipViewportTools();
         }
 
         run();
