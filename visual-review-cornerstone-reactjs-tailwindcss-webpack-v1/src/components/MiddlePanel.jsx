@@ -4,7 +4,7 @@ import MarkPanel from './MarkPanel.jsx';
 import MiddleTopPanel from './MiddleTopPanel.jsx';
 import ViewPanel from './ViewPanel.jsx';
 
-function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility }) {
+function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity }) {
   return (
     <div id="middlePanel" className="relative w-full rounded-lg border-4 border-blue-500 p-2 flex flex-col gap-2 overflow-hidden">
       <button
@@ -33,7 +33,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       </button>
 
       <MiddleTopPanel />
-      <ViewPanel />
+      <ViewPanel zoom={zoom} opacity={opacity} />
       <MarkPanel />
     </div>
   );

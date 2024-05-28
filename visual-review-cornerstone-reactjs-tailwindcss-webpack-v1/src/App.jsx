@@ -11,6 +11,8 @@ function App() {
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
+  const [zoom, setZoom] = useState(1);
+  const [opacity, setOpacity] = useState(0.2); // Default opacity value
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[auto,1fr,auto]'
@@ -27,7 +29,7 @@ function App() {
       <div id="main" className={`h-full grid ${gridTemplate} rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className="w-72 h-full rounded-lg overflow-y-hidden">
-            <LeftPanel />
+            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} />
           </div>
         )}
         <MiddlePanel
@@ -37,6 +39,8 @@ function App() {
           setRightPanelVisibility={setRightPanelVisibility}
           topPanelVisibility={topPanelVisibility} 
           setTopPanelVisibility={setTopPanelVisibility}
+          zoom={zoom}
+          opacity={opacity}
         />
         {rightPanelVisibility && (
           <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
