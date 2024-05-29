@@ -12,6 +12,9 @@ module.exports = {
     clean: true,
     filename: 'bundle.js'
   },
+  resolve: {
+    extensions: ['.jsx', '...'],
+  },
   experiments: {
       asyncWebAssembly: true,
       // syncWebAssembly: true,
@@ -48,6 +51,7 @@ module.exports = {
     ]
   },
   devServer: {
+    historyApiFallback: true,
     static: {
       directory: path.join(__dirname, 'public'),
     },
