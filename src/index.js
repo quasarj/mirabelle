@@ -33,7 +33,9 @@ const router = createBrowserRouter([
 		path: "app",
 		element: <App />,
 	},
-]);
+], {
+	basename: "/mira",
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

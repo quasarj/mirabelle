@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/mira/', // This will be the base path 
+    publicPath: 'auto',
     clean: true,
     filename: 'bundle.js'
   },
