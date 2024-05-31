@@ -6,7 +6,7 @@ import VisualReview from './components/VisualReview.jsx';
 
 function App() {
 
-  const [template, setLayout] = useState('VisualReview');
+  const [template, setLayout] = useState('Masker');
 
   
   return (

@@ -14,8 +14,8 @@ const CornerstoneViewer = ({ zoom, opacity, layout }) => {
   const renderingEngineRef = useRef(null);
 
   useEffect(() => {
-    const seriesUID = '1.3.6.1.4.1.14519.5.2.1.1078.3273.284434159400355227660618151357';
-    const timepointID = '6750';
+    const seriesUID = '1.3.46.670589.61.128.1.2022090215365373100020001';
+    const timepointID = '591';
 
     let volumeId = null;
     let volume = null;
@@ -175,6 +175,69 @@ const CornerstoneViewer = ({ zoom, opacity, layout }) => {
 
       const container = containerRef.current;
       container.innerHTML = ''; // Clear previous content
+
+      if (layout === 'Masker') {
+        const viewportInput = [];
+
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        container.style.gridGap = '2px';
+        container.style.width = '100%';
+        container.style.height = '100%';
+
+        const volSagittalContent = setupPanel('vol_sagittal');
+        const volCoronalContent = setupPanel('vol_coronal');
+        const t3dCoronalContent = setupPanel('t3d_coronal');
+          
+        container.appendChild(volSagittalContent);
+        container.appendChild(volCoronalContent);
+        container.appendChild(t3dCoronalContent);
+
+        viewportInput.push(
+            {
+              viewportId: 'vol_sagittal',
+              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+              element: volSagittalContent,
+              defaultOptions: {
+                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+              },
+            },
+            {
+              viewportId: 'vol_coronal',
+              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+              element: volCoronalContent,
+              defaultOptions: {
+                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+              },
+            },
+            {
+              viewportId: 't3d_coronal',
+              type: cornerstone.Enums.ViewportType.VOLUME_3D,
+              element: t3dCoronalContent,
+              defaultOptions: {
+                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+              },
+            }
+        );
+
+        renderingEngine.setViewports(viewportInput);
+        volume.load();
+
+        await cornerstone.setVolumesForViewports(
+            renderingEngine,
+            [{ volumeId: volumeId }],
+            ['vol_sagittal', 'vol_coronal']
+          );
+
+        await cornerstone.setVolumesForViewports(
+          renderingEngine, 
+          [{ volumeId: volumeId }], 
+          ['t3d_coronal']).then(() => {
+          const viewport = renderingEngine.getViewport('t3d_coronal');
+          viewport.setProperties({ preset: 'MR-Default' });
+        });        
+
+      }
 
       if (layout === 'all' || layout === 'volumes' || layout === 'mips' || layout === '3d') {
         const viewportInput = [];
