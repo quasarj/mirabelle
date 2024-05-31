@@ -8,11 +8,17 @@ import LeftPanel from '../../components/LeftPanel';
 // import MiddlePanel from '../components/MiddlePanel.jsx';
 import RightPanel from '../../components/RightPanel';
 
+import { getDetails, tests as maskingTests } from '../../masking.js';
+
 // function to load data for this component
 // will be called by the Router before rendering
 export async function loader({ params }) {
-	// TODO get the thing here
-	const details = { iec: params.iec };
+
+	// TODO remove this when testing is done
+	await maskingTests();
+
+
+	const details = await getDetails(params.iec);
 
 	return { details };
 }
@@ -26,13 +32,13 @@ export default function MaskIEC() {
 	  <Header />
 	  <TopPanel />
       <div id="main" className="h-full grid rounded-lg gap-2 overflow-hidden">
-          <div id="leftPanel" className="w-72 h-full rounded-lg overflow-y-hidden">
-            <LeftPanel />
-          </div>
-	      <div>
+	      <div id="middlePanel" className="relative w-full rounded-lg border-4 border-blue-500 p-2 flex flex-col gap-2 overflow-hidden">
 			<h1>were masking IECs here</h1>
 			<p>
-				Working on this IEC: {details.iec}
+				Working on this IEC: {details.image_equivalence_class_id}
+			</p>
+			<p>
+				Current status: {details.masking_status}
 			</p>
 			<Link to="/">
 				<button type="button">
@@ -40,9 +46,6 @@ export default function MaskIEC() {
 				</button>
 			</Link>
 	      </div>
-          <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
-            <RightPanel />
-          </div>
 		</div>
 	  </div>
   );
