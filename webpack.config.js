@@ -7,9 +7,9 @@ module.exports = {
   devtool: 'inline-source-map',
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: 'auto',
-    clean: true,
+    //path: path.resolve(__dirname, 'dist'),
+    publicPath: '/mira/',
+    //clean: true,
     filename: 'bundle.js'
   },
   resolve: {
@@ -51,9 +51,12 @@ module.exports = {
     ]
   },
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: {
+		index: '/mira/index.html',
+	},
     static: {
       directory: path.join(__dirname, 'public'),
+	  publicPath: '/mira/',
     },
     headers: {
             "Cross-Origin-Opener-Policy": "same-origin",
