@@ -7,7 +7,7 @@ import MiddlePanel from './MiddlePanel.jsx';
 import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
-function Masker() {
+function Masker({template}) {
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
@@ -26,12 +26,12 @@ function Masker() {
   
   return (
     <div id="app" className={`grid ${topPanelVisibility ? 'grid-rows-[auto,auto,1fr]' : 'grid-rows-[1fr]'} gap-2 w-screen h-screen p-2`}>
-      {topPanelVisibility && <Header />}
+      {topPanelVisibility && <Header title={"Masker"}/>}
       {topPanelVisibility && <TopPanel />}
       <div id="main" className={`h-full grid ${gridTemplate} rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
-            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} />
+            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} template={template}/>
           </div>
         )}
         <MiddlePanel

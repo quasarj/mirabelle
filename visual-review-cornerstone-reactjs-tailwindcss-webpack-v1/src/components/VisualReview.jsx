@@ -7,14 +7,14 @@ import MiddlePanel from './MiddlePanel.jsx';
 import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
-function VisualReview() {
+function VisualReview({ template }) {
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
 
   const [zoom, setZoom] = useState(1);
   const [opacity, setOpacity] = useState(0.2); // Default opacity value
-  const [layout, setLayout] = useState('');
+  const [layout, setLayout] = useState('all');
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[auto,1fr,auto]'
@@ -25,13 +25,13 @@ function VisualReview() {
     : 'grid-cols-1';
   
   return (
-    <div id="app" className={`grid ${topPanelVisibility ? 'grid-rows-[auto,auto,1fr]' : 'grid-rows-[1fr]'} gap-2 w-screen h-screen p-2`}>
-      {topPanelVisibility && <Header />}
-      {topPanelVisibility && <TopPanel />}
+    <div id="app" className={`grid ${topPanelVisibility ? 'grid-rows-[auto,1fr]' : 'grid-rows-[1fr]'} gap-2 w-screen h-screen p-2`}>
+      {topPanelVisibility && <Header title={"Visual Review"}/>}
+      {/*{topPanelVisibility && <TopPanel />}*/}
       <div id="main" className={`h-full grid ${gridTemplate} rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
-            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} />
+            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} template={template} />
           </div>
         )}
         <MiddlePanel

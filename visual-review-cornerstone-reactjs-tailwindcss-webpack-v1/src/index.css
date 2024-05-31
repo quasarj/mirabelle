@@ -80,3 +80,7 @@ button:focus-visible {
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
 }
+
+.mainLogo {
+  background-image: url(./assets/mirabelle-logo.png);
+}

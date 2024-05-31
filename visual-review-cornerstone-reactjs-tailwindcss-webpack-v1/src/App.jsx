@@ -6,12 +6,12 @@ import VisualReview from './components/VisualReview.jsx';
 
 function App() {
 
-  const [template, setLayout] = useState('');
+  const [template, setLayout] = useState('Masker');
 
   
   return (
     <div>
-        {template === 'masker' ? <Masker /> : <VisualReview />}
+        {template === 'Masker' ? <Masker template={template} /> : <VisualReview template={template} />}
     </div>
   )
 }
