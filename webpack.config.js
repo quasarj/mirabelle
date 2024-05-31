@@ -61,9 +61,16 @@ module.exports = {
         },
     proxy: [
             {
-                context: ['/papi'],
+                // PROD (disabled)
+                context: ['/papi-prod'],
                 target: 'http://tcia-posda-rh-1.ad.uams.edu',
                 headers: { 'Authorization': 'Bearer e9a63bc2-bfa5-4299-afb3-c844fb2ef38b' },
+            },
+            {
+                // ARIES
+                context: ['/papi'],
+                target: 'http://aries-posda-a1.ad.uams.edu',
+                headers: { 'Authorization': 'Bearer fcda15e2-297e-4893-984c-d2667371d9f5' },
             },
         ],
     // historyApiFallback: true, // This helps with routing; ensure it's true if using React Router
