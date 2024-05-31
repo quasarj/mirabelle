@@ -14,7 +14,7 @@ function Masker({template}) {
 
   const [zoom, setZoom] = useState(1);
   const [opacity, setOpacity] = useState(0.2); // Default opacity value
-  const [layout, setLayout] = useState('3d');
+  const [layout, setLayout] = useState('Masker');
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[auto,1fr,auto]'
@@ -25,10 +25,10 @@ function Masker({template}) {
     : 'grid-cols-1';
   
   return (
-    <div id="app" className={`grid ${topPanelVisibility ? 'grid-rows-[auto,auto,1fr]' : 'grid-rows-[1fr]'} gap-2 w-screen h-screen p-2`}>
+    <div id="app" className={`grid grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2`}>
       {topPanelVisibility && <Header title={"Masker"}/>}
-      {topPanelVisibility && <TopPanel />}
-      <div id="main" className={`h-full grid ${gridTemplate} rounded-lg gap-2 overflow-hidden`}>
+      {/*{topPanelVisibility && <TopPanel />}*/}
+      <div id="main" className={`h-full grid grid-cols-[auto,1fr] rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
             <LeftPanel setZoom={setZoom} setOpacity={setOpacity} template={template}/>
@@ -44,12 +44,13 @@ function Masker({template}) {
           zoom={zoom}
           opacity={opacity}
           layout={layout}
+          template={template}
         />
-        {rightPanelVisibility && (
+        {/*{rightPanelVisibility && (
           <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
             <RightPanel />
           </div>
-        )}
+        )}*/}
       </div>
     </div>
   )

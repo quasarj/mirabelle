@@ -239,184 +239,184 @@ const CornerstoneViewer = ({ zoom, opacity, layout }) => {
 
       }
 
-      if (layout === 'all' || layout === 'volumes' || layout === 'mips' || layout === '3d') {
-        const viewportInput = [];
+      // if (layout === 'all' || layout === 'volumes' || layout === 'mips' || layout === '3d') {
+      //   const viewportInput = [];
 
-        if (layout === 'all' || layout === 'volumes') {
-          container.style.display = 'grid';
-          container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-          container.style.gridTemplateRows = '1fr';
-          container.style.gridGap = '2px';
-          container.style.width = '100%';
-          container.style.height = '100%';
+      //   if (layout === 'all' || layout === 'volumes') {
+      //     container.style.display = 'grid';
+      //     container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      //     container.style.gridTemplateRows = '1fr';
+      //     container.style.gridGap = '2px';
+      //     container.style.width = '100%';
+      //     container.style.height = '100%';
 
-          const volAxialContent = setupPanel('vol_axial');
-          const volSagittalContent = setupPanel('vol_sagittal');
-          const volCoronalContent = setupPanel('vol_coronal');
+      //     const volAxialContent = setupPanel('vol_axial');
+      //     const volSagittalContent = setupPanel('vol_sagittal');
+      //     const volCoronalContent = setupPanel('vol_coronal');
 
-          container.appendChild(volAxialContent);
-          container.appendChild(volSagittalContent);
-          container.appendChild(volCoronalContent);
+      //     container.appendChild(volAxialContent);
+      //     container.appendChild(volSagittalContent);
+      //     container.appendChild(volCoronalContent);
 
-          viewportInput.push(
-            {
-              viewportId: 'vol_axial',
-              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-              element: volAxialContent,
-              defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-              },
-            },
-            {
-              viewportId: 'vol_sagittal',
-              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-              element: volSagittalContent,
-              defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-              },
-            },
-            {
-              viewportId: 'vol_coronal',
-              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-              element: volCoronalContent,
-              defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-              },
-            }
-          );
-        }
+      //     viewportInput.push(
+      //       {
+      //         viewportId: 'vol_axial',
+      //         type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+      //         element: volAxialContent,
+      //         defaultOptions: {
+      //           orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+      //         },
+      //       },
+      //       {
+      //         viewportId: 'vol_sagittal',
+      //         type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+      //         element: volSagittalContent,
+      //         defaultOptions: {
+      //           orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+      //         },
+      //       },
+      //       {
+      //         viewportId: 'vol_coronal',
+      //         type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+      //         element: volCoronalContent,
+      //         defaultOptions: {
+      //           orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+      //         },
+      //       }
+      //     );
+      //   }
 
-        if (layout === 'all' || layout === 'mips') {
-          container.style.display = 'grid';
-          container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-          container.style.gridTemplateRows = '1fr';
-          container.style.gridGap = '2px';
-          container.style.width = '100%';
-          container.style.height = '100%';
+      //   if (layout === 'all' || layout === 'mips') {
+      //     container.style.display = 'grid';
+      //     container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      //     container.style.gridTemplateRows = '1fr';
+      //     container.style.gridGap = '2px';
+      //     container.style.width = '100%';
+      //     container.style.height = '100%';
 
-          const mipAxialContent = setupPanel('mip_axial');
-          const mipSagittalContent = setupPanel('mip_sagittal');
-          const mipCoronalContent = setupPanel('mip_coronal');
+      //     const mipAxialContent = setupPanel('mip_axial');
+      //     const mipSagittalContent = setupPanel('mip_sagittal');
+      //     const mipCoronalContent = setupPanel('mip_coronal');
 
-          container.appendChild(mipAxialContent);
-          container.appendChild(mipSagittalContent);
-          container.appendChild(mipCoronalContent);
+      //     container.appendChild(mipAxialContent);
+      //     container.appendChild(mipSagittalContent);
+      //     container.appendChild(mipCoronalContent);
 
-          viewportInput.push(
-            {
-              viewportId: 'mip_axial',
-              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-              element: mipAxialContent,
-              defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-              },
-            },
-            {
-              viewportId: 'mip_sagittal',
-              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-              element: mipSagittalContent,
-              defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-              },
-            },
-            {
-              viewportId: 'mip_coronal',
-              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-              element: mipCoronalContent,
-              defaultOptions: {
-                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-              },
-            }
-          );
-        }
+      //     viewportInput.push(
+      //       {
+      //         viewportId: 'mip_axial',
+      //         type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+      //         element: mipAxialContent,
+      //         defaultOptions: {
+      //           orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+      //         },
+      //       },
+      //       {
+      //         viewportId: 'mip_sagittal',
+      //         type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+      //         element: mipSagittalContent,
+      //         defaultOptions: {
+      //           orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+      //         },
+      //       },
+      //       {
+      //         viewportId: 'mip_coronal',
+      //         type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+      //         element: mipCoronalContent,
+      //         defaultOptions: {
+      //           orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+      //         },
+      //       }
+      //     );
+      //   }
 
-        if (layout === 'all' || layout === '3d') {
-          if (layout === 'all') {
-            container.style.gridTemplateRows = 'repeat(2, 1fr)';
-          } else {
-            container.style.gridTemplateColumns = '1fr';
-            container.style.gridTemplateRows = '1fr';
-          }
-          container.style.gridGap = '2px';
-          container.style.width = '100%';
-          container.style.height = '100%';
+      //   if (layout === 'all' || layout === '3d') {
+      //     if (layout === 'all') {
+      //       container.style.gridTemplateRows = 'repeat(2, 1fr)';
+      //     } else {
+      //       container.style.gridTemplateColumns = '1fr';
+      //       container.style.gridTemplateRows = '1fr';
+      //     }
+      //     container.style.gridGap = '2px';
+      //     container.style.width = '100%';
+      //     container.style.height = '100%';
 
-          const t3dCoronalContent = setupPanel('t3d_coronal');
-          container.appendChild(t3dCoronalContent);
+      //     const t3dCoronalContent = setupPanel('t3d_coronal');
+      //     container.appendChild(t3dCoronalContent);
 
-          viewportInput.push({
-            viewportId: 't3d_coronal',
-            type: cornerstone.Enums.ViewportType.VOLUME_3D,
-            element: t3dCoronalContent,
-            defaultOptions: {
-              orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-            },
-          });
-        }
+      //     viewportInput.push({
+      //       viewportId: 't3d_coronal',
+      //       type: cornerstone.Enums.ViewportType.VOLUME_3D,
+      //       element: t3dCoronalContent,
+      //       defaultOptions: {
+      //         orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+      //       },
+      //     });
+      //   }
 
-        renderingEngine.setViewports(viewportInput);
+      //   renderingEngine.setViewports(viewportInput);
 
-        volume.load();
+      //   volume.load();
 
-        if (layout === 'all' || layout === 'volumes') {
-          await cornerstone.setVolumesForViewports(
-            renderingEngine,
-            [{ volumeId: volumeId }],
-            ['vol_axial', 'vol_sagittal', 'vol_coronal']
-          );
-        }
+      //   if (layout === 'all' || layout === 'volumes') {
+      //     await cornerstone.setVolumesForViewports(
+      //       renderingEngine,
+      //       [{ volumeId: volumeId }],
+      //       ['vol_axial', 'vol_sagittal', 'vol_coronal']
+      //     );
+      //   }
 
-        if (layout === 'all' || layout === 'mips') {
-          await cornerstone.setVolumesForViewports(
-            renderingEngine,
-            [
-              {
-                volumeId: volumeId,
-                blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
-              },
-            ],
-            ['mip_axial', 'mip_sagittal', 'mip_coronal']
-          );
-        }
+      //   if (layout === 'all' || layout === 'mips') {
+      //     await cornerstone.setVolumesForViewports(
+      //       renderingEngine,
+      //       [
+      //         {
+      //           volumeId: volumeId,
+      //           blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+      //         },
+      //       ],
+      //       ['mip_axial', 'mip_sagittal', 'mip_coronal']
+      //     );
+      //   }
 
-        if (layout === 'all' || layout === '3d') {
-          await cornerstone.setVolumesForViewports(renderingEngine, [{ volumeId: volumeId }], ['t3d_coronal']).then(() => {
-            const viewport = renderingEngine.getViewport('t3d_coronal');
-            viewport.setProperties({ preset: 'MR-Default' });
+      //   if (layout === 'all' || layout === '3d') {
+      //     await cornerstone.setVolumesForViewports(renderingEngine, [{ volumeId: volumeId }], ['t3d_coronal']).then(() => {
+      //       const viewport = renderingEngine.getViewport('t3d_coronal');
+      //       viewport.setProperties({ preset: 'MR-Default' });
 
-            const actorEntry = viewport.getActors()[0];
-            if (actorEntry && actorEntry.actor) {
-              const volumeActor = actorEntry.actor;
-              const property = volumeActor.getProperty();
-              const opacityFunction = property.getScalarOpacity(0);
+      //       const actorEntry = viewport.getActors()[0];
+      //       if (actorEntry && actorEntry.actor) {
+      //         const volumeActor = actorEntry.actor;
+      //         const property = volumeActor.getProperty();
+      //         const opacityFunction = property.getScalarOpacity(0);
 
-              opacityFunction.removeAllPoints();
-              opacityFunction.addPoint(0, 0); // Fully transparent at intensity 0
-              opacityFunction.addPoint(500, opacity); // Slightly transparent at intensity 500
-              opacityFunction.addPoint(1000, opacity); // Semi-transparent at intensity 1000
-              opacityFunction.addPoint(1500, opacity); // Almost opaque at intensity 1500
-              opacityFunction.addPoint(2000, opacity); // Fully opaque at intensity 2000
+      //         opacityFunction.removeAllPoints();
+      //         opacityFunction.addPoint(0, 0); // Fully transparent at intensity 0
+      //         opacityFunction.addPoint(500, opacity); // Slightly transparent at intensity 500
+      //         opacityFunction.addPoint(1000, opacity); // Semi-transparent at intensity 1000
+      //         opacityFunction.addPoint(1500, opacity); // Almost opaque at intensity 1500
+      //         opacityFunction.addPoint(2000, opacity); // Fully opaque at intensity 2000
 
-              property.setScalarOpacity(0, opacityFunction);
-              viewport.render();
-            }
-          });
-        }
+      //         property.setScalarOpacity(0, opacityFunction);
+      //         viewport.render();
+      //       }
+      //     });
+      //   }
 
-        renderingEngine.render();
+      //   renderingEngine.render();
 
-        if (layout === 'all' || layout === 'volumes') {
-          setupVolViewportTools();
-        }
+      //   if (layout === 'all' || layout === 'volumes') {
+      //     setupVolViewportTools();
+      //   }
 
-        if (layout === 'all' || layout === 'mips') {
-          setupMipViewportTools();
-        }
+      //   if (layout === 'all' || layout === 'mips') {
+      //     setupMipViewportTools();
+      //   }
 
-        if (layout === 'all' || layout === '3d') {
-          setup3dViewportTools();
-        }
-      }
+      //   if (layout === 'all' || layout === '3d') {
+      //     setup3dViewportTools();
+      //   }
+      // }
     }
 
     run();

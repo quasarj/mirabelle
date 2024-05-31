@@ -15,6 +15,10 @@ import MaskIEC, {
 	loader as iecLoader,
 } from './routes/mask/iec';
 
+import MaskVR, {
+	loader as vrLoader,
+} from './routes/mask/vr';
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -27,7 +31,8 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "mask/vr/:visual_review_instance_id",
-		element: <Home />,
+		element: <MaskVR />,
+		loader: vrLoader,
 	},
 	{
 		path: "app",

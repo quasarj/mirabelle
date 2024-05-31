@@ -9,17 +9,15 @@ import { getDetails, tests as maskingTests } from '../../masking.js';
 // will be called by the Router before rendering
 export async function loader({ params }) {
 
+  return null
 
-	const details = await getDetails(params.iec);
-
-	return { details };
 }
 
-export default function MaskIEC() {
-  const { details } = useLoaderData();
+export default function MaskVR() {
+  // const { details } = useLoaderData();
 
   // Here we just assemble the various panels that we need for this mode
   return (
-    <Masker template="Masker" />
+    <Masker template="MaskerVR" />
   );
 }

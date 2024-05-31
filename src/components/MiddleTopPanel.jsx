@@ -3,11 +3,11 @@ import React from 'react';
 import EditViewPanel from "./EditViewPanel.jsx";
 import NavigationPanel from "./NavigationPanel.jsx";
 
-function MiddleTopPanel() {
+function MiddleTopPanel({template}) {
   return (
     <div id="middleTopPanel" className="w-full flex justify-between items-center">
-        <NavigationPanel />
-        <EditViewPanel />
+        {template !== "Masker" && <NavigationPanel />}
+        {/*<EditViewPanel />*/}
       </div>
   );
 }
