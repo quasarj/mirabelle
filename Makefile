@@ -8,3 +8,6 @@ build: node_modules
 
 node_modules: package.json
 	npm i
+
+clean:
+	rm -rf node_modules dist

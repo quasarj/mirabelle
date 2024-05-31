@@ -1,5 +1,5 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',  // Set to 'production' or 'development' as needed
@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/dist/', // Ensures that all output files are served from /dist/
+    publicPath: '/mira/', // This will be the base path 
     clean: true,
     filename: 'bundle.js'
   },
@@ -77,9 +77,9 @@ module.exports = {
     // compress: true,
     port: 3000,
   },
-  /* plugins: [
+   plugins: [
       new HtmlWebpackPlugin({
           template: 'src/index.html'
       })
-  ] */
+  ],
 };
