@@ -1,4 +1,4 @@
-default: build
+default: serve
 
 serve: node_modules
 	npm run start

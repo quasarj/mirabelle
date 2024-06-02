@@ -51,6 +51,7 @@ module.exports = {
     ]
   },
   devServer: {
+    open: ['/mira/'],
     historyApiFallback: {
 		index: '/mira/index.html',
 	},
