@@ -1,16 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/mirabelle-logo-light.svg'; 
+import logoLight from '../assets/mirabelle-logo-light.svg';
+import logoDark from '../assets/mirabelle-logo-dark.svg'; 
 
 function Header({title}) {
   return (
-    <div id="header" className=" h-12 flex items-center px-6 font-black rounded-lg dark:bg-opacity-5 bg-gray-100">
+    <div id="header" className=" h-12 flex items-center px-6 rounded-lg bg-blue-100 dark:bg-blue-950">
       <div id="logo" className="h-10">
         <Link to="/">
-        <img src={logo} alt="Logo" className="w-full h-full object-contain" />
+          {/* Light theme logo */}
+          <img src={logoLight} alt="Logo Light" className="w-full h-full object-contain dark:hidden" />
+          {/* Dark theme logo */}
+          <img src={logoDark} alt="Logo Dark" className="w-full h-full object-contain hidden dark:block" />
         </Link>
       </div>
-      <div id="title" className="flex-1 text-center">{title}</div>
+      <div id="title" className="flex-1 text-left ml-2">{title}</div>
       <div id="username" className="flex-1 text-right">Username</div>
     </div>
   );
