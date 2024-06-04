@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logoLight from '../assets/mirabelle-logo-light.svg';
 import logoDark from '../assets/mirabelle-logo-dark.svg'; 
+import { getUsername } from '../masking';
 
 function Header({title}) {
+  const [ username, setUsername ] = useState("Username");
+
+  useEffect(() => {
+    (async () => {
+      const un = await getUsername();
+      setUsername(un);
+    })();
+  }, []);
+
   return (
     <div id="header" className=" h-12 flex items-center px-6 rounded-lg bg-blue-100 dark:bg-blue-950">
       <div id="logo" className="h-10">
@@ -15,7 +25,7 @@ function Header({title}) {
         </Link>
       </div>
       <div id="title" className="flex-1 text-left ml-2">{title}</div>
-      <div id="username" className="flex-1 text-right">Username</div>
+      <div id="username" className="flex-1 text-right">{username}</div>
     </div>
   );
 }

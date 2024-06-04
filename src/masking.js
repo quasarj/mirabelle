@@ -2,6 +2,12 @@
  * Functions related to masking
  */
 
+export async function getUsername() {
+	const response = await fetch(`/papi/v1/other/testme`);
+	const details = await response.json();
+
+	return details.username;
+}
 
 export async function getDetails(iec) {
 
