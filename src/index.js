@@ -5,8 +5,6 @@ import {
 	RouterProvider,
 } from 'react-router-dom';
 
-import App from './App.jsx'
-
 import './index.css'
 import './transitions.css';
 
@@ -33,10 +31,6 @@ const router = createBrowserRouter([
 		path: "mask/vr/:visual_review_instance_id",
 		element: <MaskVR />,
 		loader: vrLoader,
-	},
-	{
-		path: "app",
-		element: <App />,
 	},
 ], {
 	basename: "/mira",

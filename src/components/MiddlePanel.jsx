@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import MarkPanel from './MarkPanel.jsx';
 import MaskerPanel from './MaskerPanel.jsx';
@@ -6,7 +6,47 @@ import MaskerPanel from './MaskerPanel.jsx';
 import MiddleTopPanel from './MiddleTopPanel.jsx';
 import ViewPanel from './ViewPanel.jsx';
 
-function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity, layout, template }) {
+import { getFiles } from '../masking.js';
+
+function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity, layout, template, files, iecs }) {
+  const cornerstoneViewerRef = useRef();
+
+  const [realFiles, setRealFiles] = useState([]);
+  const [iecOffset, setIecOffset] = useState(0);
+  const [volumeName, setVolumeName] = useState(0);
+
+  async function onExpand() {
+    if (cornerstoneViewerRef.current) {
+      await cornerstoneViewerRef.current.expandSelection()
+    }
+  }
+  async function onClear() {
+    if (cornerstoneViewerRef.current) {
+      await cornerstoneViewerRef.current.clearSelection()
+    }
+  }
+  async function onAccept() {
+    if (cornerstoneViewerRef.current) {
+      await cornerstoneViewerRef.current.acceptSelection()
+    }
+  }
+
+  useEffect(() => {
+    const doTheThing = async () => {
+
+      console.log(">>> MiddlePanel useEffect firing, iecOffset=", iecOffset);
+      if (files === undefined) {
+        const iecfiles = await getFiles(iecs[iecOffset]);
+        setRealFiles(iecfiles);
+        setVolumeName(iecs[iecOffset]);
+      } else {
+        setRealFiles(files);
+      }
+    };
+
+    doTheThing();
+  }, [iecs, iecOffset]);
+
   return (
     <div id="middlePanel" className="relative w-full rounded-lg border-4 border-blue-500 p-2 flex flex-col gap-2 overflow-hidden">
       {/*<button
@@ -35,9 +75,9 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       </button>
       */}
 
-      <MiddleTopPanel template={template} />
-      <ViewPanel zoom={zoom} opacity={opacity} layout={layout} />
-      {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel /> : <MarkPanel />}
+      <MiddleTopPanel template={template} iecs={iecs} onIecChange={setIecOffset}/>
+      <ViewPanel ref={cornerstoneViewerRef} zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} />
+      {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />}
     </div>
   );
 }

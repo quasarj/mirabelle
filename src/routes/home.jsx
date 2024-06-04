@@ -13,9 +13,6 @@ export default function Home() {
 		<li>
 	  		<Link to={`/mask/vr/1`}>Example Mask VR</Link>
 	  	</li>
-		<li>
-	  		<Link to={`/app`}>Full UI</Link>
-	  	</li>
 	  </ul>
 
 
