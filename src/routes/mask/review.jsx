@@ -2,16 +2,21 @@ import React from 'react';
 import { useLoaderData, Link } from 'react-router-dom';
 import Masker from '../../components/Masker.jsx';
 
-// import { getDetails, getFiles } from '../../masking.js';
+import { getReviewFiles, getDetails } from '../../masking.js';
+
+export async function loader({ params }) {
+
+
+	const details = await getDetails(params.iec);
+  const files = await getReviewFiles(params.iec);
+
+	return { details, files, iec: params.iec };
+}
 
 export default function ReviewIEC() {
   const { details, files, iec } = useLoaderData();
 
   return (
-    <p>stuff here</p>
+    <Masker template="Masker" files={files} iec={iec}/>
   );
-  // Here we just assemble the various panels that we need for this mode
-  // return (
-  //   <Masker template="Masker" files={files} iec={iec}/>
-  // );
 }

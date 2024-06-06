@@ -15,7 +15,9 @@ import MaskIEC, {
 	loader as iecLoader,
 } from './routes/mask/iec';
 
-import ReviewIEC from './routes/mask/review';
+import ReviewIEC, {
+  loader as iecReviewLoader,
+} from './routes/mask/review';
 
 import MaskVR, {
 	loader as vrLoader,
@@ -40,7 +42,7 @@ const router = createBrowserRouter([
 	{
 		path: "review/iec/:iec",
 		element: <ReviewIEC />,
-		loader: iecLoader,
+		loader: iecReviewLoader,
 	},
 ], {
 	basename: "/mira",
