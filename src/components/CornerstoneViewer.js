@@ -11,14 +11,22 @@ import {
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dicomParser from 'dicom-parser';
 
-import { expandSegTo3D } from '../utilities';
+import {
+	expandSegTo3D,
+	calculateDistance,
+} from '../utilities';
 
-function finalCalc(coords, volumeId) {
+import { setParameters } from '../masking';
+
+//TODO this should probably be moved somewhere else, masking.js maybe?
+async function finalCalc(coords, volumeId, iec) {
   console.log("finalCalc running");
   console.log(coords);
 
   const volume = cornerstone.cache.getVolume(volumeId);
   const volumeDims = volume.dimensions;
+  const volumeSpacing = volume.spacing;
+
 
   // Extracting the coordinates of the corners of the top face
   const topLeft = [coords.x.min, coords.y.min, coords.z.max];
@@ -43,9 +51,66 @@ function finalCalc(coords, volumeId) {
 
   console.log("Center point of the top face:", centerPoint);
 
+  const radius = calculateDistance(topFaceCorners[0], centerPoint);
+  const height = coords.z.max - coords.z.min;
+
+  // experimental adjustment of coordinates for masker
+  function invert(val, maxval) {
+    return maxval - val
+  }
+  /*
+    * Convert a point in LPS to RAS.
+    * This just inverts the first two points (which is why it needs
+    * the dims). This is only useful if the input is actually in LPS!
+    */
+  function convertLPStoRAS(point, dims) {
+    const [ dimX, dimY, dimZ ] = dims;
+    let [x, y, z] = point;
+    x = invert(x, dimX);
+    y = invert(y, dimY);
+
+    return [ x, y, z];
+  }
+  function scaleBySpacing(point, spacings) {
+    const [ spaceX, spaceY, spaceZ ] = spacings;
+    let [x, y, z] = point;
+
+    return [ Math.floor(x * spaceX),
+          Math.floor(y * spaceY),
+          Math.floor(z * spaceZ) ];
+  }
+
+  const [ dimX, dimY, dimZ ] = volumeDims;
+  const [ spaceX, spaceY, spaceZ ] = volumeSpacing;
+
+  // let [x, y, z] = centerPoint;
+  // let x2 = invert(x, dimX) * spaceX;
+  // let y2 = invert(y, dimY) * spaceY;
+  // let z2 = z * spaceZ;
+
+  let centerPointRAS = convertLPStoRAS(centerPoint, volumeDims);
+  let centerPointFix = scaleBySpacing(centerPointRAS, volumeSpacing);
+
+  const diameter = Math.floor((radius * spaceX) * 2);
+  const i = Math.floor((centerPointRAS[2] - height) * spaceZ);
+
+  // LR PA S I diameter
+  const output = {
+    lr: centerPointFix[0],
+    pa: centerPointFix[1],
+    s: centerPointFix[2],
+    i: i,
+    d: diameter,
+  };
+  console.log(output);
+  await setParameters(iec, output);
+  //TODO need better way for this
+  alert("Submitted for masking!");
+
 }
 
-const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName, files, zoom, opacity, layout }, ref) {
+const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
+  files, zoom, opacity, layout, iec }, ref) {
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
   const renderingEngineRef = useRef(null);
@@ -508,7 +573,8 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName, fi
         [{ volumeId: volumeId }], 
         ['t3d_coronal']).then(() => {
         const viewport = renderingEngine.getViewport('t3d_coronal');
-        viewport.setProperties({ preset: 'MR-Default' });
+        // viewport.setProperties({ preset: 'MR-Default' });
+        viewport.setProperties({ preset: 'CT-Soft-Tissue' });
       });        
 
       // create and bind a new segmentation
@@ -616,7 +682,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName, fi
       .triggerSegmentationDataModified(segId);
   }
   async function acceptSelection() {
-    finalCalc(coords, volumeId);
+    await finalCalc(coords, volumeId, iec);
   }
   // expose these methods to parent components
   useImperativeHandle(ref, () => (
