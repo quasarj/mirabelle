@@ -98,8 +98,8 @@ async function finalCalc(coords, volumeId, iec) {
   const output = {
     lr: centerPointFix[0],
     pa: centerPointFix[1],
-    s: centerPointFix[2],
-    i: i,
+    i: centerPointFix[2],
+    s: i,
     d: diameter,
   };
   console.log(output);
