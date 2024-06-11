@@ -690,8 +690,12 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
   ));
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%' }} id="container">
-    </div>
+    <>
+      <div ref={containerRef} style={{ width: '100%', height: '100%' }} id="container">
+        
+      </div>
+      <MaskerPanel />
+    </>
   );
 });
 

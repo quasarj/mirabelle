@@ -5,6 +5,8 @@ import Masker from '../../components/Masker.jsx';
 
 import { getDetails, getIECsForVR } from '../../masking.js';
 
+import TemplateContextProvider from '../../components/TemplateContextProvider.js';
+
 export async function loader({ params }) {
 
   const iecs = await getIECsForVR(params.visual_review_instance_id);
@@ -18,6 +20,9 @@ export default function MaskVR() {
 
   // Here we just assemble the various panels that we need for this mode
   return (
-    <Masker template="MaskerVR" iecs={iecs} />
+    <TemplateContextProvider template={ "MaskerVR" }>
+      <Masker iecs={iecs} />
+    </TemplateContextProvider>
+    
   );
 }

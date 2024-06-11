@@ -10,6 +10,8 @@ import ErrorPage from './error-page';
 import './index.css'
 import './transitions.css';
 
+import App from './App';
+
 import Home from './routes/home';
 import MaskIEC, {
 	loader as iecLoader,
