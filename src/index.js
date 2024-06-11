@@ -1,10 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
 import {
 	createBrowserRouter,
 	RouterProvider,
 } from 'react-router-dom';
 
+import ErrorPage from './error-page';
 import './index.css'
 import './transitions.css';
 
@@ -15,6 +17,10 @@ import MaskIEC, {
 	loader as iecLoader,
 } from './routes/mask/iec';
 
+import ReviewIEC, {
+  loader as iecReviewLoader,
+} from './routes/mask/review';
+
 import MaskVR, {
 	loader as vrLoader,
 } from './routes/mask/vr';
@@ -22,7 +28,8 @@ import MaskVR, {
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <App />,
+		element: <Home />,
+		errorElement: <ErrorPage />,
 	},
 	{
 		path: "mask/iec/:iec",
@@ -33,6 +40,11 @@ const router = createBrowserRouter([
 		path: "mask/vr/:visual_review_instance_id",
 		element: <MaskVR />,
 		loader: vrLoader,
+	},
+	{
+		path: "review/iec/:iec",
+		element: <ReviewIEC />,
+		loader: iecReviewLoader,
 	},
 ], {
 	basename: "/mira",

@@ -8,7 +8,8 @@ import ViewPanel from './ViewPanel.jsx';
 
 import { getFiles } from '../masking.js';
 
-function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity, layout, files, iecs }) {
+function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity, layout, files, iecs, iec }) {
+
   const cornerstoneViewerRef = useRef();
 
   const [realFiles, setRealFiles] = useState([]);
@@ -76,8 +77,9 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       */}
 
       <MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>
-      <ViewPanel ref={cornerstoneViewerRef} zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} />
+      <ViewPanel ref={cornerstoneViewerRef} zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} iec={iec} />
       {/* {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />} */}
+
     </div>
   );
 }

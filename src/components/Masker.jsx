@@ -9,9 +9,8 @@ import MiddlePanel from './MiddlePanel.jsx';
 import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
-function Masker({ files, iecs }) {
+function Masker({ files, iecs, iec }) {
   const template = useContext(TemplateContext);
-
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
@@ -50,6 +49,7 @@ function Masker({ files, iecs }) {
           layout={layout}
           files={files}
           iecs={iecs}
+          iec={iec}
         />
         {/*{rightPanelVisibility && (
           <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">

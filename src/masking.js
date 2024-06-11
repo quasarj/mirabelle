@@ -49,6 +49,13 @@ export async function getFiles(iec) {
 
 	return details.file_ids;
 }
+export async function getReviewFiles(iec) {
+
+	const response = await fetch(`/papi/v1/masking/${iec}/reviewfiles`);
+	const details = await response.json();
+
+	return details;
+}
 export async function getIECsForVR(visual_review_id) {
 
 	const response = await fetch(
