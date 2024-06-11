@@ -15,7 +15,7 @@ function Header({title}) {
   }, []);
 
   return (
-    <div id="header" className=" h-12 flex items-center px-6 rounded-lg bg-blue-100 dark:bg-blue-950">
+    <div id="header" className=" h-12 flex items-center px-6 rounded-lg bg-blue-100 dark:bg-blue-900">
       <div id="logo" className="h-10">
         <Link to="/">
           {/* Light theme logo */}

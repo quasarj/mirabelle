@@ -25,7 +25,7 @@ function Masker({template, files, iecs}) {
     : 'grid-cols-1';
   
   return (
-    <div id="app" className={`grid grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2`}>
+    <div id="app" className={`grid grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2 dark:bg-blue-950`}>
       {topPanelVisibility && <Header title={template}/>}
       {/*{topPanelVisibility && <TopPanel />}*/}
       <div id="main" className={`h-full grid grid-cols-[auto,1fr] rounded-lg gap-2 overflow-hidden`}>
