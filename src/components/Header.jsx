@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { TemplateContext } from './TemplateContext.js'; 
+
 import { Link } from 'react-router-dom';
 import logoLight from '../assets/mirabelle-logo-light.svg';
 import logoDark from '../assets/mirabelle-logo-dark.svg'; 
 import { getUsername } from '../masking';
 
-function Header({title}) {
+function Header() {
   const [ username, setUsername ] = useState("Username");
+  const template = useContext(TemplateContext);
 
   useEffect(() => {
     (async () => {
@@ -24,7 +27,7 @@ function Header({title}) {
           <img src={logoDark} alt="Logo Dark" className="w-full h-full object-contain hidden dark:block" />
         </Link>
       </div>
-      <div id="title" className="flex-1 text-left ml-2">{title}</div>
+      <div id="title" className="flex-1 text-left ml-2">{template}</div>
       <div id="username" className="flex-1 text-right">{username}</div>
     </div>
   );

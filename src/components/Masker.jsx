@@ -30,7 +30,7 @@ function Masker({ files, iecs }) {
   
   return (
     <div id="app" className={`grid grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2 dark:bg-blue-950`}>
-      {topPanelVisibility && <Header title={template}/>}
+      {topPanelVisibility && <Header />}
       {/*{topPanelVisibility && <TopPanel />}*/}
       <div id="main" className={`h-full grid grid-cols-[auto,1fr] rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
@@ -48,7 +48,6 @@ function Masker({ files, iecs }) {
           zoom={zoom}
           opacity={opacity}
           layout={layout}
-          template={template}
           files={files}
           iecs={iecs}
         />
