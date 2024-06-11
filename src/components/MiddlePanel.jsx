@@ -77,7 +77,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
 
       <MiddleTopPanel template={template} iecs={iecs} onIecChange={setIecOffset}/>
       <ViewPanel ref={cornerstoneViewerRef} zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} />
-      {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />}
+      {/* {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />} */}
     </div>
   );
 }

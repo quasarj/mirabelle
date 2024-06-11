@@ -2,6 +2,8 @@ import React from 'react';
 import { useLoaderData, Link } from 'react-router-dom';
 import Masker from '../../components/Masker.jsx';
 
+import { TemplateContext } from '../../components/TemplateContext.js';
+
 
 import { getDetails, getIECsForVR } from '../../masking.js';
 
@@ -18,6 +20,9 @@ export default function MaskVR() {
 
   // Here we just assemble the various panels that we need for this mode
   return (
-    <Masker template="MaskerVR" iecs={iecs} />
+    <TemplateContext.Provider value={ "MaskerVR" }>
+      <Masker iecs={iecs} />
+    </TemplateContext.Provider>
+    
   );
 }
