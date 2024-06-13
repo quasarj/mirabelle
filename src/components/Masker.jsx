@@ -16,6 +16,7 @@ function Masker({ files, iecs, iec }) {
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
 
   const [zoom, setZoom] = useState(1);
+  const [preset, setPreset] = useState('CT-MIP');
   const [opacity, setOpacity] = useState(0.2); // Default opacity value
   const [layout, setLayout] = useState('Masker');
 
@@ -34,7 +35,7 @@ function Masker({ files, iecs, iec }) {
       <div id="main" className={`h-full grid grid-cols-[auto,1fr] rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
-            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} template={template}/>
+            <LeftPanel setPreset={setPreset} setZoom={setZoom} setOpacity={setOpacity} template={template}/>
           </div>
         )}
         <MiddlePanel
@@ -50,6 +51,7 @@ function Masker({ files, iecs, iec }) {
           files={files}
           iecs={iecs}
           iec={iec}
+	      preset={preset}
         />
         {/*{rightPanelVisibility && (
           <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
