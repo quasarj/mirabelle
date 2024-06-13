@@ -10,27 +10,9 @@ import { getFiles } from '../masking.js';
 
 function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity, layout, files, iecs, iec, preset }) {
 
-  const cornerstoneViewerRef = useRef();
-
   const [realFiles, setRealFiles] = useState([]);
   const [iecOffset, setIecOffset] = useState(0);
   const [volumeName, setVolumeName] = useState(0);
-
-  async function onExpand() {
-    if (cornerstoneViewerRef.current) {
-      await cornerstoneViewerRef.current.expandSelection()
-    }
-  }
-  async function onClear() {
-    if (cornerstoneViewerRef.current) {
-      await cornerstoneViewerRef.current.clearSelection()
-    }
-  }
-  async function onAccept() {
-    if (cornerstoneViewerRef.current) {
-      await cornerstoneViewerRef.current.acceptSelection()
-    }
-  }
 
   useEffect(() => {
     const doTheThing = async () => {
@@ -77,7 +59,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       */}
 
       <MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>
-      <ViewPanel ref={cornerstoneViewerRef} zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} iec={iec} preset={preset} />
+      <ViewPanel zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} iec={iec} preset={preset} />
       {/* {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />} */}
 
     </div>

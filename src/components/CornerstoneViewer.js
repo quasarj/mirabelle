@@ -109,12 +109,22 @@ async function finalCalc(coords, volumeId, iec) {
 
 }
 
-const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
-  files, zoom, opacity, layout, iec, preset }, ref) {
+function CornerstoneViewer({ volumeName,
+                             files,
+                             zoom,
+                             opacity,
+                             layout,
+                             iec,
+                             preset }) {
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
   const renderingEngineRef = useRef(null);
 
+  console.log(
+    ">>>>>>>>>>>>>>>>>>>>>>",
+    "CornerstoneViewer() running",
+    "loading is set to:", loading,
+  );
 
   let coords;
   let segId = 'seg' + volumeName;
@@ -228,16 +238,24 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
     }
 
     function setupVolViewportTools() {
+      try {
       cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
       cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
       cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
       cornerstoneTools.addTool(cornerstoneTools.PanTool);
       cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+      } catch (error) {
+        console.log("errors while loading tools:", error);
+      }
 
       // Create group and add viewports
       // TODO: should the render engine be coming from a var instead?
-      const group = cornerstoneTools.ToolGroupManager.createToolGroup(
+      let group = cornerstoneTools.ToolGroupManager.getToolGroup(
         'vol_tool_group');
+      if (group === undefined) {
+        group = cornerstoneTools.ToolGroupManager.createToolGroup(
+          'vol_tool_group');
+      }
       group.addViewport('vol_sagittal', 'viewer_render_engine');
       group.addViewport('vol_coronal', 'viewer_render_engine');
 
@@ -551,6 +569,6 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       />
     </>
   );
-});
+};
 
 export default CornerstoneViewer;
