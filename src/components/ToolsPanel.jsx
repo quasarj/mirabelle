@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from './Context.js';
 
-function ToolsPanel({ setZoom, setOpacity, setPreset }) {
+
+function ToolsPanel({ setZoom, setOpacity }) {
+  const { presets, selectedPreset, setSelectedPreset } = useContext(Context);
+  
   const [zoom, setLocalZoom] = useState(1);
   const [opacity, setLocalOpacity] = useState(0.2); // Default opacity value
-  const [selectedPreset, setSelectedPreset] = useState('CT-MIP'); // Default preset
 
   const handleZoomChange = (event) => {
     const newZoom = event.target.value;
@@ -20,7 +23,6 @@ function ToolsPanel({ setZoom, setOpacity, setPreset }) {
   const handlePresetChange = (event) => {
     const newPreset = event.target.value;
     setSelectedPreset(newPreset);
-    setPreset(newPreset);
   };
 
   return (
@@ -42,10 +44,9 @@ function ToolsPanel({ setZoom, setOpacity, setPreset }) {
         <li className="mb-2 p-2 cursor-pointer hover:bg-blue-500 hover:text-white rounded-lg">
           <label>3D Volume Preset:</label>
           <select value={selectedPreset} onChange={handlePresetChange} className="w-full border border-gray-300 rounded-lg p-2">
-            <option value="CT-MIP">CT-MIP</option>
-            <option value="CT-Soft-Tissue">Skin</option>
-            <option value="CT-AAA">Bones</option>
-            <option value="MR-Default">MR-Default</option>
+            {presets.map((preset) => (
+              <option key={preset} value={preset}>{preset}</option>
+            ))}
           </select>
         </li>
       </ul>

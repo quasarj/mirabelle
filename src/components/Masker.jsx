@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { useState, useContext } from 'react';
-import { TemplateContext } from './TemplateContext.js';
+import { useState } from 'react';
 
 import Header from './Header.jsx';
 import LeftPanel from './LeftPanel.jsx';
@@ -10,7 +9,7 @@ import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
 function Masker({ files, iecs, iec }) {
-  const { template, other } = useContext(TemplateContext);
+
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
