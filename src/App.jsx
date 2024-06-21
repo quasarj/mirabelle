@@ -1,7 +1,7 @@
 import React from 'react';
 import {useState} from 'react';
 
-import { TemplateContext } from './components/TemplateContext.js';
+import { Context } from './components/Context.js';
 
 import Masker from './components/Masker.jsx';
 import VisualReview from './components/VisualReview.jsx';
@@ -11,9 +11,9 @@ function App({children}) {
   const [template, setLayout] = useState('Masker');
 
   return (
-    <TemplateContext.Provider value={ template }>
+    <Context.Provider value={ template }>
       <Masker files={["22835914"]} iecs={["117"]}/>
-    </TemplateContext.Provider>
+    </Context.Provider>
   )
 }
 

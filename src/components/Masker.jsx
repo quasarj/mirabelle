@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { useState, useContext } from 'react';
-import { TemplateContext } from './TemplateContext.js';
+import { useState } from 'react';
 
 import Header from './Header.jsx';
 import LeftPanel from './LeftPanel.jsx';
@@ -10,7 +9,7 @@ import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
 function Masker({ files, iecs, iec }) {
-  const template = useContext(TemplateContext);
+
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   const [topPanelVisibility, setTopPanelVisibility] = useState(true);
@@ -34,7 +33,7 @@ function Masker({ files, iecs, iec }) {
       <div id="main" className={`h-full grid grid-cols-[auto,1fr] rounded-lg gap-2 overflow-hidden`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
-            <LeftPanel setZoom={setZoom} setOpacity={setOpacity} template={template}/>
+            <LeftPanel setZoom={setZoom} setOpacity={setOpacity}/>
           </div>
         )}
         <MiddlePanel
