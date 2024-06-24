@@ -8,7 +8,7 @@ import { getUsername } from '../masking';
 
 function Header() {
   const [ username, setUsername ] = useState("Username");
-  const template = useContext(TemplateContext);
+  const { template } = useContext(TemplateContext);
 
   useEffect(() => {
     (async () => {

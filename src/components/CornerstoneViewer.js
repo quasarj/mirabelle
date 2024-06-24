@@ -1,5 +1,4 @@
-// V5 Layout 2
-import React, { forwardRef, useImperativeHandle, useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import MaskerPanel from './MaskerPanel.jsx';
 
 import * as cornerstone from '@cornerstonejs/core';
@@ -16,7 +15,15 @@ import {
 	calculateDistance,
 } from '../utilities';
 
-import { setParameters } from '../masking';
+import { setParameters, loaded } from '../masking';
+
+function getOrCreateToolgroup(toolgroup_name) {
+  let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
+  if (group === undefined) {
+    group = cornerstoneTools.ToolGroupManager.createToolGroup(toolgroup_name);
+  }
+  return group;
+}
 
 //TODO this should probably be moved somewhere else, masking.js maybe?
 async function finalCalc(coords, volumeId, iec) {
@@ -128,7 +135,7 @@ function CornerstoneViewer({ volumeName,
 
   let coords;
   let segId = 'seg' + volumeName;
-  let volumeId;
+  let volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
 
   useLayoutEffect(() => {
     let volume = null;
@@ -194,12 +201,16 @@ function CornerstoneViewer({ volumeName,
     }
 
     function setup3dViewportTools() {
+      // Add tools if needed
+      try {
+        cornerstoneTools.addTool(cornerstoneTools.TrackballRotateTool);
+      } catch (error) { }
+
       // Tool Group Setup
-      const t3dToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('t3d_tool_group');
+      const t3dToolGroup = getOrCreateToolgroup('t3d_tool_group');
       t3dToolGroup.addViewport('t3d_coronal', 'viewer_render_engine');
 
       // Trackball Rotate
-      cornerstoneTools.addTool(cornerstoneTools.TrackballRotateTool);
       t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
       t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
         bindings: [
@@ -239,23 +250,18 @@ function CornerstoneViewer({ volumeName,
 
     function setupVolViewportTools() {
       try {
-      cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-      cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-      cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-      cornerstoneTools.addTool(cornerstoneTools.PanTool);
-      cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+        cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+        cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+        cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+        cornerstoneTools.addTool(cornerstoneTools.PanTool);
+        cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
       } catch (error) {
         console.log("errors while loading tools:", error);
       }
 
       // Create group and add viewports
       // TODO: should the render engine be coming from a var instead?
-      let group = cornerstoneTools.ToolGroupManager.getToolGroup(
-        'vol_tool_group');
-      if (group === undefined) {
-        group = cornerstoneTools.ToolGroupManager.createToolGroup(
-          'vol_tool_group');
-      }
+      const group = getOrCreateToolgroup('vol_tool_group');
       group.addViewport('vol_sagittal', 'viewer_render_engine');
       group.addViewport('vol_coronal', 'viewer_render_engine');
 
@@ -311,10 +317,13 @@ function CornerstoneViewer({ volumeName,
     }
 
     async function run() {
-      await cornerstone.init();
-      await cornerstoneTools.init();
-      await initVolumeLoader();
-      await initCornerstoneDICOMImageLoader();
+      if (!loaded.loaded) {
+        await cornerstone.init();
+        await cornerstoneTools.init();
+        await initVolumeLoader();
+        await initCornerstoneDICOMImageLoader();
+        loaded.loaded = true;
+      }
 
       const renderingEngine = new cornerstone.RenderingEngine('viewer_render_engine');
       renderingEngineRef.current = renderingEngine;
@@ -395,6 +404,7 @@ function CornerstoneViewer({ volumeName,
 
     // TODO: not sure if this is helpful here
     cornerstone.cache.purgeCache();
+    cornerstone.cache.purgeVolumeCache();
 
     let volume = null;
     const renderingEngine = renderingEngineRef.current;
@@ -402,7 +412,6 @@ function CornerstoneViewer({ volumeName,
     async function getFileData() {
       let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
       // TODO: could probably use a better way to generate unique volumeIds
-      volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
       volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
     }
 
@@ -433,6 +442,9 @@ function CornerstoneViewer({ volumeName,
         { volumeId: segId }
       );
 
+      // make sure it doesn't already exist
+      cornerstoneTools.segmentation.state.removeSegmentation(segId);
+      cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
       cornerstoneTools.segmentation.addSegmentations([
         {
           segmentationId: segId,

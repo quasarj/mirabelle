@@ -2,6 +2,9 @@
  * Functions related to masking
  */
 
+// TODO experiment for singleton value
+export let loaded = { loaded: false };
+
 export async function getUsername() {
 	const response = await fetch(`/papi/v1/other/testme`);
 	const details = await response.json();
