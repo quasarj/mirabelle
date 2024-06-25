@@ -2,21 +2,16 @@ import React, { useState, useContext } from 'react';
 import { Context } from './Context.js';
 
 
-function ToolsPanel({ setZoom, setOpacity }) {
-  const { presets, selectedPreset, setSelectedPreset } = useContext(Context);
-  
-  const [zoom, setLocalZoom] = useState(1);
-  const [opacity, setLocalOpacity] = useState(0.2);
+function ToolsPanel() {
+  const { zoom, setZoom, opacity, setOpacity, presets, selectedPreset, setSelectedPreset } = useContext(Context);
 
   const handleZoomChange = (event) => {
     const newZoom = event.target.value;
-    setLocalZoom(newZoom);
     setZoom(newZoom);
   };
 
   const handleOpacityChange = (event) => {
     const newOpacity = parseFloat(event.target.value);
-    setLocalOpacity(newOpacity);
     setOpacity(newOpacity);
   };
 
@@ -30,8 +25,22 @@ function ToolsPanel({ setZoom, setOpacity }) {
       <div className="mb-2 font-semibold">Tools</div>
       <ul className="h-full overflow-y-scroll">
         <li className="mb-2 p-2 dark:bg-opacity-5 cursor-pointer hover:bg-blue-500 hover:text-white rounded-lg">
-          <label>Opacity at 500 intensity:</label>
+          <label>Zoom:</label>
           <input
+            className='w-full'
+            type="range"
+            min="1"
+            max="250"
+            step="1"
+            value={zoom}
+            onChange={handleZoomChange}
+          />
+          <span>{zoom}</span>
+        </li>
+        <li className="mb-2 p-2 dark:bg-opacity-5 cursor-pointer hover:bg-blue-500 hover:text-white rounded-lg">
+          <label>Opacity:</label>
+          <input
+            className='w-full'
             type="range"
             min="0"
             max="1"

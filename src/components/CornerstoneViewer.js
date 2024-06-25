@@ -113,9 +113,9 @@ async function finalCalc(coords, volumeId, iec) {
 }
 
 const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
-  files, zoom, opacity, layout, iec }, ref) {
+  files, layout, iec }, ref) {
 
-  const { presets, setPresets, selectedPreset } = useContext(Context);
+  const { zoom, opacity, setPresets, selectedPreset } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
@@ -466,12 +466,12 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
   useEffect(() => {
     const renderingEngine = renderingEngineRef.current;
     if (renderingEngine) {
-      const volAxialViewport = renderingEngine.getViewport('vol_axial');
-      if (volAxialViewport) {
-        const camera = volAxialViewport.getCamera();
+      const volSagittalViewport = renderingEngine.getViewport('vol_sagittal');
+      if (volSagittalViewport) {
+        const camera = volSagittalViewport.getCamera();
         camera.parallelScale = zoom;
-        volAxialViewport.setCamera(camera);
-        volAxialViewport.render();
+        volSagittalViewport.setCamera(camera);
+        volSagittalViewport.render();
       }
     }
   }, [zoom]);
