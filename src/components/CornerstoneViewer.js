@@ -1,6 +1,6 @@
 // V6 
 import React, { forwardRef, useImperativeHandle, useContext, useState, useEffect, useLayoutEffect, useRef } from 'react';
-import MaskerPanel from './MaskerPanel.jsx';
+import MiddlelBottomPanel from './MiddlelBottomPanel.jsx';
 
 import { Context } from './Context.js';
 
@@ -325,7 +325,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
 
         container.style.display = 'grid';
         container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-        container.style.gridGap = '2px';
+        container.style.gridGap = '6px';
         container.style.width = '100%';
         container.style.height = '100%';
 
@@ -543,9 +543,8 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
   return (
     <>
       <div ref={containerRef} style={{ width: '100%', height: '100%' }} id="container">
-        
       </div>
-      <MaskerPanel />
+      <MiddlelBottomPanel />
     </>
   );
 });
