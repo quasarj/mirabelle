@@ -2,7 +2,7 @@ import React from 'react';
 
 function FilesPanel() {
   return (
-    <div id="filesPanel" className=" p-6 rounded-lg overflow-hidden dark:bg-opacity-5 bg-gray-100">
+    <div id="filesPanel" className=" p-6 rounded-lg overflow-hidden bg-blue-100 dark:bg-blue-900">
       <div className="mb-2 text-lg font-semibold">Files</div>
       <ul className="h-full overflow-y-scroll">
         <li className="mb-2 p-2 dark:bg-opacity-5 bg-white cursor-pointer hover:bg-blue-500 hover:text-white  rounded-lg">file1.dcm</li>

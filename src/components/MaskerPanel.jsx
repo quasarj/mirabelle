@@ -3,9 +3,9 @@ import React from 'react';
 function MaskerPanel() {
   return (
     <div id="maskerPanel" className="h-12 flex justify-center gap-2">
-        <button id="expandSelection">Expand Selection</button>
-        <button id="clearSelection">Clear Selection</button>
-        <button id="acceptSelection">Accept Selection</button>
+        <button id="expandSelection" className="bg-gray-200 dark:bg-slate-900">Expand Selection</button>
+        <button id="clearSelection" className="bg-gray-200 dark:bg-slate-900">Clear Selection</button>
+        <button id="acceptSelection" className="bg-gray-200 dark:bg-slate-900">Accept Selection</button>
       </div>
   );
 }

@@ -10,6 +10,7 @@ function LeftPanel({ setZoom, setOpacity }) {
   return (
     <div id="leftPanelWrapper" className="grid grid-rows-[auto,auto] h-full overflow-hidden gap-2">
       {template !== 'Masker' && template !== 'MaskerVR' ? <FilesPanel /> : null }
+      <FilesPanel />
       <ToolsPanel setZoom={setZoom} setOpacity={setOpacity} />
     </div>
   );
