@@ -1,14 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 
 import MarkPanel from './MarkPanel.jsx';
 import MaskerPanel from './MaskerPanel.jsx';
+
+import { Context } from './Context.js';
 
 import MiddleTopPanel from './MiddleTopPanel.jsx';
 import ViewPanel from './ViewPanel.jsx';
 
 import { getFiles } from '../masking.js';
 
-function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility, topPanelVisibility, setTopPanelVisibility, zoom, opacity, layout, files, iecs, iec, preset }) {
+function MiddlePanel({ layout, files, iecs, iec }) {
+
+  const {leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
+
+  const cornerstoneViewerRef = useRef();
 
   const [realFiles, setRealFiles] = useState([]);
   const [iecOffset, setIecOffset] = useState(0);
@@ -39,7 +45,7 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_left</span>
-      </button>
+  </button>*/}
         <button
         id="leftPanelButton"
         onClick={() => setLeftPanelVisibility(!leftPanelVisibility)}
@@ -56,10 +62,9 @@ function MiddlePanel({ leftPanelVisibility, setLeftPanelVisibility, rightPanelVi
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_right</span>
       </button>
-      */}
 
-      <MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>
-      <ViewPanel zoom={zoom} opacity={opacity} layout={layout} files={realFiles} volumeName={volumeName} iec={iec} preset={preset} />
+      {/*<MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>*/}
+      <ViewPanel ref={cornerstoneViewerRef} layout={layout} files={realFiles} volumeName={volumeName} iec={iec} />
       {/* {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />} */}
 
     </div>
