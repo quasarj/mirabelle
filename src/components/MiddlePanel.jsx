@@ -14,8 +14,6 @@ function MiddlePanel({ layout, files, iecs, iec }) {
 
   const {leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
 
-  const cornerstoneViewerRef = useRef();
-
   const [realFiles, setRealFiles] = useState([]);
   const [iecOffset, setIecOffset] = useState(0);
   const [volumeName, setVolumeName] = useState(0);
@@ -64,7 +62,7 @@ function MiddlePanel({ layout, files, iecs, iec }) {
       </button>
 
       {/*<MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>*/}
-      <ViewPanel ref={cornerstoneViewerRef} layout={layout} files={realFiles} volumeName={volumeName} iec={iec} />
+      <ViewPanel layout={layout} files={realFiles} volumeName={volumeName} iec={iec} />
       {/* {template ==="Masker" || template ==="MaskerVR" ?  <MaskerPanel onExpand={onExpand} onClear={onClear} onAccept={onAccept} /> : <MarkPanel />} */}
 
     </div>

@@ -12,9 +12,14 @@ import { Context } from './Context.js';
 
 function Masker({ files, iecs, iec }) {
 
-  const { leftPanelVisibility, setLeftPanelVisibility,rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
+  const {
+    leftPanelVisibility,
+    setLeftPanelVisibility,
+    rightPanelVisibility,
+    setRightPanelVisibility,
+    template,
 
-  const [layout, setLayout] = useState('Masker');
+  } = useContext(Context);
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[auto,1fr,auto]'
@@ -35,11 +40,10 @@ function Masker({ files, iecs, iec }) {
           </div>
         )}
         <MiddlePanel
-          layout={layout}
+          layout={template}
           files={files}
           iecs={iecs}
           iec={iec}
-	      preset={preset}
         />
         {rightPanelVisibility && (
           <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">

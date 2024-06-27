@@ -1,10 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLoaderData, Link } from 'react-router-dom';
 import Masker from '../../components/Masker.jsx';
-
-import ContextProvider from '../../components/ContextProvider.js';
-import PresetsContextProvider from '../../components/PresetsContextProvider.js';
-
+import { Context } from '../../components/Context';
 
 import { getDetails, getFiles } from '../../masking.js';
 
@@ -22,10 +19,27 @@ export async function loader({ params }) {
 export default function MaskIEC() {
   const { details, files, iec } = useLoaderData();
 
+  // default values for this route/mode
+  const [template, setTemplate] = useState('Masker');
+  const [zoom, setZoom] = useState(250);
+  const [opacity, setOpacity] = useState(0.3);
+  const [presets, setPresets] = useState([]);
+  const [selectedPreset, setSelectedPreset] = useState('CT-MIP');
+  const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
+  const [rightPanelVisibility, setRightPanelVisibility] = useState(false);
+
   // Here we just assemble the various panels that we need for this mode
   return (
-    <ContextProvider template={ "Masker" }>
+    <Context.Provider value={{
+        template, setTemplate,
+        zoom, setZoom,
+        opacity, setOpacity,
+        presets, setPresets,
+        selectedPreset, setSelectedPreset,
+        leftPanelVisibility, setLeftPanelVisibility,
+        rightPanelVisibility, setRightPanelVisibility,
+    }}>
         <Masker files={files} iec={iec} />
-    </ContextProvider>
+    </Context.Provider>
   );
 }
