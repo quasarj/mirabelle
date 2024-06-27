@@ -1,16 +1,18 @@
 import React from 'react';
 
-function MaskerPanel() {
+import MaskerPanel from './MaskerPanel.jsx';
+import NavigationPanel from './NavigationPanel.jsx';
+
+function MiddlelBottomPanel() {
   return (
-    <div id="maskerPanel" className="h-12 flex justify-center gap-2">
-        <button id="expandSelection">Expand Selection</button>
-        <button id="clearSelection">Clear Selection</button>
-        <button id="acceptSelection">Accept Selection</button>
+    <div id="middleBottomPanel" className="w-full h-12 flex justify-between gap-2">
+        <MaskerPanel />
+        <NavigationPanel />
       </div>
   );
 }
 
-export default MaskerPanel;
+export default MiddlelBottomPanel;
 
 // function MaskerPanel({ onExpand, onClear, onAccept }) {
 //   return (
