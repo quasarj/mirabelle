@@ -20,7 +20,7 @@ export default function MaskVR() {
 
   // Here we just assemble the various panels that we need for this mode
   return (
-    <ContextProvider template="MaskerVR">
+    <ContextProvider initialLayout="MaskerVR">
         <Masker iecs={iecs} />
     </ContextProvider>
     

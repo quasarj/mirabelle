@@ -113,9 +113,9 @@ async function finalCalc(coords, volumeId, iec) {
 }
 
 const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
-  files, layout, iec }, ref) {
+  files, iec }, ref) {
 
-  const { zoom, opacity, setPresets, selectedPreset } = useContext(Context);
+  const { layout, zoom, opacity, setPresets, selectedPreset } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
@@ -320,7 +320,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       const container = containerRef.current;
       container.innerHTML = ''; // Clear previous content
 
-      if (layout === 'Masker') {
+      if (layout === 'MaskerVR') {
         const viewportInput = [];
 
         container.style.display = 'grid';
@@ -368,11 +368,11 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
 
       }
 
-        if (layout === 'all' || layout === 'volumes' || layout === 'Masker') {
+        if (layout === 'all' || layout === 'volumes' || layout === 'MaskerVR') {
           setupVolViewportTools();
         }
 
-        if (layout === 'all' || layout === '3d' | layout === 'Masker') {
+        if (layout === 'all' || layout === '3d' | layout === 'MaskerVR') {
           setup3dViewportTools();
         }
       setLoading(false); // signal that setup is complete

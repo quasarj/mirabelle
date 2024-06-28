@@ -9,12 +9,12 @@ import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
+import { log } from 'dcmjs';
 
 function Masker({ files, iecs, iec }) {
 
-  const { leftPanelVisibility, setLeftPanelVisibility,rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
-
-  const [layout, setLayout] = useState('Masker');
+  const { layout, leftPanelVisibility, setLeftPanelVisibility,rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
+  console.log('layout', layout);
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[auto,1fr,auto]'
@@ -35,7 +35,6 @@ function Masker({ files, iecs, iec }) {
           </div>
         )}
         <MiddlePanel
-          layout={layout}
           files={files}
           iecs={iecs}
           iec={iec}

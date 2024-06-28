@@ -3,7 +3,6 @@ import { useLoaderData, Link } from 'react-router-dom';
 import Masker from '../../components/Masker.jsx';
 
 import ContextProvider from '../../components/ContextProvider.js';
-import PresetsContextProvider from '../../components/PresetsContextProvider.js';
 
 
 import { getDetails, getFiles } from '../../masking.js';
@@ -24,7 +23,7 @@ export default function MaskIEC() {
 
   // Here we just assemble the various panels that we need for this mode
   return (
-    <ContextProvider template={ "Masker" }>
+    <ContextProvider initialLayout="Masker">
         <Masker files={files} iec={iec} />
     </ContextProvider>
   );
