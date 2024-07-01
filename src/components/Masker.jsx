@@ -25,10 +25,10 @@ function Masker({ files, iecs, iec }) {
     : 'grid-cols-1';
   
   return (
-    <div id="app" className={`grid grid-cols-[auto, 1fr, auto] grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2 dark:bg-blue-950`}>
+    <div id="app" className={`grid grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2 dark:bg-blue-950`}>
       <Header />
       {/*{topPanelVisibility && <TopPanel />}*/}
-      <div id="main" className={`h-full grid grid-cols-[auto,1fr,auto] rounded-lg gap-2 overflow-hidden`}>
+      <div id="main" className={`h-full grid ${ gridTemplate } rounded-lg gap-2 overflow-hidden transition-all duration-300`}>
         {leftPanelVisibility && (
           <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
             <LeftPanel />
