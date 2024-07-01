@@ -183,7 +183,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
     const resizeObserver = new ResizeObserver(() => {
       const renderingEngine = renderingEngineRef.current;
       if (renderingEngine) {
-        renderingEngine.resize(true, false);
+        renderingEngine.resize(true, true);
       }
     });
 
@@ -194,6 +194,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       panel.style.height = '100%';
       panel.style.borderRadius = '8px';
       panel.style.overflow = 'hidden';
+      panel.style.backgroundColor = 'black';
       panel.oncontextmenu = e => e.preventDefault();
       resizeObserver.observe(panel);
       return panel;

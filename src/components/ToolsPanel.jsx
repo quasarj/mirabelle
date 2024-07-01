@@ -52,7 +52,7 @@ function ToolsPanel() {
         </li>
         <li className="mb-2 p-2 cursor-pointer hover:bg-blue-500 hover:text-white rounded-lg">
           <label>3D Volume Preset:</label>
-          <select value={selectedPreset} onChange={handlePresetChange} className="w-full border border-gray-300 dark:bg-slate-800 rounded-lg p-2">
+          <select value={selectedPreset} onChange={handlePresetChange} className="w-full text-black dark:text-white border border-gray-300 dark:bg-slate-800 rounded-lg p-2">
             {presets.map((preset) => (
               <option key={preset} value={preset}>{preset}</option>
             ))}
