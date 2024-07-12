@@ -115,7 +115,7 @@ async function finalCalc(coords, volumeId, iec) {
 const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
   files, iec }, ref) {
 
-  const { layout, zoom, opacity, setPresets, selectedPreset } = useContext(Context);
+  const { layout, zoom, opacity, setPresets, selectedPreset, crosshairs, rectangleScissors } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
@@ -245,11 +245,63 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
     }
 
     function setupVolViewportTools() {
-      cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+
+      const viewportColors = {
+        ['vol_axial']: 'rgb(200, 0, 0)',
+        ['vol_sagittal']: 'rgb(200, 200, 0)',
+        ['vol_coronal']: 'rgb(0, 200, 0)',
+      };
+
+      const viewportReferenceLineControllable = [
+          'vol_axial',
+          'vol_sagittal',
+          'vol_coronal',
+      ];
+
+      const viewportReferenceLineDraggableRotatable = [
+          'vol_axial',
+          'vol_sagittal',
+          'vol_coronal',
+      ];
+
+      const viewportReferenceLineSlabThicknessControlsOn = [
+          'vol_axial',
+          'vol_sagittal',
+          'vol_coronal',
+      ];
+
+      function getReferenceLineColor(viewportId) {
+          return viewportColors[viewportId];
+      }
+
+      function getReferenceLineControllable(viewportId) {
+          const index = viewportReferenceLineControllable.indexOf(viewportId);
+          return index !== -1;
+      }
+
+      function getReferenceLineDraggableRotatable(viewportId) {
+          const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+          return index !== -1;
+      }
+
+      function getReferenceLineSlabThicknessControlsOn(viewportId) {
+          const index =
+              viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+          return index !== -1;
+      }
+      
+      if (rectangleScissors) {
+        cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+      }
+      cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
       cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
       cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
       cornerstoneTools.addTool(cornerstoneTools.PanTool);
       cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+
+      if (crosshairs) {
+        cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+      }
 
       // Create group and add viewports
       // TODO: should the render engine be coming from a var instead?
@@ -266,12 +318,14 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
       // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-      group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
-      group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-        bindings: [
-          { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-        ]
-      });
+      if (rectangleScissors) {
+        group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+        group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+          ]
+        });
+      }
 
       group.addTool(cornerstoneTools.PanTool.toolName);
       group.setToolActive(cornerstoneTools.PanTool.toolName, {
@@ -287,6 +341,36 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
           { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
         ],
       });
+
+      // Window Level
+    group.addTool(cornerstoneTools.WindowLevelTool.toolName);
+    group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+        bindings: [
+            {
+                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+            },
+        ],
+    });
+
+    if (crosshairs) {
+      group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+        getReferenceLineColor,
+        getReferenceLineControllable,
+        getReferenceLineDraggableRotatable,
+        getReferenceLineSlabThicknessControlsOn,
+      });
+      group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+        bindings: [
+          { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+        ],
+      });
+    }
+
+    const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
+
+    ['vol_sagittal', 'vol_coronal'].forEach((viewport) => {
+        volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+    });
 
     }
 
@@ -501,6 +585,43 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       }
     }
   }, [opacity]);
+
+useEffect(() => {
+  const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+  
+  if (volToolGroup) {
+    // Add the CrosshairsTool if it hasn't been added already
+    if (!volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName)) {
+      cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+      volToolGroup.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+        getReferenceLineColor,
+        getReferenceLineControllable,
+        getReferenceLineDraggableRotatable,
+        getReferenceLineSlabThicknessControlsOn,
+    });
+    }
+
+    // Activate or deactivate the CrosshairsTool based on the crosshairs state
+    if (crosshairs) {
+      volToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+        bindings: [
+          { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+        ],
+      });
+    } else {
+      volToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+    }
+  }
+}, [crosshairs]);
+
+useEffect(() => {
+  // group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+  //       group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+  //         bindings: [
+  //           { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+  //         ]
+  //       });
+}, [rectangleScissors]);
 
   async function expandSelection() {
     coords = expandSegTo3D(segId);

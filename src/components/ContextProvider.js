@@ -7,11 +7,14 @@ export default function ContextProvider({ children, initialLayout = ''}) {
   const [opacity, setOpacity] = useState(0.3);
   const [presets, setPresets] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState('CT-Bone');
+  const [crosshairs, setCrosshairs] = useState(true);
+  const [rectangleScissors, setRectangleScissors] = useState(true);
+
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   
   return (
-    <Context.Provider value={{ layout, setlayout, zoom, setZoom, opacity, setOpacity, presets, setPresets, selectedPreset, setSelectedPreset, leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility }}>
+    <Context.Provider value={{ layout, setlayout, zoom, setZoom, opacity, setOpacity, presets, setPresets, selectedPreset, setSelectedPreset, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors, leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility }}>
       {children}
     </Context.Provider>
   );

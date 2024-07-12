@@ -10,6 +10,7 @@ import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
 import { log } from 'dcmjs';
+import Arrows from './Arrows.jsx';
 
 function Masker({ files, iecs, iec }) {
 
@@ -25,10 +26,10 @@ function Masker({ files, iecs, iec }) {
     : 'grid-cols-[0rem,1fr,0rem]';
   
   return (
-    <div id="app" className={`grid grid-rows-[auto,1fr] gap-2 w-screen h-screen p-2 dark:bg-blue-950`}>
+    <div id="app" className={`relative grid grid-rows-[auto,1fr] gap-2 w-screen min-w-[1425px] h-screen p-2 dark:bg-blue-950 overflow-hidden`}>
       <Header />
       {/*{topPanelVisibility && <TopPanel />}*/}
-      <div id="main" className={`h-full w-full grid ${ gridTemplate } rounded-lg gap-2 overflow-hidden transition-all duration-300`}>
+      <div id="main" className={`h-full w-full grid ${ gridTemplate } rounded-lg gap-2 transition-all duration-200 overflow-hidden`}>
         <div id="leftPanel" className={`w-full h-full rounded-lg overflow-hidden`}>
           <LeftPanel />
         </div>
@@ -51,6 +52,22 @@ function Masker({ files, iecs, iec }) {
           </div>
         )}*/}
       </div>
+      <button
+          id="leftPanelButton"
+          onClick={() => setLeftPanelVisibility(!leftPanelVisibility)}
+          className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisibility ? 'translate-x-0' : 'rotate-180 -translate-x-72'}`}
+        
+        >
+          <span className="material-icons rounded-full leading-5 text-white">chevron_left</span>
+        </button>
+        <button
+          id="rightPanelButton"
+          onClick={() => setRightPanelVisibility(!rightPanelVisibility)}
+          className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisibility ? 'translate-x-0' : 'rotate-180 translate-x-72'}`}
+        
+        >
+          <span className="material-icons rounded-full leading-5 text-white">chevron_right</span>
+        </button>
     </div>
   )
 }

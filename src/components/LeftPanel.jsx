@@ -4,14 +4,14 @@ import ToolsPanel from './ToolsPanel.jsx';
 
 import { Context } from './Context.js';
 
-function LeftPanel({ setZoom, setOpacity }) {
+function LeftPanel() {
   const { layout } = useContext(Context);
   
   return (
-    <div id="leftPanelWrapper" className="grid grid-rows-[auto,auto] h-full w-72 overflow-hidden gap-2">
+    <div id="leftPanelWrapper" className="grid grid-rows-[1fr] h-full w-72 gap-2">
       {layout !== 'Masker' && layout !== 'MaskerVR' ? <FilesPanel /> : null }
-      <FilesPanel />
-      <ToolsPanel setZoom={setZoom} setOpacity={setOpacity} />
+      {/*<FilesPanel />*/}
+      <ToolsPanel />
     </div>
   );
 }

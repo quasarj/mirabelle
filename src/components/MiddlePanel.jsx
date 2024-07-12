@@ -53,7 +53,7 @@ function MiddlePanel({ files, iecs, iec }) {
   }, [iecs, iecOffset]);
 
   return (
-    <div id="middlePanel" className="relative w-full rounded-lg border-4 border-blue-500 p-2 flex flex-col gap-2 overflow-hidden">
+    <div id="middlePanel" className="relative w-full rounded-lg border-4 border-blue-500 p-2 flex flex-col gap-2">
       {/*<button
         id="topPanelButton"
         onClick={() => setTopPanelVisibility(!topPanelVisibility)}
@@ -61,11 +61,11 @@ function MiddlePanel({ files, iecs, iec }) {
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_left</span>
-  </button>*/}
-        <button
+  </button>
+      <button
         id="leftPanelButton"
         onClick={() => setLeftPanelVisibility(!leftPanelVisibility)}
-        className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisibility ? '-translate-x-3' : 'rotate-180 -translate-x-3'}`}
+        className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisibility ? '-translate-x-4' : 'rotate-180 -translate-x-4'}`}
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_left</span>
@@ -77,7 +77,7 @@ function MiddlePanel({ files, iecs, iec }) {
       
       >
         <span className="material-icons rounded-full leading-5 text-white">chevron_right</span>
-      </button>
+      </button>*/}
 
       {/*<MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>*/}
       <ViewPanel ref={cornerstoneViewerRef} files={realFiles} volumeName={volumeName} iec={iec} />
