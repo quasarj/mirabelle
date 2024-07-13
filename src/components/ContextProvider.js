@@ -8,7 +8,7 @@ export default function ContextProvider({ children, initialLayout = ''}) {
   const [presets, setPresets] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState('CT-Bone');
   const [crosshairs, setCrosshairs] = useState(true);
-  const [rectangleScissors, setRectangleScissors] = useState(true);
+  const [rectangleScissors, setRectangleScissors] = useState(false);
 
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);

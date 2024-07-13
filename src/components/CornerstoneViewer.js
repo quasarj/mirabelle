@@ -307,6 +307,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       // TODO: should the render engine be coming from a var instead?
       const group = cornerstoneTools.ToolGroupManager.createToolGroup(
         'vol_tool_group');
+      group.addViewport('vol_axial', 'viewer_render_engine');
       group.addViewport('vol_sagittal', 'viewer_render_engine');
       group.addViewport('vol_coronal', 'viewer_render_engine');
 
@@ -368,7 +369,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
 
     const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
 
-    ['vol_sagittal', 'vol_coronal'].forEach((viewport) => {
+    ['vol_axial', 'vol_sagittal', 'vol_coronal'].forEach((viewport) => {
         volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
     });
 
@@ -409,21 +410,33 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
         const viewportInput = [];
 
         container.style.display = 'grid';
-        container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        container.style.gridTemplateRows = 'repeat(2, 1fr)';
         container.style.gridGap = '6px';
         container.style.width = '100%';
         container.style.height = '100%';
 
+        const volAxialContent = setupPanel('vol_axial');
+
         const volSagittalContent = setupPanel('vol_sagittal');
         const volCoronalContent = setupPanel('vol_coronal');
         const t3dCoronalContent = setupPanel('t3d_coronal');
-          
+        
+        container.appendChild(volAxialContent);
         container.appendChild(volSagittalContent);
         container.appendChild(volCoronalContent);
         container.appendChild(t3dCoronalContent);
 
         viewportInput.push(
-            {
+          {
+              viewportId: 'vol_axial',
+              type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+              element: volAxialContent,
+              defaultOptions: {
+                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+              },
+            },  
+          {
               viewportId: 'vol_sagittal',
               type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
               element: volSagittalContent,
@@ -501,7 +514,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       await cornerstone.setVolumesForViewports(
           renderingEngine,
           [{ volumeId: volumeId }],
-          ['vol_sagittal', 'vol_coronal']
+          ['vol_axial', 'vol_sagittal', 'vol_coronal']
         );
 
       await cornerstone.setVolumesForViewports(
