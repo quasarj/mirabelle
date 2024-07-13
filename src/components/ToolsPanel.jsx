@@ -3,7 +3,7 @@ import { Context } from './Context.js';
 
 
 function ToolsPanel() {
-  const { zoom, setZoom, opacity, setOpacity, presets, selectedPreset, setSelectedPreset, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors} = useContext(Context);
+  const { zoom, setZoom, opacity, setOpacity, presets, selectedPreset, setSelectedPreset, windowLevel, setWindowLevel, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors} = useContext(Context);
 
   const handleZoomChange = (event) => {
     const newZoom = event.target.value;
@@ -20,12 +20,22 @@ function ToolsPanel() {
     setSelectedPreset(newPreset);
   };
 
-  const handleToggleCrosshairsButtonClick = () => {
-    setCrosshairs(!crosshairs);
+  const handleWindowLevelButtonClick = () => {
+    setWindowLevel(true);
+    setCrosshairs(false);
+    setRectangleScissors(false);
   };
 
-  const handleToggleRectangleScissorsButtonClick = () => {
-    setRectangleScissors(!rectangleScissors);
+  const handleCrosshairsButtonClick = () => {
+    setWindowLevel(false);
+    setCrosshairs(true);
+    setRectangleScissors(false);
+  };
+
+  const handleRectangleScissorsButtonClick = () => {
+    setWindowLevel(false);
+    setCrosshairs(false);
+    setRectangleScissors(true);
   };
 
   return (
@@ -66,20 +76,25 @@ function ToolsPanel() {
             ))}
           </select>
         </li>
-        <li className="mb-2 pb-2 pt-2 rounded-lg">
-          <label>Crosshairs:</label>
-          <button onClick={handleToggleCrosshairsButtonClick} className="w-full">
-            Toggle Crosshairs
+
+        <label>Set mode:</label>
+        <li className="pb-1 pt-1 rounded-lg">
+          <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Window Level
           </button>
         </li>
-        <li className="mb-2 pb-2 pt-2 rounded-lg">
-          <label>Selection:</label>
-          <button onClick={handleToggleRectangleScissorsButtonClick} className="w-full">
-            Toggle Selection
+        <li className="pb-1 pt-1 rounded-lg">
+          <button onClick={handleCrosshairsButtonClick} className={`w-full ${ crosshairs ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Crosshairs
           </button>
         </li>
-        {/*<hr className='mb-2'/>*/}
-        <li className="mb-2 pb-2 pt-2 rounded-lg">
+        <li className="pb-1 pt-1 rounded-lg">
+          <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Scissors
+          </button>
+        </li>
+        
+        <li className="mb-2 pb-2 pt-4 rounded-lg">
           
           <button className="w-full bg-red-600">
             Reset Everything
