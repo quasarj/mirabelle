@@ -15,7 +15,6 @@ import Arrows from './Arrows.jsx';
 function Masker({ files, iecs, iec }) {
 
   const { layout, leftPanelVisibility, setLeftPanelVisibility,rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
-  console.log('layout', layout);
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[18rem,1fr,18rem]'

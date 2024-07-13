@@ -81,7 +81,7 @@ function ToolsPanel() {
         {/*<hr className='mb-2'/>*/}
         <li className="mb-2 pb-2 pt-2 rounded-lg">
           
-          <button onClick={''} className="w-full bg-red-600">
+          <button className="w-full bg-red-600">
             Reset Everything
           </button>
         </li>
