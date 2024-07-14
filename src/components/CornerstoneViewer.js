@@ -115,7 +115,7 @@ async function finalCalc(coords, volumeId, iec) {
 const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
   files, iec }, ref) {
 
-  const { layout, zoom, opacity, setPresets, selectedPreset, windowLevel, crosshairs, rectangleScissors } = useContext(Context);
+  const { layout, zoom, opacity, setPresets, selectedPreset, windowLevel, crosshairs, rectangleScissors, resetViewports, setResetViewports } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
@@ -290,8 +290,6 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
           return index !== -1;
       }
       
-      
-
       cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
       cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
       cornerstoneTools.addTool(cornerstoneTools.PanTool);
@@ -609,7 +607,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
 
     if (volToolGroup) {
-      // Add the RectangleScissorsTool if it hasn't been added already
+      // Add the WindowLevelTool if it hasn't been added already
       
       if (!volToolGroup.getToolInstance(cornerstoneTools.WindowLevelTool.toolName)) {
         
@@ -617,7 +615,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
         volToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
       }
 
-      // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
+      // Activate or deactivate the WindowLevelTool based on the windowLevel state
       if (windowLevel) {
         
         volToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
@@ -686,6 +684,24 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       }
     }
   }, [rectangleScissors]);
+
+  useEffect(() => {
+    if (resetViewports) {
+      
+      const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+
+      renderingEngine.getViewports().forEach((viewport) => {
+          // Needs to be called twice to ensure the camera is reset
+          // Not sure why this is the case
+          viewport.resetCamera(true, true, true, true);
+          viewport.resetCamera(true, true, true, true);
+      });
+      renderingEngine.render();
+      console.log("Viewports reset!");
+
+      setResetViewports(false);
+    }
+  }, [resetViewports]);
 
   async function expandSelection() {
     coords = expandSegTo3D(segId);

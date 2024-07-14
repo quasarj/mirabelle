@@ -10,12 +10,13 @@ export default function ContextProvider({ children, initialLayout = ''}) {
   const [windowLevel, setWindowLevel] = useState(true);
   const [crosshairs, setCrosshairs] = useState(false);
   const [rectangleScissors, setRectangleScissors] = useState(false);
+  const [resetViewports, setResetViewports] = useState(false);
 
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
   
   return (
-    <Context.Provider value={{ layout, setlayout, zoom, setZoom, opacity, setOpacity, presets, setPresets, selectedPreset, setSelectedPreset, windowLevel, setWindowLevel, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors, leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility }}>
+    <Context.Provider value={{ layout, setlayout, zoom, setZoom, opacity, setOpacity, presets, setPresets, selectedPreset, setSelectedPreset, windowLevel, setWindowLevel, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors, resetViewports, setResetViewports, leftPanelVisibility, setLeftPanelVisibility, rightPanelVisibility, setRightPanelVisibility }}>
       {children}
     </Context.Provider>
   );

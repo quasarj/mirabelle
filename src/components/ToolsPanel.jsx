@@ -3,7 +3,7 @@ import { Context } from './Context.js';
 
 
 function ToolsPanel() {
-  const { zoom, setZoom, opacity, setOpacity, presets, selectedPreset, setSelectedPreset, windowLevel, setWindowLevel, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors} = useContext(Context);
+  const { zoom, setZoom, opacity, setOpacity, presets, selectedPreset, setSelectedPreset, windowLevel, setWindowLevel, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors, resetViewports, setResetViewports} = useContext(Context);
 
   const handleZoomChange = (event) => {
     const newZoom = event.target.value;
@@ -36,6 +36,16 @@ function ToolsPanel() {
     setWindowLevel(false);
     setCrosshairs(false);
     setRectangleScissors(true);
+  };
+
+  const handleResetViewportsButtonClick = () => {
+    setZoom(250);
+    setOpacity(0.3);
+    setSelectedPreset('CT-Bone');
+    setWindowLevel(true);
+    setCrosshairs(false);
+    setRectangleScissors(false);
+    setResetViewports(true);
   };
 
   return (
@@ -96,8 +106,8 @@ function ToolsPanel() {
         
         <li className="mb-2 pb-2 pt-4 rounded-lg">
           
-          <button className="w-full bg-red-600">
-            Reset Everything
+          <button onClick={handleResetViewportsButtonClick}className="w-full bg-red-600">
+            Reset Viewports
           </button>
         </li>
       </ul>
