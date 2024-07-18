@@ -2,6 +2,9 @@
  * Functions related to masking
  */
 
+// TODO experiment for singleton value
+export let loaded = { loaded: false };
+
 export async function getUsername() {
 	const response = await fetch(`/papi/v1/other/testme`);
 	const details = await response.json();
@@ -19,6 +22,28 @@ export async function getDetails(iec) {
 export async function flagForMasking(iec) {
 	const response = await fetch(
 		`/papi/v1/masking/${iec}/mask`,
+		{
+			method: "POST",
+		}
+	);
+	const details = await response.json();
+
+	return details;
+}
+export async function flagAsAccepted(iec) {
+	const response = await fetch(
+		`/papi/v1/masking/${iec}/accept`,
+		{
+			method: "POST",
+		}
+	);
+	const details = await response.json();
+
+	return details;
+}
+export async function flagAsRejected(iec) {
+	const response = await fetch(
+		`/papi/v1/masking/${iec}/reject`,
 		{
 			method: "POST",
 		}

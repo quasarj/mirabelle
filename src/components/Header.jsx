@@ -8,7 +8,7 @@ import { getUsername } from '../masking';
 
 function Header() {
   const [ username, setUsername ] = useState("Username");
-  const { layout } = useContext(Context);
+  const { template } = useContext(Context);
 
   useEffect(() => {
     (async () => {
@@ -27,7 +27,7 @@ function Header() {
           <img src={logoDark} alt="Logo Dark" className="w-full h-full object-contain hidden dark:block" />
         </Link>
       </div>
-      <div id="title" className="flex-1 text-left ml-2">{ layout }</div>
+      <div id="title" className="flex-1 text-left ml-2">{ template }</div>
       <div id="username" className="flex-1 text-right">{username}</div>
     </div>
   );

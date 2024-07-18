@@ -3,7 +3,16 @@ import { Context } from './Context.js';
 
 
 function ToolsPanel() {
-  const { zoom, setZoom, opacity, setOpacity, presets, selectedPreset, setSelectedPreset, windowLevel, setWindowLevel, crosshairs, setCrosshairs, rectangleScissors, setRectangleScissors, resetViewports, setResetViewports} = useContext(Context);
+  const { 
+    zoom, setZoom, 
+    opacity, setOpacity, 
+    presets, 
+    selectedPreset, setSelectedPreset, 
+    windowLevel, setWindowLevel, 
+    crosshairs, setCrosshairs,
+    rectangleScissors, setRectangleScissors, 
+    resetViewports, setResetViewports
+  } = useContext(Context);
 
   const handleZoomChange = (event) => {
     const newZoom = event.target.value;

@@ -9,12 +9,17 @@ import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
-import { log } from 'dcmjs';
-import Arrows from './Arrows.jsx';
 
 function Masker({ files, iecs, iec }) {
 
-  const { layout, leftPanelVisibility, setLeftPanelVisibility,rightPanelVisibility, setRightPanelVisibility } = useContext(Context);
+  const {
+    leftPanelVisibility,
+    setLeftPanelVisibility,
+    rightPanelVisibility,
+    setRightPanelVisibility,
+    layout,
+
+  } = useContext(Context);
 
   const gridTemplate = leftPanelVisibility && rightPanelVisibility
     ? 'grid-cols-[18rem,1fr,18rem]'
