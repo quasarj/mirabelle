@@ -79,7 +79,7 @@ function ToolsPanel() {
           <span>{opacity}</span>
         </li>
         <li className="mb-2 pb-2 pt-2 rounded-lg">
-          <label>3D Volume Preset:</label>
+          <label>Preset:</label>
           <select value={selectedPreset} onChange={handlePresetChange} className="w-full cursor-pointer text-black dark:text-white border border-gray-300 dark:bg-slate-800 rounded-lg p-2">
             {presets.map((preset) => (
               <option key={preset} value={preset}>{preset}</option>
@@ -87,7 +87,7 @@ function ToolsPanel() {
           </select>
         </li>
 
-        <label>Set mode:</label>
+        <label>Mode:</label>
         <li className="pb-1 pt-1 rounded-lg">
           <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'bg-blue-500' : 'bg-slate-900'}`}>
             Window Level

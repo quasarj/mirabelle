@@ -7,6 +7,8 @@ import { Context } from './Context.js';
 import * as cornerstone from '@cornerstonejs/core';
 import { CONSTANTS, cache } from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
+
+
 import {
   cornerstoneStreamingImageVolumeLoader,
   cornerstoneStreamingDynamicImageVolumeLoader,
@@ -20,6 +22,7 @@ import {
 } from '../utilities';
 
 import { setParameters } from '../masking';
+import { log } from 'dcmjs';
 
 //TODO this should probably be moved somewhere else, masking.js maybe?
 async function finalCalc(coords, volumeId, iec) {
@@ -678,7 +681,7 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
           ],
         });
-        console.log("Rectangle Scissors Tool Active");
+        
       } else {
         volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
       }
@@ -691,13 +694,36 @@ const CornerstoneViewer = forwardRef(function CornerstoneViewer({ volumeName,
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
       renderingEngine.getViewports().forEach((viewport) => {
-          // Needs to be called twice to ensure the camera is reset
-          // Not sure why this is the case
-          viewport.resetCamera(true, true, true, true);
-          viewport.resetCamera(true, true, true, true);
+
+        // const element = viewport.element;
+        // const canvas = element.querySelector('canvas');
+        // const context = canvas.getContext('2d');
+        // context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // const element = viewport.element;
+        // // get annotations layer
+        // const annotationsLayer = element.querySelector('.cornerstone-annotation-layer');
+        // console.log(annotationsLayer);
+        // // remove all child nodes
+        // while (annotationsLayer.firstChild) {
+        //   annotationsLayer.removeChild(annotationsLayer.firstChild);
+        // }
+        
+        const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+        
+        // remove rectanglescissorstool if it exists use removeTool
+        if (volToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
+          volToolGroup.removeTool;
+        }
+        
+        
+        // Needs to be called twice to ensure the camera is reset
+        // Not sure why this is the case
+        viewport.resetCamera(true, true, true, true);
+        viewport.resetCamera(true, true, true, true);
       });
+
       renderingEngine.render();
-      console.log("Viewports reset!");
 
       setResetViewports(false);
     }
