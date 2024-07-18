@@ -19,24 +19,32 @@ export default function MaskVR() {
   const { iecs } = useLoaderData();
 
   // default values for this route/mode
-  const [template, setTemplate] = useState('MaskerVR');
+  const [layout, setLayout] = useState('MaskerVR');
   const [zoom, setZoom] = useState(250);
   const [opacity, setOpacity] = useState(0.3);
   const [presets, setPresets] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState('CT-MIP');
+  const [windowLevel, setWindowLevel] = useState(true);
+  const [crosshairs, setCrosshairs] = useState(false);
+  const [rectangleScissors, setRectangleScissors] = useState(false);
+  const [resetViewports, setResetViewports] = useState(false);
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(false);
 
   // Here we just assemble the various panels that we need for this mode
   return (
     <Context.Provider value={{
-        template, setTemplate,
+        layout, setLayout,
         zoom, setZoom,
         opacity, setOpacity,
         presets, setPresets,
         selectedPreset, setSelectedPreset,
         leftPanelVisibility, setLeftPanelVisibility,
         rightPanelVisibility, setRightPanelVisibility,
+        windowLevel, setWindowLevel,
+        crosshairs, setCrosshairs,
+        rectangleScissors, setRectangleScissors,
+        resetViewports, setResetViewports,
     }}>
         <Masker iecs={iecs} />
     </Context.Provider>

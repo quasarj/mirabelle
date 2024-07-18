@@ -18,8 +18,8 @@ function NavigationPanel({ iecs, onIecChange }) {
 
   return (
     <div id="navigationPanel" className="flex gap-2">
-      <button id="goBack" onClick={onClickBack}>Back</button>
-      <button id="skipForward" onClick={clickForward}>Forward</button>
+      <button id="goBack" onClick={onClickBack} className="bg-gray-200 dark:bg-slate-900">Backward</button>
+      <button id="skipForward" onClick={clickForward} className="bg-gray-200 dark:bg-slate-900">Forward</button>
     </div>
   );
 }
