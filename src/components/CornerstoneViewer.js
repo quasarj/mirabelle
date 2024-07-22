@@ -734,6 +734,16 @@ function CornerstoneViewer({ volumeName,
     if (resetViewports) {
       
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+      
+      // Remove all segmentations
+      const segVolume = cornerstone.cache.getVolume(segId);
+      const scalarData = segVolume.scalarData;
+      scalarData.fill(0);
+
+      // redraw segmentation
+      cornerstoneTools.segmentation
+        .triggerSegmentationEvents
+        .triggerSegmentationDataModified(segId);
 
       renderingEngine.getViewports().forEach((viewport) => {
 
@@ -761,7 +771,6 @@ function CornerstoneViewer({ volumeName,
         
         // Needs to be called twice to ensure the camera is reset
         // Not sure why this is the case
-        viewport.resetCamera(true, true, true, true);
         viewport.resetCamera(true, true, true, true);
       });
 
