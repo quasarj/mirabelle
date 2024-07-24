@@ -125,7 +125,19 @@ function CornerstoneViewer({ volumeName,
                              files,
                              iec }) {
 
-  const { layout, zoom, opacity, setPresets, selectedPreset, windowLevel, crosshairs, rectangleScissors, resetViewports, setResetViewports } = useContext(Context);
+  const { 
+    layout,
+    zoom,
+    opacity,
+    setPresets,
+    selectedPreset,
+    windowLevel,
+    crosshairs,
+    rectangleScissors,
+    resetViewports,
+    viewportNavigation,
+    setResetViewports 
+  } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
   const containerRef = useRef(null);
@@ -236,27 +248,32 @@ function CornerstoneViewer({ volumeName,
         ],
       });
 
-      // Pan
-      // cornerstoneTools.addTool(cornerstoneTools.PanTool);
       t3dToolGroup.addTool(cornerstoneTools.PanTool.toolName);
-      t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-        bindings: [
-          {
-            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-          },
-        ],
-      });
-
-      // Zoom
-      // cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
       t3dToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
-      t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-        bindings: [
-          {
-            mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
-          },
-        ],
-      });
+
+      if (viewportNavigation === 'Pan') {
+        console.log("Setting up Pan Tool");
+        // Pan
+        // cornerstoneTools.addTool(cornerstoneTools.PanTool);
+        t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [
+            {
+              mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
+            },
+          ],
+        });
+      } else {
+        console.log("Setting up Zoom Tool");
+        // Zoom
+        // cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+        t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+          bindings: [
+            {
+              mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary, // Right Click
+            },
+          ],
+        });
+      }
 
       // Segmentation Display
       // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
@@ -348,19 +365,21 @@ function CornerstoneViewer({ volumeName,
       } 
 
       group.addTool(cornerstoneTools.PanTool.toolName);
-      group.setToolActive(cornerstoneTools.PanTool.toolName, {
-        bindings: [
-          // Middle mouse button
-          { mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary },
-        ],
-      });
-
       group.addTool(cornerstoneTools.ZoomTool.toolName);
-      group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-        bindings: [
-          { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-        ],
-      });
+
+      if (viewportNavigation === 'Pan') {
+        group.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+          ],
+        });
+      } else {
+        group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+          ],
+        });
+      }
 
       // Window Level
       group.addTool(cornerstoneTools.WindowLevelTool.toolName);
@@ -731,14 +750,55 @@ function CornerstoneViewer({ volumeName,
   }, [rectangleScissors]);
 
   useEffect(() => {
+    const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+    if (viewportNavigation === 'Pan') {
+      if (volToolGroup) {
+        
+        volToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+        volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+        });
+        // access the t3d_tool_group and do the same
+        const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+        t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+        t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+        });
+      }
+    } else {
+      if (volToolGroup) {
+        volToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+        volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+        });
+        // access the t3d_tool_group and do the same
+        const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+        t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+        t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+        });
+      }
+    }
+  }, [viewportNavigation]);
+
+  useEffect(() => {
     if (resetViewports) {
       
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
       
+      console.log("segId is", segId);
+
       // Remove all segmentations
       const segVolume = cornerstone.cache.getVolume(segId);
+      console.log("segVolume is", segVolume);
       const scalarData = segVolume.scalarData;
+      console.log("scalarData is", scalarData);
       scalarData.fill(0);
+
+      // reset crosshairs tool slab thickness
+      const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+      const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+      crosshairsToolInstance.resetCrosshairs();
 
       // redraw segmentation
       cornerstoneTools.segmentation
@@ -746,32 +806,13 @@ function CornerstoneViewer({ volumeName,
         .triggerSegmentationDataModified(segId);
 
       renderingEngine.getViewports().forEach((viewport) => {
-
-        // const element = viewport.element;
-        // const canvas = element.querySelector('canvas');
-        // const context = canvas.getContext('2d');
-        // context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // const element = viewport.element;
-        // // get annotations layer
-        // const annotationsLayer = element.querySelector('.cornerstone-annotation-layer');
-        // console.log(annotationsLayer);
-        // // remove all child nodes
-        // while (annotationsLayer.firstChild) {
-        //   annotationsLayer.removeChild(annotationsLayer.firstChild);
-        // }
-        
-        const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-        
-        // remove rectanglescissorstool if it exists use removeTool
-        if (volToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
-          volToolGroup.removeTool;
-        }
-        
-        
-        // Needs to be called twice to ensure the camera is reset
-        // Not sure why this is the case
         viewport.resetCamera(true, true, true, true);
+        viewport.setProperties({ 
+          voi: {
+            windowWidth: 400,
+            windowCenter: 40,
+          },
+         });
       });
 
       renderingEngine.render();

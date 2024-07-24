@@ -10,7 +10,8 @@ function ToolsPanel() {
     selectedPreset, setSelectedPreset, 
     windowLevel, setWindowLevel, 
     crosshairs, setCrosshairs,
-    rectangleScissors, setRectangleScissors, 
+    rectangleScissors, setRectangleScissors,
+    viewportNavigation, setViewportNavigation,
     resetViewports, setResetViewports
   } = useContext(Context);
 
@@ -47,13 +48,24 @@ function ToolsPanel() {
     setRectangleScissors(true);
   };
 
+  const handleZoomButtonClick = () => {
+    setViewportNavigation("Zoom");
+    console.log('Zoom button clicked');
+  };
+
+  const handlePanButtonClick = () => {
+    setViewportNavigation("Pan");
+    console.log('Pan button clicked');
+  };
+
   const handleResetViewportsButtonClick = () => {
     setZoom(250);
     setOpacity(0.3);
-    setSelectedPreset('CT-Bone');
+    setSelectedPreset('CT-MIP');
     setWindowLevel(true);
     setCrosshairs(false);
     setRectangleScissors(false);
+    setViewportNavigation("Zoom");
     setResetViewports(true);
   };
 
@@ -61,7 +73,7 @@ function ToolsPanel() {
     <div id="toolsPanel" className="overflow-hidden p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
       <div className="mb-2 font-semibold">Tools</div>
       <ul className="overflow-y-scroll h-full pb-4">
-        <li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
+        {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
           <label>Zoom:</label>
           <input
             className='w-full cursor-pointer'
@@ -73,7 +85,7 @@ function ToolsPanel() {
             onChange={handleZoomChange}
           />
           <span>{zoom}</span>
-        </li>
+        </li>*/}
         <li className="mb-2 pb-2 pt-2 dark:bg-opacity-5 rounded-lg">
           <label>Opacity:</label>
           <input
@@ -96,7 +108,7 @@ function ToolsPanel() {
           </select>
         </li>
 
-        <label>Mode:</label>
+        <label>Left-Click:</label>
         <li className="pb-1 pt-1 rounded-lg">
           <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'bg-blue-500' : 'bg-slate-900'}`}>
             Window Level
@@ -107,14 +119,23 @@ function ToolsPanel() {
             Crosshairs
           </button>
         </li>
-        <li className="pb-1 pt-1 rounded-lg">
+        <li className="mb-2 pb-1 pt-1 rounded-lg">
           <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'bg-blue-500' : 'bg-slate-900'}`}>
             Scissors
           </button>
         </li>
-        
+        <label>Right-Click:</label>
+        <li className="pb-1 pt-1 rounded-lg">
+          <button onClick={handleZoomButtonClick} className={`w-full ${ viewportNavigation === "Zoom" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Zoom
+          </button>
+        </li>
+        <li className="pb-1 pt-1 rounded-lg">
+          <button onClick={handlePanButtonClick} className={`w-full ${ viewportNavigation === "Pan" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Pan
+          </button>
+        </li>
         <li className="mb-2 pb-2 pt-4 rounded-lg">
-          
           <button onClick={handleResetViewportsButtonClick}className="w-full bg-red-600">
             Reset Viewports
           </button>
