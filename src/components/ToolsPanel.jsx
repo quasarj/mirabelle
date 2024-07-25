@@ -12,7 +12,8 @@ function ToolsPanel() {
     crosshairs, setCrosshairs,
     rectangleScissors, setRectangleScissors,
     viewportNavigation, setViewportNavigation,
-    resetViewports, setResetViewports
+    resetViewports, setResetViewports,
+    view, setView,
   } = useContext(Context);
 
   const handleZoomChange = (event) => {
@@ -58,6 +59,16 @@ function ToolsPanel() {
     console.log('Pan button clicked');
   };
 
+  const handleVolumeButtonClick = () => {
+    setView("Volume");
+    console.log('Volume button clicked');
+  };
+
+  const handleProjectionButtonClick = () => {
+    setView("Projection");
+    console.log('Projection button clicked');
+  };
+
   const handleResetViewportsButtonClick = () => {
     setZoom(250);
     setOpacity(0.3);
@@ -67,12 +78,24 @@ function ToolsPanel() {
     setRectangleScissors(false);
     setViewportNavigation("Zoom");
     setResetViewports(true);
+    setView("Volume");
   };
 
   return (
     <div id="toolsPanel" className="overflow-hidden p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
-      <div className="mb-2 font-semibold">Tools</div>
+      {/*<div className="mb-2 font-semibold">Tools</div>*/}
       <ul className="overflow-y-scroll h-full pb-4">
+        <label>View:</label>
+        <li className="pt-1 dark:bg-opacity-5  rounded-lg">
+          <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Volume
+          </button>
+        </li>
+        <li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
+          <button onClick={handleProjectionButtonClick}className={`w-full ${ view === "Projection" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            Projection
+          </button>
+        </li>
         {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
           <label>Zoom:</label>
           <input
@@ -86,28 +109,6 @@ function ToolsPanel() {
           />
           <span>{zoom}</span>
         </li>*/}
-        <li className="mb-2 pb-2 pt-2 dark:bg-opacity-5 rounded-lg">
-          <label>Opacity:</label>
-          <input
-            className='w-full cursor-pointer'
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={opacity}
-            onChange={handleOpacityChange}
-          />
-          <span>{opacity}</span>
-        </li>
-        <li className="mb-2 pb-2 pt-2 rounded-lg">
-          <label>Preset:</label>
-          <select value={selectedPreset} onChange={handlePresetChange} className="w-full cursor-pointer text-black dark:text-white border border-gray-300 dark:bg-slate-800 rounded-lg p-2">
-            {presets.map((preset) => (
-              <option key={preset} value={preset}>{preset}</option>
-            ))}
-          </select>
-        </li>
-
         <label>Left-Click:</label>
         <li className="pb-1 pt-1 rounded-lg">
           <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'bg-blue-500' : 'bg-slate-900'}`}>
@@ -119,7 +120,7 @@ function ToolsPanel() {
             Crosshairs
           </button>
         </li>
-        <li className="mb-2 pb-1 pt-1 rounded-lg">
+        <li className="mb-2 pb-2 pt-1 rounded-lg">
           <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'bg-blue-500' : 'bg-slate-900'}`}>
             Scissors
           </button>
@@ -134,6 +135,27 @@ function ToolsPanel() {
           <button onClick={handlePanButtonClick} className={`w-full ${ viewportNavigation === "Pan" ? 'bg-blue-500' : 'bg-slate-900'}`}>
             Pan
           </button>
+        </li>
+        <li className="pt-2 dark:bg-opacity-5 rounded-lg">
+          <label>Opacity:</label>
+          <input
+            className='w-full cursor-pointer'
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={opacity}
+            onChange={handleOpacityChange}
+          />
+          <span>{opacity}</span>
+        </li>
+        <li className="pb-2 pt-2 rounded-lg">
+          <label>Preset:</label>
+          <select value={selectedPreset} onChange={handlePresetChange} className="w-full cursor-pointer text-black dark:text-white border border-gray-300 dark:bg-slate-800 rounded-lg p-2 mt-1">
+            {presets.map((preset) => (
+              <option key={preset} value={preset}>{preset}</option>
+            ))}
+          </select>
         </li>
         <li className="mb-2 pb-2 pt-4 rounded-lg">
           <button onClick={handleResetViewportsButtonClick}className="w-full bg-red-600">

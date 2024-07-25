@@ -31,7 +31,7 @@ export default function MaskVR() {
   const [resetViewports, setResetViewports] = useState(false);
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
-
+  const [view, setView] = useState("Volume");
 
   // Here we just assemble the various panels that we need for this mode
   return (
@@ -48,6 +48,7 @@ export default function MaskVR() {
         rectangleScissors, setRectangleScissors,
         viewportNavigation, setViewportNavigation,
         resetViewports, setResetViewports,
+        view, setView,
         
     }}>
         <Masker iecs={iecs} />

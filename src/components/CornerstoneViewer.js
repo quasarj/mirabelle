@@ -807,6 +807,7 @@ function CornerstoneViewer({ volumeName,
 
       renderingEngine.getViewports().forEach((viewport) => {
         viewport.resetCamera(true, true, true, true);
+        
         viewport.setProperties({ 
           voi: {
             windowWidth: 400,
