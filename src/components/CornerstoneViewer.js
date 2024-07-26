@@ -872,13 +872,13 @@ function CornerstoneViewer({ volumeName,
       <div ref={containerRef}
            style={{ width: '100%', height: '100%' }}
            id="container"></div>
-      <MiddlelBottomPanel 
+      {/*<MiddlelBottomPanel 
         onAccept={handleAcceptSelection}
         onClear={handleClearSelection}
         onExpand={handleExpandSelection}
         onMarkAccepted={handleMarkAccepted}
         onMarkRejected={handleMarkRejected}
-      />
+      />*/}
     </>
   );
 };

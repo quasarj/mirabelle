@@ -82,9 +82,20 @@ function ToolsPanel() {
   };
 
   return (
-    <div id="toolsPanel" className="overflow-hidden p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
-      {/*<div className="mb-2 font-semibold">Tools</div>*/}
-      <ul className="overflow-y-scroll h-full pb-4">
+    <div id="toolsPanel" className="overflow-y-scroll p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
+      {/*<div className="mb-2 font-semib  old">Tools</div>*/}
+      <ul className=" h-full pb-4">
+        <label>Study:</label>
+        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Next
+          </button>
+        </li>
+        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Previous
+          </button>
+        </li>
         <label>View:</label>
         <li className="pt-1 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'bg-blue-500' : 'bg-slate-900'}`}>
@@ -120,11 +131,28 @@ function ToolsPanel() {
             Crosshairs
           </button>
         </li>
-        <li className="mb-2 pb-2 pt-1 rounded-lg">
+        <li className="mb-1 pt-1 rounded-lg">
           <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'bg-blue-500' : 'bg-slate-900'}`}>
-            Scissors
+            Selection
           </button>
         </li>
+        { rectangleScissors ? <><li className="pb-1 pt-1 rounded-lg">
+          <button className={`w-full bg-slate-900`}>
+            Expand
+          </button>
+        </li>
+        <li className="pb-1 pt-1 rounded-lg">
+          <button className={`w-full bg-slate-900`}>
+            Clear
+          </button>
+        </li>
+        <li className="pb-2 pt-1 rounded-lg">
+          <button className={`w-full  bg-slate-900`}>
+            Accept
+          </button>
+        </li>
+        </> : null }
+        <div className="h-2"></div>
         <label>Right-Click:</label>
         <li className="pb-1 pt-1 rounded-lg">
           <button onClick={handleZoomButtonClick} className={`w-full ${ viewportNavigation === "Zoom" ? 'bg-blue-500' : 'bg-slate-900'}`}>
