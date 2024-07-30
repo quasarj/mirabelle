@@ -3,7 +3,7 @@ import CornerstoneViewer from './CornerstoneViewer';
 
 function ViewPanel({ files, volumeName, iec }) {
   return (
-    <div id="viewPanel" className="grid grid-rows-[auto] text-center gap-2 overflow- h-full">
+    <div id="viewPanel" className="grid grid-rows-[1fr,auto] text-center gap-2 overflow- h-full">
 	  {files && files.length > 0 &&
         <CornerstoneViewer 
           files={files}

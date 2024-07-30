@@ -21,6 +21,7 @@ import {
 } from '../utilities';
 
 import { setParameters, loaded, flagAsAccepted, flagAsRejected } from '../masking';
+import { render } from 'react-dom';
 
 function getOrCreateToolgroup(toolgroup_name) {
   let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -136,7 +137,10 @@ function CornerstoneViewer({ volumeName,
     rectangleScissors,
     resetViewports,
     viewportNavigation,
-    setResetViewports 
+    setResetViewports,
+    view,
+    setView,
+    defaultView,
   } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
@@ -218,6 +222,7 @@ function CornerstoneViewer({ volumeName,
     function setupPanel(panelId) {
       const panel = document.createElement('div');
       panel.id = panelId;
+      panel.style.display = 'none';
       panel.style.width = '100%';
       panel.style.height = '100%';
       panel.style.borderRadius = '8px';
@@ -418,22 +423,139 @@ function CornerstoneViewer({ volumeName,
     }
 
     function setupMipViewportTools() {
-      // Tool Group setup
-      const mipToolGroup = cornerstoneTools.ToolGroupManager.createToolGroup('mip_tool_group');
-      mipToolGroup.addViewport('mip_axial', 'viewer_render_engine');
-      mipToolGroup.addViewport('mip_sagittal', 'viewer_render_engine');
-      mipToolGroup.addViewport('mip_coronal', 'viewer_render_engine');
+
+      const viewportColors = {
+        ['mip_axial']: 'rgb(200, 0, 0)',
+        ['mip_sagittal']: 'rgb(200, 200, 0)',
+        ['mip_coronal']: 'rgb(0, 200, 0)',
+      };
+
+      const viewportReferenceLineControllable = [
+          'mip_axial',
+          'mip_sagittal',
+          'mip_coronal',
+      ];
+
+      const viewportReferenceLineDraggableRotatable = [
+          'mip_axial',
+          'mip_sagittal',
+          'mip_coronal',
+      ];
+
+      const viewportReferenceLineSlabThicknessControlsOn = [
+          'mip_axial',
+          'mip_sagittal',
+          'mip_coronal',
+      ];
+
+      function getReferenceLineColor(viewportId) {
+          return viewportColors[viewportId];
+      }
+
+      function getReferenceLineControllable(viewportId) {
+          const index = viewportReferenceLineControllable.indexOf(viewportId);
+          return index !== -1;
+      }
+
+      function getReferenceLineDraggableRotatable(viewportId) {
+          const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+          return index !== -1;
+      }
+
+      function getReferenceLineSlabThicknessControlsOn(viewportId) {
+          const index =
+              viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+          return index !== -1;
+      }
+      
+      try {
+        cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+        cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+        cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+        cornerstoneTools.addTool(cornerstoneTools.PanTool);
+        cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+        cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+        cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+      } catch (error) {
+        console.log("errors while loading tools:", error);
+      }
+
+      // Create group and add viewports
+      // TODO: should the render engine be coming from a var instead?
+      const group = getOrCreateToolgroup('mip_tool_group');
+      group.addViewport('mip_axial', 'viewer_render_engine');
+      group.addViewport('mip_sagittal', 'viewer_render_engine');
+      group.addViewport('mip_coronal', 'viewer_render_engine');
+
+      // Stack Scroll Tool
+      group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+      group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+
+      group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+      // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+      // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+
+      group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+
+      if (rectangleScissors)  {
+        group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+          ]
+        });
+      } 
+
+      group.addTool(cornerstoneTools.PanTool.toolName);
+      group.addTool(cornerstoneTools.ZoomTool.toolName);
+
+      if (viewportNavigation === 'Pan') {
+        group.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+          ],
+        });
+      } else {
+        group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+          ],
+        });
+      }
 
       // Window Level
-      cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-      mipToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
-      mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-        bindings: [
-          {
-            mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
-          },
-        ],
+      group.addTool(cornerstoneTools.WindowLevelTool.toolName);
+
+      if (windowLevel) {
+        group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+            bindings: [
+                {
+                    mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                },
+            ],
+        });
+      }
+      
+      group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+        getReferenceLineColor,
+        getReferenceLineControllable,
+        getReferenceLineDraggableRotatable,
+        getReferenceLineSlabThicknessControlsOn,
       });
+
+      if (crosshairs) {
+        group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+          ],
+        });
+      }
+
+      const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("mip_voi_syncronizer");
+
+      ['mip_axial', 'mip_sagittal', 'mip_coronal'].forEach((viewport) => {
+          mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+      });
+
     }
 
     async function run() {
@@ -455,8 +577,14 @@ function CornerstoneViewer({ volumeName,
         const viewportInput = [];
 
         container.style.display = 'grid';
-        container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-        container.style.gridTemplateRows = 'repeat(2, 1fr)';
+        if (view === 'All') {
+          container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+          container.style.gridTemplateRows = 'repeat(3, 1fr)';
+        } else {
+          container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+          container.style.gridTemplateRows = 'repeat(2, 1fr)';
+        }
+
         container.style.gridGap = '6px';
         container.style.width = '100%';
         container.style.height = '100%';
@@ -464,11 +592,17 @@ function CornerstoneViewer({ volumeName,
         const volAxialContent = setupPanel('vol_axial');
         const volSagittalContent = setupPanel('vol_sagittal');
         const volCoronalContent = setupPanel('vol_coronal');
+        const mipAxialContent = setupPanel('mip_axial');
+        const mipSagittalContent = setupPanel('mip_sagittal');
+        const mipCoronalContent = setupPanel('mip_coronal');
         const t3dCoronalContent = setupPanel('t3d_coronal');
         
         container.appendChild(volAxialContent);
         container.appendChild(volSagittalContent);
         container.appendChild(volCoronalContent);
+        container.appendChild(mipAxialContent);
+        container.appendChild(mipSagittalContent);
+        container.appendChild(mipCoronalContent);
         container.appendChild(t3dCoronalContent);
 
         viewportInput.push(
@@ -497,6 +631,30 @@ function CornerstoneViewer({ volumeName,
             },
           },
           {
+            viewportId: 'mip_axial',
+            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+            element: mipAxialContent,
+            defaultOptions: {
+              orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+            },
+          },
+          {
+            viewportId: 'mip_sagittal',
+            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+            element: mipSagittalContent,
+            defaultOptions: {
+              orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+            },
+          },
+          {
+            viewportId: 'mip_coronal',
+            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+            element: mipCoronalContent,
+            defaultOptions: {
+              orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+            },
+          },
+          {
             viewportId: 't3d_coronal',
             type: cornerstone.Enums.ViewportType.VOLUME_3D,
             element: t3dCoronalContent,
@@ -511,11 +669,15 @@ function CornerstoneViewer({ volumeName,
 
       if (layout === 'MaskerVR' || layout === 'MaskerReview' || layout === 'Masker') {
         setupVolViewportTools();
+        setupMipViewportTools();
       }
 
       if (layout === 'MaskerVR' || layout === 'MaskerReview' | layout === 'Masker') {
         setup3dViewportTools();
       }
+
+      hideShowViewports();
+
       setLoading(false); // signal that setup is complete
     }
 
@@ -526,6 +688,86 @@ function CornerstoneViewer({ volumeName,
       resizeObserver.disconnect();
     };
   }, [layout]);
+
+  function hideShowViewports() {
+
+    const container = containerRef.current;
+
+    if (view === 'All') {
+      // set all viewport panels to be visible
+
+      container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      container.style.gridTemplateRows = 'repeat(3, 1fr)';
+      
+      const volAxialContent = document.getElementById('vol_axial');
+      const volSagittalContent = document.getElementById('vol_sagittal');
+      const volCoronalContent = document.getElementById('vol_coronal');
+      const mipAxialContent = document.getElementById('mip_axial');
+      const mipSagittalContent = document.getElementById('mip_sagittal');
+      const mipCoronalContent = document.getElementById('mip_coronal');
+      const t3dCoronalContent = document.getElementById('t3d_coronal');
+
+      volAxialContent.style.display = 'block';
+      volSagittalContent.style.display = 'block';
+      volCoronalContent.style.display = 'block';
+      mipAxialContent.style.display = 'block';
+      mipSagittalContent.style.display = 'block';
+      mipCoronalContent.style.display = 'block';
+      t3dCoronalContent.style.display = 'block';
+    } else if (view === 'Volume') {
+
+      container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      container.style.gridTemplateRows = 'repeat(2, 1fr)';
+
+      // set volume viewport panels to be visible
+      const volAxialContent = document.getElementById('vol_axial');
+      const volSagittalContent = document.getElementById('vol_sagittal');
+      const volCoronalContent = document.getElementById('vol_coronal');
+      const mipAxialContent = document.getElementById('mip_axial');
+      const mipSagittalContent = document.getElementById('mip_sagittal');
+      const mipCoronalContent = document.getElementById('mip_coronal');
+      const t3dCoronalContent = document.getElementById('t3d_coronal');
+
+      volAxialContent.style.display = 'block';
+      volSagittalContent.style.display = 'block';
+      volCoronalContent.style.display = 'block';
+      mipAxialContent.style.display = 'none';
+      mipSagittalContent.style.display = 'none';
+      mipCoronalContent.style.display = 'none';
+      t3dCoronalContent.style.display = 'block';
+    } else if (view === 'Projection') {
+
+      container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      container.style.gridTemplateRows = 'repeat(2, 1fr)';
+
+      // set projection viewport panels to be visible
+      const volAxialContent = document.getElementById('vol_axial');
+      const volSagittalContent = document.getElementById('vol_sagittal');
+      const volCoronalContent = document.getElementById('vol_coronal');
+      const mipAxialContent = document.getElementById('mip_axial');
+      const mipSagittalContent = document.getElementById('mip_sagittal');
+      const mipCoronalContent = document.getElementById('mip_coronal');
+      const t3dCoronalContent = document.getElementById('t3d_coronal');
+
+      volAxialContent.style.display = 'none';
+      volSagittalContent.style.display = 'none';
+      volCoronalContent.style.display = 'none';
+      mipAxialContent.style.display = 'block';
+      mipSagittalContent.style.display = 'block';
+      mipCoronalContent.style.display = 'block';
+      t3dCoronalContent.style.display = 'block';
+    }
+  }
+
+  useEffect(() => {
+    // check if volumes mips and 3d viewports are loaded already
+    if (loading) {
+      return;
+    }
+
+    hideShowViewports();
+    
+  }, [view]);
 
   // Load the actual volume into the display here
   useEffect(() => {
@@ -554,14 +796,38 @@ function CornerstoneViewer({ volumeName,
       window.cornerstone = cornerstone;
       window.cornerstoneTools = cornerstoneTools;
       await getFileData();
+      
       volume.load();
 
       console.log("about to setVolumes for rendering engine:", renderingEngine);
+      
       await cornerstone.setVolumesForViewports(
           renderingEngine,
           [{ volumeId: volumeId }],
           ['vol_axial', 'vol_sagittal', 'vol_coronal']
-        );
+      );
+
+      const volDimensions = volume.dimensions;
+
+      const volSlab = Math.sqrt(
+          volDimensions[0] * volDimensions[0] +
+          volDimensions[1] * volDimensions[1] +
+          volDimensions[2] * volDimensions[2]
+      );
+
+      // Add volumes to MIP viewports
+      await cornerstone.setVolumesForViewports(
+          renderingEngine,
+          [
+              //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+              {
+                  volumeId: volumeId,
+                  blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+                  slabThickness: volSlab,
+              },
+          ],
+          ['mip_axial', 'mip_sagittal', 'mip_coronal']
+      );
 
       await cornerstone.setVolumesForViewports(
         renderingEngine, 
@@ -595,6 +861,16 @@ function CornerstoneViewer({ volumeName,
 
       await cornerstoneTools.segmentation.addSegmentationRepresentations(
         'vol_tool_group',
+        [
+          {
+            segmentationId: segId,
+            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+          },
+        ]
+      );
+
+      await cornerstoneTools.segmentation.addSegmentationRepresentations(
+        'mip_tool_group',
         [
           {
             segmentationId: segId,
@@ -668,6 +944,8 @@ function CornerstoneViewer({ volumeName,
   }, [opacity]);
 
   useEffect(() => {
+
+    // Volumes
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
 
     if (volToolGroup) {
@@ -691,22 +969,39 @@ function CornerstoneViewer({ volumeName,
         volToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
       }
     }
+
+    // MIPs
+    const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+
+    if (mipToolGroup) {
+      // Add the WindowLevelTool if it hasn't been added already
+      
+      if (!mipToolGroup.getToolInstance(cornerstoneTools.WindowLevelTool.toolName)) {
+        
+        cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+        mipToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
+      }
+
+      // Activate or deactivate the WindowLevelTool based on the windowLevel state
+      if (windowLevel) {
+        
+        mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+          ],
+        });
+      } else {
+        mipToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
+      }
+    }
   }, [windowLevel]);
 
   useEffect(() => {
+
+    // Volumes
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
     
     if (volToolGroup) {
-      // Add the CrosshairsTool if it hasn't been added already
-      // if (!volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName)) {
-      //   cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
-      //   volToolGroup.addTool(cornerstoneTools.CrosshairsTool.toolName, {
-      //     getReferenceLineColor,
-      //     getReferenceLineControllable,
-      //     getReferenceLineDraggableRotatable,
-      //     getReferenceLineSlabThicknessControlsOn,
-      // });
-      // }
 
       // Activate or deactivate the CrosshairsTool based on the crosshairs state
       if (crosshairs) {
@@ -719,10 +1014,27 @@ function CornerstoneViewer({ volumeName,
         volToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
       }
     }
+
+    // MIPs
+    const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+    
+    if (mipToolGroup) {
+      // Activate or deactivate the CrosshairsTool based on the crosshairs state
+      if (crosshairs) {
+        mipToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+          ],
+        });
+      } else {
+        mipToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+      }
+    }
   }, [crosshairs]);
 
   useEffect(() => {
 
+    // Volumes
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
 
     if (volToolGroup) {
@@ -747,9 +1059,37 @@ function CornerstoneViewer({ volumeName,
         volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
       }
     }
+
+    // MIPs
+    const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+
+    if (mipToolGroup) {
+      // Add the RectangleScissorsTool if it hasn't been added already
+      
+      if (!mipToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
+        
+        cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+        mipToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+      }
+
+      // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
+      if (rectangleScissors) {
+        
+        mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+          bindings: [
+            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+          ],
+        });
+        
+      } else {
+        mipToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+      }
+    }
   }, [rectangleScissors]);
 
   useEffect(() => {
+
+    // Volumes
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
     if (viewportNavigation === 'Pan') {
       if (volToolGroup) {
@@ -779,14 +1119,31 @@ function CornerstoneViewer({ volumeName,
         });
       }
     }
+
+    // MIPs
+    const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+    if (viewportNavigation === 'Pan') {
+      if (mipToolGroup) {
+        
+        mipToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+        mipToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+        });
+      }
+    } else {
+      if (mipToolGroup) {
+        mipToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+        mipToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+        });
+      }
+    }
   }, [viewportNavigation]);
 
   useEffect(() => {
     if (resetViewports) {
       
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
-      
-      console.log("segId is", segId);
 
       // Remove all segmentations
       const segVolume = cornerstone.cache.getVolume(segId);
@@ -795,10 +1152,30 @@ function CornerstoneViewer({ volumeName,
       console.log("scalarData is", scalarData);
       scalarData.fill(0);
 
-      // reset crosshairs tool slab thickness
+      // reset crosshairs tool slab thickness for vols
       const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
       const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
       crosshairsToolInstance.resetCrosshairs();
+
+      // reset crosshairs tool slab thickness for mips
+      // get the volume dimentions
+      // const volume = cornerstone.cache.getVolume(volumeId);
+      // const volDimensions = volume.dimensions;
+
+      // const volSlab = Math.sqrt(
+      //     volDimensions[0] * volDimensions[0] +
+      //     volDimensions[1] * volDimensions[1] +
+      //     volDimensions[2] * volDimensions[2]
+      // );
+
+      // const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+      // const crosshairsToolInstanceMip = mipToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+
+      // set slab thickness of mip crosshairs tool
+      
+      // const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+      // const crosshairsToolInstanceMip = mipToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+      // crosshairsToolInstanceMip.resetCrosshairs();
 
       // redraw segmentation
       cornerstoneTools.segmentation
@@ -808,17 +1185,25 @@ function CornerstoneViewer({ volumeName,
       renderingEngine.getViewports().forEach((viewport) => {
         viewport.resetCamera(true, true, true, true);
         
-        viewport.setProperties({ 
-          voi: {
-            windowWidth: 400,
-            windowCenter: 40,
-          },
-         });
+        viewport.getVtkActiveCamera();
+        
+        // viewport.setProperties({ 
+        //   voi: {
+        //     windowWidth: 400,
+        //     windowCenter: 40,
+        //   },
+        //  });
       });
 
-      renderingEngine.render();
+      // set trackball rotate tool to 0,0,0
+      // const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+      // const trackballRotateToolInstance = t3dToolGroup.getToolInstance(cornerstoneTools.TrackballRotateTool.toolName);
 
+      renderingEngine.render();
+      
       setResetViewports(false);
+
+      setView(defaultView);
     }
   }, [resetViewports]);
 
@@ -872,13 +1257,13 @@ function CornerstoneViewer({ volumeName,
       <div ref={containerRef}
            style={{ width: '100%', height: '100%' }}
            id="container"></div>
-      {/*<MiddlelBottomPanel 
+      <MiddlelBottomPanel 
         onAccept={handleAcceptSelection}
         onClear={handleClearSelection}
         onExpand={handleExpandSelection}
         onMarkAccepted={handleMarkAccepted}
         onMarkRejected={handleMarkRejected}
-      />*/}
+      />
     </>
   );
 };

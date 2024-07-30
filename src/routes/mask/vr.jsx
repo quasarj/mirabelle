@@ -19,6 +19,8 @@ export default function MaskVR() {
   const { iecs } = useLoaderData();
 
   // default values for this route/mode
+  const [defaultView] = useState('All');
+
   const [layout, setLayout] = useState('MaskerVR');
   const [zoom, setZoom] = useState(250);
   const [opacity, setOpacity] = useState(0.3);
@@ -31,7 +33,7 @@ export default function MaskVR() {
   const [resetViewports, setResetViewports] = useState(false);
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(true);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(true);
-  const [view, setView] = useState("Volume");
+  const [view, setView] = useState(defaultView);
 
   // Here we just assemble the various panels that we need for this mode
   return (
@@ -49,6 +51,7 @@ export default function MaskVR() {
         viewportNavigation, setViewportNavigation,
         resetViewports, setResetViewports,
         view, setView,
+        defaultView,
         
     }}>
         <Masker iecs={iecs} />

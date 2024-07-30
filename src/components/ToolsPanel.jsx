@@ -14,6 +14,7 @@ function ToolsPanel() {
     viewportNavigation, setViewportNavigation,
     resetViewports, setResetViewports,
     view, setView,
+    defaultView,
   } = useContext(Context);
 
   const handleZoomChange = (event) => {
@@ -69,6 +70,11 @@ function ToolsPanel() {
     console.log('Projection button clicked');
   };
 
+  const handleAllButtonClick = () => {
+    setView(defaultView);
+    console.log('All button clicked');
+  };
+
   const handleResetViewportsButtonClick = () => {
     setZoom(250);
     setOpacity(0.3);
@@ -78,14 +84,14 @@ function ToolsPanel() {
     setRectangleScissors(false);
     setViewportNavigation("Zoom");
     setResetViewports(true);
-    setView("Volume");
+    setView(defaultView);
   };
 
   return (
     <div id="toolsPanel" className="overflow-y-scroll p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
       {/*<div className="mb-2 font-semib  old">Tools</div>*/}
       <ul className=" h-full pb-4">
-        <label>Study:</label>
+        <label>IEC:</label>
         <li className="pt-1 dark:bg-opacity-5 rounded-lg">
           <button className={`w-full dark:bg-slate-900`}>
             Next
@@ -102,9 +108,14 @@ function ToolsPanel() {
             Volume
           </button>
         </li>
-        <li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
+        <li className=" pt-2 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleProjectionButtonClick}className={`w-full ${ view === "Projection" ? 'bg-blue-500' : 'bg-slate-900'}`}>
             Projection
+          </button>
+        </li>
+        <li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
+          <button onClick={handleAllButtonClick}className={`w-full ${ view === "All" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+            All
           </button>
         </li>
         {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
@@ -136,7 +147,7 @@ function ToolsPanel() {
             Selection
           </button>
         </li>
-        { rectangleScissors ? <><li className="pb-1 pt-1 rounded-lg">
+        {/*{ rectangleScissors ? <><li className="pb-1 pt-1 rounded-lg">
           <button className={`w-full bg-slate-900`}>
             Expand
           </button>
@@ -151,7 +162,7 @@ function ToolsPanel() {
             Accept
           </button>
         </li>
-        </> : null }
+        </> : null } */}
         <div className="h-2"></div>
         <label>Right-Click:</label>
         <li className="pb-1 pt-1 rounded-lg">
