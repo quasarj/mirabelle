@@ -71,7 +71,7 @@ function ToolsPanel() {
   };
 
   const handleAllButtonClick = () => {
-    setView(defaultView);
+    setView("All");
     console.log('All button clicked');
   };
 
