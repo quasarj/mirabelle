@@ -222,7 +222,7 @@ function CornerstoneViewer({ volumeName,
     function setupPanel(panelId) {
       const panel = document.createElement('div');
       panel.id = panelId;
-      panel.style.display = 'none';
+      panel.style.display = 'block';
       panel.style.width = '100%';
       panel.style.height = '100%';
       panel.style.borderRadius = '8px';
@@ -667,16 +667,11 @@ function CornerstoneViewer({ volumeName,
         renderingEngine.setViewports(viewportInput);
       }
 
-      if (layout === 'MaskerVR' || layout === 'MaskerReview' || layout === 'Masker') {
-        setupVolViewportTools();
-        setupMipViewportTools();
-      }
+      setupVolViewportTools();
+      setupMipViewportTools();
+      setup3dViewportTools();
 
-      if (layout === 'MaskerVR' || layout === 'MaskerReview' | layout === 'Masker') {
-        setup3dViewportTools();
-      }
-
-      hideShowViewports();
+      //hideShowViewports();
 
       setLoading(false); // signal that setup is complete
     }
@@ -693,19 +688,19 @@ function CornerstoneViewer({ volumeName,
 
     const container = containerRef.current;
 
+    const volAxialContent = document.getElementById('vol_axial');
+    const volSagittalContent = document.getElementById('vol_sagittal');
+    const volCoronalContent = document.getElementById('vol_coronal');
+    const mipAxialContent = document.getElementById('mip_axial');
+    const mipSagittalContent = document.getElementById('mip_sagittal');
+    const mipCoronalContent = document.getElementById('mip_coronal');
+    const t3dCoronalContent = document.getElementById('t3d_coronal');
+
     if (view === 'All') {
       // set all viewport panels to be visible
 
       container.style.gridTemplateColumns = 'repeat(3, 1fr)';
       container.style.gridTemplateRows = 'repeat(3, 1fr)';
-      
-      const volAxialContent = document.getElementById('vol_axial');
-      const volSagittalContent = document.getElementById('vol_sagittal');
-      const volCoronalContent = document.getElementById('vol_coronal');
-      const mipAxialContent = document.getElementById('mip_axial');
-      const mipSagittalContent = document.getElementById('mip_sagittal');
-      const mipCoronalContent = document.getElementById('mip_coronal');
-      const t3dCoronalContent = document.getElementById('t3d_coronal');
 
       volAxialContent.style.display = 'block';
       volSagittalContent.style.display = 'block';
@@ -720,13 +715,6 @@ function CornerstoneViewer({ volumeName,
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set volume viewport panels to be visible
-      const volAxialContent = document.getElementById('vol_axial');
-      const volSagittalContent = document.getElementById('vol_sagittal');
-      const volCoronalContent = document.getElementById('vol_coronal');
-      const mipAxialContent = document.getElementById('mip_axial');
-      const mipSagittalContent = document.getElementById('mip_sagittal');
-      const mipCoronalContent = document.getElementById('mip_coronal');
-      const t3dCoronalContent = document.getElementById('t3d_coronal');
 
       volAxialContent.style.display = 'block';
       volSagittalContent.style.display = 'block';
@@ -741,13 +729,6 @@ function CornerstoneViewer({ volumeName,
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set projection viewport panels to be visible
-      const volAxialContent = document.getElementById('vol_axial');
-      const volSagittalContent = document.getElementById('vol_sagittal');
-      const volCoronalContent = document.getElementById('vol_coronal');
-      const mipAxialContent = document.getElementById('mip_axial');
-      const mipSagittalContent = document.getElementById('mip_sagittal');
-      const mipCoronalContent = document.getElementById('mip_coronal');
-      const t3dCoronalContent = document.getElementById('t3d_coronal');
 
       volAxialContent.style.display = 'none';
       volSagittalContent.style.display = 'none';

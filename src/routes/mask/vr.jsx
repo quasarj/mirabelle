@@ -19,7 +19,7 @@ export default function MaskVR() {
   const { iecs } = useLoaderData();
 
   // default values for this route/mode
-  const [defaultView] = useState('All');
+  const [defaultView] = useState('Volume');
 
   const [layout, setLayout] = useState('MaskerVR');
   const [zoom, setZoom] = useState(250);
