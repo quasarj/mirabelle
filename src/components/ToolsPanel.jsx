@@ -134,6 +134,17 @@ function ToolsPanel() {
             All
           </button>
         </li>
+        <label>Form:</label>
+        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Cuboid
+          </button>
+        </li>
+        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Cylinder
+          </button>
+        </li>
         {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
           <label>Zoom:</label>
           <input
