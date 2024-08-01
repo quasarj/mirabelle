@@ -102,6 +102,22 @@ function ToolsPanel() {
             Previous
           </button>
         </li>
+        <label>Function:</label>
+        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Mask
+          </button>
+        </li>
+        <li className=" pt-2 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Blackout
+          </button>
+        </li>
+        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Slice Removal
+          </button>
+        </li>
         <label>View:</label>
         <li className="pt-1 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'bg-blue-500' : 'bg-slate-900'}`}>

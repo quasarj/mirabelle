@@ -33,8 +33,8 @@ function getOrCreateToolgroup(toolgroup_name) {
 
 //TODO this should probably be moved somewhere else, masking.js maybe?
 async function finalCalc(coords, volumeId, iec) {
-  console.log("finalCalc running");
-  console.log(coords);
+  // console.log("finalCalc running");
+  // console.log(coords);
 
   const volume = cornerstone.cache.getVolume(volumeId);
   const volumeDims = volume.dimensions;
@@ -53,7 +53,7 @@ async function finalCalc(coords, volumeId, iec) {
 
   const topFaceCorners = [topLeft, topRight, bottomLeft, bottomRight];
 
-  console.log("Coordinates of the corners of the top face:", topFaceCorners);
+  // console.log("Coordinates of the corners of the top face:", topFaceCorners);
 
   // Calculate the center point
   const centerX = (topLeft[0] + topRight[0] + bottomLeft[0] + bottomRight[0]) / 4;
@@ -62,7 +62,7 @@ async function finalCalc(coords, volumeId, iec) {
 
   const centerPoint = [centerX, centerY, centerZ];
 
-  console.log("Center point of the top face:", centerPoint);
+  // console.log("Center point of the top face:", centerPoint);
 
   const radius = calculateDistance(topFaceCorners[0], centerPoint);
   const height = coords.z.max - coords.z.min;
@@ -115,7 +115,7 @@ async function finalCalc(coords, volumeId, iec) {
     s: i,
     d: diameter,
   };
-  console.log(output);
+  // console.log(output);
   await setParameters(iec, output);
   //TODO need better way for this
   alert("Submitted for masking!");
@@ -147,11 +147,11 @@ function CornerstoneViewer({ volumeName,
   const containerRef = useRef(null);
   const renderingEngineRef = useRef(null);
 
-  console.log(
-    ">>>>>>>>>>>>>>>>>>>>>>",
-    "CornerstoneViewer() running",
-    "loading is set to:", loading,
-  );
+  // console.log(
+  //   ">>>>>>>>>>>>>>>>>>>>>>",
+  //   "CornerstoneViewer() running",
+  //   "loading is set to:", loading,
+  // );
 
   let coords;
   let segId = 'seg' + volumeName;
@@ -257,7 +257,6 @@ function CornerstoneViewer({ volumeName,
       t3dToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
 
       if (viewportNavigation === 'Pan') {
-        console.log("Setting up Pan Tool");
         // Pan
         // cornerstoneTools.addTool(cornerstoneTools.PanTool);
         t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
@@ -268,7 +267,6 @@ function CornerstoneViewer({ volumeName,
           ],
         });
       } else {
-        console.log("Setting up Zoom Tool");
         // Zoom
         // cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
         t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
@@ -341,7 +339,7 @@ function CornerstoneViewer({ volumeName,
         cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
         cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
       } catch (error) {
-        console.log("errors while loading tools:", error);
+        // console.log("errors while loading tools:", error);
       }
 
       // Create group and add viewports
@@ -477,7 +475,7 @@ function CornerstoneViewer({ volumeName,
         cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
         cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
       } catch (error) {
-        console.log("errors while loading tools:", error);
+        // console.log("errors while loading tools:", error);
       }
 
       // Create group and add viewports
@@ -671,8 +669,6 @@ function CornerstoneViewer({ volumeName,
       setupMipViewportTools();
       setup3dViewportTools();
 
-      //hideShowViewports();
-
       setLoading(false); // signal that setup is complete
     }
 
@@ -686,6 +682,8 @@ function CornerstoneViewer({ volumeName,
 
   function hideShowViewports() {
 
+    // console.log("loading:", loading);
+    // console.log("hideShowViewports called");
     const container = containerRef.current;
 
     const volAxialContent = document.getElementById('vol_axial');
@@ -696,6 +694,17 @@ function CornerstoneViewer({ volumeName,
     const mipCoronalContent = document.getElementById('mip_coronal');
     const t3dCoronalContent = document.getElementById('t3d_coronal');
 
+    // console.log(
+    //   volAxialContent.style.display,
+    //   volSagittalContent.style.display,
+    //   volCoronalContent.style.display,
+    //   mipAxialContent.style.display,
+    //   mipSagittalContent.style.display,
+    //   mipCoronalContent.style.display,
+    //   t3dCoronalContent.style.display,
+    // );
+
+
     if (view === 'All') {
       // set all viewport panels to be visible
 
@@ -705,9 +714,11 @@ function CornerstoneViewer({ volumeName,
       volAxialContent.style.display = 'block';
       volSagittalContent.style.display = 'block';
       volCoronalContent.style.display = 'block';
+
       mipAxialContent.style.display = 'block';
       mipSagittalContent.style.display = 'block';
       mipCoronalContent.style.display = 'block';
+
       t3dCoronalContent.style.display = 'block';
     } else if (view === 'Volume') {
 
@@ -722,6 +733,7 @@ function CornerstoneViewer({ volumeName,
       mipAxialContent.style.display = 'none';
       mipSagittalContent.style.display = 'none';
       mipCoronalContent.style.display = 'none';
+
       t3dCoronalContent.style.display = 'block';
     } else if (view === 'Projection') {
 
@@ -729,24 +741,37 @@ function CornerstoneViewer({ volumeName,
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set projection viewport panels to be visible
-
       volAxialContent.style.display = 'none';
       volSagittalContent.style.display = 'none';
       volCoronalContent.style.display = 'none';
+      
       mipAxialContent.style.display = 'block';
       mipSagittalContent.style.display = 'block';
       mipCoronalContent.style.display = 'block';
+
       t3dCoronalContent.style.display = 'block';
     }
+
+    // console.log(
+    //   volAxialContent.style.display,
+    //   volSagittalContent.style.display,
+    //   volCoronalContent.style.display,
+    //   mipAxialContent.style.display,
+    //   mipSagittalContent.style.display,
+    //   mipCoronalContent.style.display,
+    //   t3dCoronalContent.style.display,
+    // );
   }
 
   useEffect(() => {
+
     // check if volumes mips and 3d viewports are loaded already
     if (loading) {
       return;
     }
-
+    
     hideShowViewports();
+    console.log("view changed to:", view);
     
   }, [view]);
 
@@ -780,7 +805,7 @@ function CornerstoneViewer({ volumeName,
       
       volume.load();
 
-      console.log("about to setVolumes for rendering engine:", renderingEngine);
+      // console.log("about to setVolumes for rendering engine:", renderingEngine);
       
       await cornerstone.setVolumesForViewports(
           renderingEngine,
@@ -876,7 +901,7 @@ function CornerstoneViewer({ volumeName,
     if (renderingEngine) {
       const viewport = renderingEngine.getViewport('t3d_coronal');
       viewport.setProperties({ preset: selectedPreset });
-      console.log(cornerstone.cache.getVolumes());
+      // console.log(cornerstone.cache.getVolumes());
     }
   }, [selectedPreset]);
 
@@ -1128,9 +1153,9 @@ function CornerstoneViewer({ volumeName,
 
       // Remove all segmentations
       const segVolume = cornerstone.cache.getVolume(segId);
-      console.log("segVolume is", segVolume);
+      // console.log("segVolume is", segVolume);
       const scalarData = segVolume.scalarData;
-      console.log("scalarData is", scalarData);
+      // console.log("scalarData is", scalarData);
       scalarData.fill(0);
 
       // reset crosshairs tool slab thickness for vols
@@ -1166,8 +1191,6 @@ function CornerstoneViewer({ volumeName,
       renderingEngine.getViewports().forEach((viewport) => {
         viewport.resetCamera(true, true, true, true);
         
-        viewport.getVtkActiveCamera();
-        
         // viewport.setProperties({ 
         //   voi: {
         //     windowWidth: 400,
@@ -1189,7 +1212,7 @@ function CornerstoneViewer({ volumeName,
   }, [resetViewports]);
 
   async function handleExpandSelection() {
-    console.log('handleExpandSelection called, setId is', segId);
+    // console.log('handleExpandSelection called, setId is', segId);
     coords = expandSegTo3D(segId);
 
     cornerstoneTools.segmentation

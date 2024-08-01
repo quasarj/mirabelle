@@ -65,14 +65,14 @@ module.exports = {
         },
     proxy: [
             {
-                // PROD (disabled)
-                context: ['/papi-prod'],
+                // PROD
+                context: ['/papi'],
                 target: 'http://tcia-posda-rh-1.ad.uams.edu',
                 headers: { 'Authorization': 'Bearer e9a63bc2-bfa5-4299-afb3-c844fb2ef38b' },
             },
             {
-                // ARIES
-                context: ['/papi'],
+                // ARIES (disabled)
+                context: ['/papi-prod'],
                 target: 'http://aries-posda-a1.ad.uams.edu',
                 headers: { 'Authorization': 'Bearer fcda15e2-297e-4893-984c-d2667371d9f5' },
             },
