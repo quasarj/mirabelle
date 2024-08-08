@@ -21,7 +21,8 @@ import {
 } from '../utilities';
 
 import { setParameters, loaded, flagAsAccepted, flagAsRejected } from '../masking';
-import { render } from 'react-dom';
+
+import resizeButtonLogo from '../assets/resize-button.svg';
 
 function getOrCreateToolgroup(toolgroup_name) {
   let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -220,7 +221,57 @@ function CornerstoneViewer({ volumeName,
     });
 
     function setupPanel(panelId) {
+      const panelWrapper = document.createElement('div');
+      const resizeButton = document.createElement('button');
       const panel = document.createElement('div');
+
+      // set panelWrapper styles
+      panelWrapper.id = panelId + '_wrapper';
+      panelWrapper.style.display = 'block';
+      panelWrapper.style.width = '100%';
+      panelWrapper.style.height = '100%';
+      panelWrapper.style.position = 'relative';
+      panelWrapper.style.borderRadius = '8px';
+      panelWrapper.style.overflow = 'hidden';
+      panelWrapper.style.backgroundColor = 'black';
+
+      // remove default button styling
+      resizeButton.style.border = 'none';
+      resizeButton.style.outline = 'none';
+      resizeButton.style.cursor = 'pointer';
+      resizeButton.style.backgroundColor = 'transparent';
+      resizeButton.style.padding = '0';
+
+      // set resizeButton backgorund image to the resizeButtonLogo
+      resizeButton.id = panelId + '_resize_button';
+      resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
+      resizeButton.style.backgroundSize = 'contain';
+      resizeButton.style.backgroundRepeat = 'no-repeat';
+      resizeButton.style.backgroundPosition = 'center';
+      resizeButton.style.width = '30px';
+      resizeButton.style.height = '30px';
+      resizeButton.style.position = 'absolute';
+      resizeButton.style.top = '10px';
+      resizeButton.style.left = '10px';
+      resizeButton.style.zIndex = '1000';
+      resizeButton.style.display = 'none';
+      // set button to show when mouse is over panelWrapper
+      panelWrapper.onmouseover = () => {  
+        resizeButton.style.display = 'block';
+      };
+      panelWrapper.onmouseout = () => {  resizeButton.style.display = 'none'; };
+      
+      // on resizeButton click, set the panelWrapper to be full viewport size
+      resizeButton.onclick = () => {
+        panelWrapper.style.width = '100vw';
+        panelWrapper.style.height = '100vh';
+        panelWrapper.style.position = 'fixed';
+        panelWrapper.style.top = '0';
+        panelWrapper.style.left = '0';
+        panelWrapper.style.zIndex = '1000';
+        resizeButton.style.display = 'none';
+      };
+
       panel.id = panelId;
       panel.style.display = 'block';
       panel.style.width = '100%';
@@ -230,7 +281,12 @@ function CornerstoneViewer({ volumeName,
       panel.style.backgroundColor = 'black';
       panel.oncontextmenu = e => e.preventDefault();
       resizeObserver.observe(panel);
-      return panel;
+
+      // add resizebutton and panel to panelWrapper
+      panelWrapper.appendChild(panel);
+      panelWrapper.appendChild(resizeButton);
+
+      return panelWrapper;
     }
 
     function setup3dViewportTools() {
@@ -607,7 +663,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 'vol_axial',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: volAxialContent,
+            element: volAxialContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.AXIAL,
             },
@@ -615,7 +671,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 'vol_sagittal',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: volSagittalContent,
+            element: volSagittalContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
             },
@@ -623,7 +679,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 'vol_coronal',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: volCoronalContent,
+            element: volCoronalContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.CORONAL,
             },
@@ -631,7 +687,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 'mip_axial',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: mipAxialContent,
+            element: mipAxialContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.AXIAL,
             },
@@ -639,7 +695,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 'mip_sagittal',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: mipSagittalContent,
+            element: mipSagittalContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
             },
@@ -647,7 +703,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 'mip_coronal',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-            element: mipCoronalContent,
+            element: mipCoronalContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.CORONAL,
             },
@@ -655,7 +711,7 @@ function CornerstoneViewer({ volumeName,
           {
             viewportId: 't3d_coronal',
             type: cornerstone.Enums.ViewportType.VOLUME_3D,
-            element: t3dCoronalContent,
+            element: t3dCoronalContent.childNodes[0],
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.CORONAL,
             },
@@ -686,13 +742,13 @@ function CornerstoneViewer({ volumeName,
     // console.log("hideShowViewports called");
     const container = containerRef.current;
 
-    const volAxialContent = document.getElementById('vol_axial');
-    const volSagittalContent = document.getElementById('vol_sagittal');
-    const volCoronalContent = document.getElementById('vol_coronal');
-    const mipAxialContent = document.getElementById('mip_axial');
-    const mipSagittalContent = document.getElementById('mip_sagittal');
-    const mipCoronalContent = document.getElementById('mip_coronal');
-    const t3dCoronalContent = document.getElementById('t3d_coronal');
+    const volAxialContent = document.getElementById('vol_axial_wrapper');
+    const volSagittalContent = document.getElementById('vol_sagittal_wrapper');
+    const volCoronalContent = document.getElementById('vol_coronal_wrapper');
+    const mipAxialContent = document.getElementById('mip_axial_wrapper');
+    const mipSagittalContent = document.getElementById('mip_sagittal_wrapper');
+    const mipCoronalContent = document.getElementById('mip_coronal_wrapper');
+    const t3dCoronalContent = document.getElementById('t3d_coronal_wrapper');
 
     // console.log(
     //   volAxialContent.style.display,
