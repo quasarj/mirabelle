@@ -23,6 +23,7 @@ import {
 import { setParameters, loaded, flagAsAccepted, flagAsRejected } from '../masking';
 
 import resizeButtonLogo from '../assets/resize-button.svg';
+import { defaults } from 'autoprefixer';
 
 function getOrCreateToolgroup(toolgroup_name) {
   let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -128,23 +129,38 @@ function CornerstoneViewer({ volumeName,
                              iec }) {
 
   const { 
-    layout,
-    zoom,
-    opacity,
-    setPresets,
-    selectedPreset,
-    windowLevel,
-    crosshairs,
-    rectangleScissors,
-    resetViewports,
-    viewportNavigation,
-    setResetViewports,
-    view,
-    setView,
+    defaultLayout,
+    defaultZoom,
+    defaultOpacity,
+    defaultPresets,
+    defaultSelectedPreset,
+    defaultWindowLevel,
+    defaultCrosshairs,
+    defaultRectangleScissors,
+    defaultViewportNavigation,
+    defaultResetViewports,
+    defaultLeftPanelVisibility,
+    defaultRightPanelVisibility,
     defaultView,
+
+    layout, setLayout,
+    zoom, setZoom,
+    opacity, setOpacity,
+    presets, setPresets,
+    selectedPreset, setSelectedPreset,
+    leftPanelVisibility, setLeftPanelVisibility,
+    rightPanelVisibility, setRightPanelVisibility,
+    windowLevel, setWindowLevel,
+    crosshairs, setCrosshairs,
+    rectangleScissors, setRectangleScissors,
+    viewportNavigation, setViewportNavigation,
+    resetViewports, setResetViewports,
+    view, setView,
   } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
+  const [ filesLoaded, setFilesLoaded ] = useState(false);
+
   const containerRef = useRef(null);
   const renderingEngineRef = useRef(null);
 
@@ -725,7 +741,8 @@ function CornerstoneViewer({ volumeName,
       setupMipViewportTools();
       setup3dViewportTools();
 
-      setLoading(false); // signal that setup is complete
+      setLoading(false);
+      
     }
 
     run();
@@ -736,10 +753,15 @@ function CornerstoneViewer({ volumeName,
     };
   }, [layout]);
 
-  function hideShowViewports() {
+  useEffect(() => {
+    
+    // check if files are loaded before setting viewports
+    if (!filesLoaded) {
+      return;
+    }
 
-    // console.log("loading:", loading);
-    // console.log("hideShowViewports called");
+    console.log("viewports loaded");
+    
     const container = containerRef.current;
 
     const volAxialContent = document.getElementById('vol_axial_wrapper');
@@ -749,17 +771,6 @@ function CornerstoneViewer({ volumeName,
     const mipSagittalContent = document.getElementById('mip_sagittal_wrapper');
     const mipCoronalContent = document.getElementById('mip_coronal_wrapper');
     const t3dCoronalContent = document.getElementById('t3d_coronal_wrapper');
-
-    // console.log(
-    //   volAxialContent.style.display,
-    //   volSagittalContent.style.display,
-    //   volCoronalContent.style.display,
-    //   mipAxialContent.style.display,
-    //   mipSagittalContent.style.display,
-    //   mipCoronalContent.style.display,
-    //   t3dCoronalContent.style.display,
-    // );
-
 
     if (view === 'All') {
       // set all viewport panels to be visible
@@ -786,6 +797,7 @@ function CornerstoneViewer({ volumeName,
       volAxialContent.style.display = 'block';
       volSagittalContent.style.display = 'block';
       volCoronalContent.style.display = 'block';
+
       mipAxialContent.style.display = 'none';
       mipSagittalContent.style.display = 'none';
       mipCoronalContent.style.display = 'none';
@@ -807,33 +819,12 @@ function CornerstoneViewer({ volumeName,
 
       t3dCoronalContent.style.display = 'block';
     }
-
-    // console.log(
-    //   volAxialContent.style.display,
-    //   volSagittalContent.style.display,
-    //   volCoronalContent.style.display,
-    //   mipAxialContent.style.display,
-    //   mipSagittalContent.style.display,
-    //   mipCoronalContent.style.display,
-    //   t3dCoronalContent.style.display,
-    // );
-  }
-
-  useEffect(() => {
-
-    // check if volumes mips and 3d viewports are loaded already
-    if (loading) {
-      return;
-    }
     
-    hideShowViewports();
-    console.log("view changed to:", view);
-    
-  }, [view]);
+  }, [view, filesLoaded]);
 
   // Load the actual volume into the display here
   useEffect(() => {
-
+    
     cache.purgeCache();
 
     // do nothing if Cornerstone is still loading
@@ -860,7 +851,7 @@ function CornerstoneViewer({ volumeName,
       await getFileData();
       
       volume.load();
-
+      
       // console.log("about to setVolumes for rendering engine:", renderingEngine);
       
       await cornerstone.setVolumesForViewports(
@@ -941,6 +932,7 @@ function CornerstoneViewer({ volumeName,
         ]
       );
 
+      setFilesLoaded(true);
     }
 
     doit();
@@ -1203,7 +1195,18 @@ function CornerstoneViewer({ volumeName,
   }, [viewportNavigation]);
 
   useEffect(() => {
+    
     if (resetViewports) {
+
+      setZoom(defaultZoom);
+      setOpacity(defaultOpacity);
+      setSelectedPreset(defaultSelectedPreset);
+      setWindowLevel(defaultWindowLevel);
+      setCrosshairs(defaultCrosshairs);
+      setRectangleScissors(defaultRectangleScissors);
+      setViewportNavigation(defaultViewportNavigation);
+      setView(defaultView);
+      setResetViewports(defaultResetViewports);
       
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
@@ -1213,57 +1216,34 @@ function CornerstoneViewer({ volumeName,
       const scalarData = segVolume.scalarData;
       // console.log("scalarData is", scalarData);
       scalarData.fill(0);
-
-      // reset crosshairs tool slab thickness for vols
-      const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-      const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
-      crosshairsToolInstance.resetCrosshairs();
-
-      // reset crosshairs tool slab thickness for mips
-      // get the volume dimentions
-      // const volume = cornerstone.cache.getVolume(volumeId);
-      // const volDimensions = volume.dimensions;
-
-      // const volSlab = Math.sqrt(
-      //     volDimensions[0] * volDimensions[0] +
-      //     volDimensions[1] * volDimensions[1] +
-      //     volDimensions[2] * volDimensions[2]
-      // );
-
-      // const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
-      // const crosshairsToolInstanceMip = mipToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
-
-      // set slab thickness of mip crosshairs tool
-      
-      // const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
-      // const crosshairsToolInstanceMip = mipToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
-      // crosshairsToolInstanceMip.resetCrosshairs();
-
       // redraw segmentation
       cornerstoneTools.segmentation
         .triggerSegmentationEvents
         .triggerSegmentationDataModified(segId);
 
-      renderingEngine.getViewports().forEach((viewport) => {
-        viewport.resetCamera(true, true, true, true);
         
-        // viewport.setProperties({ 
-        //   voi: {
-        //     windowWidth: 400,
-        //     windowCenter: 40,
-        //   },
-        //  });
-      });
+          // // reset crosshairs tool slab thickness for vols
+          // const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+          // const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+          // crosshairsToolInstance.resetCrosshairs();
 
-      // set trackball rotate tool to 0,0,0
-      // const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-      // const trackballRotateToolInstance = t3dToolGroup.getToolInstance(cornerstoneTools.TrackballRotateTool.toolName);
+          // setTimeout(() => {
+          //   renderingEngine.getViewports().forEach((viewport) => {
+            
+          //     viewport.resetCamera(true, true, true, true);
+           
+          // });
 
-      renderingEngine.render();
+          // renderingEngine.render();
+          // }, 1000);
+          
+
+          // const viewport3D = renderingEngine.getViewports('t3d_coronal');
+          // viewport3D.resetCamera(true, true, true, true);
+
+        
       
-      setResetViewports(false);
-
-      setView(defaultView);
+      
     }
   }, [resetViewports]);
 

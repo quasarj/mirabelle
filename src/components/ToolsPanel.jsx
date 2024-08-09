@@ -4,17 +4,33 @@ import { Context } from './Context.js';
 
 function ToolsPanel() {
   const { 
-    zoom, setZoom, 
-    opacity, setOpacity, 
-    presets, 
-    selectedPreset, setSelectedPreset, 
-    windowLevel, setWindowLevel, 
+    defaultLayout,
+    defaultZoom,
+    defaultOpacity,
+    defaultPresets,
+    defaultSelectedPreset,
+    defaultWindowLevel,
+    defaultCrosshairs,
+    defaultRectangleScissors,
+    defaultViewportNavigation,
+    defaultResetViewports,
+    defaultLeftPanelVisibility,
+    defaultRightPanelVisibility,
+    defaultView,
+
+    layout, setLayout,
+    zoom, setZoom,
+    opacity, setOpacity,
+    presets, setPresets,
+    selectedPreset, setSelectedPreset,
+    leftPanelVisibility, setLeftPanelVisibility,
+    rightPanelVisibility, setRightPanelVisibility,
+    windowLevel, setWindowLevel,
     crosshairs, setCrosshairs,
     rectangleScissors, setRectangleScissors,
     viewportNavigation, setViewportNavigation,
     resetViewports, setResetViewports,
     view, setView,
-    defaultView,
   } = useContext(Context);
 
   const handleZoomChange = (event) => {
@@ -76,15 +92,7 @@ function ToolsPanel() {
   };
 
   const handleResetViewportsButtonClick = () => {
-    setZoom(250);
-    setOpacity(0.3);
-    setSelectedPreset('CT-MIP');
-    setWindowLevel(true);
-    setCrosshairs(false);
-    setRectangleScissors(false);
-    setViewportNavigation("Zoom");
     setResetViewports(true);
-    setView(defaultView);
   };
 
   return (
@@ -102,22 +110,6 @@ function ToolsPanel() {
             Previous
           </button>
         </li>
-        <label>Function:</label>
-        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Mask
-          </button>
-        </li>
-        <li className=" pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Blackout
-          </button>
-        </li>
-        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Slice Removal
-          </button>
-        </li>
         <label>View:</label>
         <li className="pt-1 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'bg-blue-500' : 'bg-slate-900'}`}>
@@ -132,6 +124,22 @@ function ToolsPanel() {
         <li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleAllButtonClick}className={`w-full ${ view === "All" ? 'bg-blue-500' : 'bg-slate-900'}`}>
             All
+          </button>
+        </li>
+        <label>Function:</label>
+        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Mask
+          </button>
+        </li>
+        <li className=" pt-2 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Blackout
+          </button>
+        </li>
+        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
+          <button className={`w-full dark:bg-slate-900`}>
+            Slice Removal
           </button>
         </li>
         <label>Form:</label>
