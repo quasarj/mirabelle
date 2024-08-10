@@ -250,6 +250,7 @@ function CornerstoneViewer({ volumeName,
       panelWrapper.style.borderRadius = '8px';
       panelWrapper.style.overflow = 'hidden';
       panelWrapper.style.backgroundColor = 'black';
+      panelWrapper.style.visibility = 'hidden';
 
       // remove default button styling
       resizeButton.style.border = 'none';
@@ -778,14 +779,21 @@ function CornerstoneViewer({ volumeName,
       container.style.gridTemplateColumns = 'repeat(3, 1fr)';
       container.style.gridTemplateRows = 'repeat(3, 1fr)';
 
+      volAxialContent.style.visibility = 'visible';
+      volSagittalContent.style.visibility = 'visible';
+      volCoronalContent.style.visibility = 'visible';
       volAxialContent.style.display = 'block';
       volSagittalContent.style.display = 'block';
       volCoronalContent.style.display = 'block';
 
+      mipAxialContent.style.visibility = 'visible';
+      mipSagittalContent.style.visibility = 'visible';
+      mipCoronalContent.style.visibility = 'visible';
       mipAxialContent.style.display = 'block';
       mipSagittalContent.style.display = 'block';
       mipCoronalContent.style.display = 'block';
 
+      t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
     } else if (view === 'Volume') {
 
@@ -794,14 +802,21 @@ function CornerstoneViewer({ volumeName,
 
       // set volume viewport panels to be visible
 
+      volAxialContent.style.visibility = 'visible';
+      volSagittalContent.style.visibility = 'visible';
+      volCoronalContent.style.visibility = 'visible';
       volAxialContent.style.display = 'block';
       volSagittalContent.style.display = 'block';
       volCoronalContent.style.display = 'block';
 
+      mipAxialContent.style.visibility = 'hidden';
+      mipSagittalContent.style.visibility = 'hidden';
+      mipCoronalContent.style.visibility = 'hidden';
       mipAxialContent.style.display = 'none';
       mipSagittalContent.style.display = 'none';
       mipCoronalContent.style.display = 'none';
 
+      t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
     } else if (view === 'Projection') {
 
@@ -809,14 +824,21 @@ function CornerstoneViewer({ volumeName,
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set projection viewport panels to be visible
+      volAxialContent.style.visibility = 'hidden';
+      volSagittalContent.style.visibility = 'hidden';
+      volCoronalContent.style.visibility = 'hidden';
       volAxialContent.style.display = 'none';
       volSagittalContent.style.display = 'none';
       volCoronalContent.style.display = 'none';
       
+      mipAxialContent.style.visibility = 'visible';
+      mipSagittalContent.style.visibility = 'visible';
+      mipCoronalContent.style.visibility = 'visible';
       mipAxialContent.style.display = 'block';
       mipSagittalContent.style.display = 'block';
       mipCoronalContent.style.display = 'block';
 
+      t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
     }
     
@@ -933,6 +955,7 @@ function CornerstoneViewer({ volumeName,
       );
 
       setFilesLoaded(true);
+      
     }
 
     doit();
@@ -1221,28 +1244,20 @@ function CornerstoneViewer({ volumeName,
         .triggerSegmentationEvents
         .triggerSegmentationDataModified(segId);
 
-        
           // // reset crosshairs tool slab thickness for vols
           // const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
           // const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
           // crosshairsToolInstance.resetCrosshairs();
-
-          // setTimeout(() => {
-          //   renderingEngine.getViewports().forEach((viewport) => {
-            
+          
+ 
+          // renderingEngine.getViewports().forEach((viewport) => {
+          //   // check if viewports are loaded before resettng the camera
+          //   //if (!viewport) {
           //     viewport.resetCamera(true, true, true, true);
+          //     viewport.render();
+          //   //}
            
           // });
-
-          // renderingEngine.render();
-          // }, 1000);
-          
-
-          // const viewport3D = renderingEngine.getViewports('t3d_coronal');
-          // viewport3D.resetCamera(true, true, true, true);
-
-        
-      
       
     }
   }, [resetViewports]);
