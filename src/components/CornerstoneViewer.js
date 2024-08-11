@@ -230,6 +230,7 @@ function CornerstoneViewer({ volumeName,
 
 
     const resizeObserver = new ResizeObserver(() => {
+      console.log("resizeObserver running");
       const renderingEngine = renderingEngineRef.current;
       if (renderingEngine) {
         renderingEngine.resize(true, true);
@@ -1227,11 +1228,9 @@ function CornerstoneViewer({ volumeName,
       setWindowLevel(defaultWindowLevel);
       setCrosshairs(defaultCrosshairs);
       setRectangleScissors(defaultRectangleScissors);
-      setViewportNavigation(defaultViewportNavigation);
       setView(defaultView);
+      setViewportNavigation(defaultViewportNavigation);
       setResetViewports(defaultResetViewports);
-      
-      const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
 
       // Remove all segmentations
       const segVolume = cornerstone.cache.getVolume(segId);
@@ -1243,22 +1242,37 @@ function CornerstoneViewer({ volumeName,
       cornerstoneTools.segmentation
         .triggerSegmentationEvents
         .triggerSegmentationDataModified(segId);
-
-          // // reset crosshairs tool slab thickness for vols
-          // const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-          // const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
-          // crosshairsToolInstance.resetCrosshairs();
-          
- 
-          // renderingEngine.getViewports().forEach((viewport) => {
-          //   // check if viewports are loaded before resettng the camera
-          //   //if (!viewport) {
-          //     viewport.resetCamera(true, true, true, true);
-          //     viewport.render();
-          //   //}
-           
-          // });
+  
+      // reset cameras for all the viewports that its wrapper is visible
+      const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+      renderingEngine.getViewports().forEach((viewport) => {
+        // if the viewport parent node is visible, reset camera
+        const viewportElement = document.getElementById(viewport.id);
+        if (viewportElement.parentNode.style.display !== 'none') {
+          viewport.resetCamera(true, true, true, true);
+          viewport.render();
+        }
+      });
       
+      // Wait 50ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
+      setTimeout(() => {
+        
+        // if the viewport parent node is visible, reset camera
+        renderingEngine.getViewports().forEach((viewport) => {
+          const viewportElement = document.getElementById(viewport.id);
+          if (viewportElement.parentNode.style.display !== 'none') {
+            viewport.resetCamera(true, true, true, true);
+            viewport.render();
+          }
+        });
+
+        // reset crosshairs tool slab thickness if the volume viewport is visible
+        if (document.getElementById('vol_axial_wrapper').style.display !== 'none') {
+          const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+          const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+          crosshairsToolInstance.resetCrosshairs();
+        }
+      }, 50);
     }
   }, [resetViewports]);
 
