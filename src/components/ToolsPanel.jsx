@@ -101,28 +101,28 @@ function ToolsPanel() {
       <ul className=" h-full pb-4">
         <label>IEC:</label>
         <li className="pt-1 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
+          <button className={`w-full bg-white dark:bg-slate-900`}>
             Next
           </button>
         </li>
         <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
+          <button className={`w-full bg-white dark:bg-slate-900`}>
             Previous
           </button>
         </li>
         <label>View:</label>
         <li className="pt-1 dark:bg-opacity-5  rounded-lg">
-          <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Volume
           </button>
         </li>
         <li className=" pt-2 dark:bg-opacity-5  rounded-lg">
-          <button onClick={handleProjectionButtonClick}className={`w-full ${ view === "Projection" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleProjectionButtonClick}className={`w-full ${ view === "Projection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Projection
           </button>
         </li>
         <li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
-          <button onClick={handleAllButtonClick}className={`w-full ${ view === "All" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleAllButtonClick}className={`w-full ${ view === "All" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             All
           </button>
         </li>
@@ -168,17 +168,17 @@ function ToolsPanel() {
         </li>*/}
         <label>Left-Click:</label>
         <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Window Level
           </button>
         </li>
         <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handleCrosshairsButtonClick} className={`w-full ${ crosshairs ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleCrosshairsButtonClick} className={`w-full ${ crosshairs ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Crosshairs
           </button>
         </li>
         <li className="mb-1 pt-1 rounded-lg">
-          <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Selection
           </button>
         </li>
@@ -201,12 +201,12 @@ function ToolsPanel() {
         <div className="h-2"></div>
         <label>Right-Click:</label>
         <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handleZoomButtonClick} className={`w-full ${ viewportNavigation === "Zoom" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handleZoomButtonClick} className={`w-full ${ viewportNavigation === "Zoom" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Zoom
           </button>
         </li>
         <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handlePanButtonClick} className={`w-full ${ viewportNavigation === "Pan" ? 'bg-blue-500' : 'bg-slate-900'}`}>
+          <button onClick={handlePanButtonClick} className={`w-full ${ viewportNavigation === "Pan" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Pan
           </button>
         </li>
@@ -232,7 +232,7 @@ function ToolsPanel() {
           </select>
         </li>
         <li className="mb-2 pb-2 pt-4 rounded-lg">
-          <button onClick={handleResetViewportsButtonClick}className="w-full bg-red-600">
+          <button onClick={handleResetViewportsButtonClick}className="w-full text-white bg-red-600">
             Reset Viewports
           </button>
         </li>

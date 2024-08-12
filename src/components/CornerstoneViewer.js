@@ -230,11 +230,51 @@ function CornerstoneViewer({ volumeName,
 
 
     const resizeObserver = new ResizeObserver(() => {
-      console.log("resizeObserver running");
+      console.log("Zoo---------------------------------ming! ")
+      console.log("Previous zoom level:");
+      // save the zoom level in all viewports
+      const zoomLevel = [];
       const renderingEngine = renderingEngineRef.current;
       if (renderingEngine) {
+        renderingEngine.getViewports().forEach((viewport, index) => {
+          const camera = viewport.getCamera();
+          zoomLevel[index] = camera.parallelScale;
+          console.log(index, viewport.id, zoomLevel[index] );
+        });
+
+        // save the pan location in all viewports
+        const panLocation = [];
+        renderingEngine.getViewports().forEach((viewport, index) => {
+          const camera = viewport.getCamera();
+          panLocation[index] = camera.position;
+          console.log(index, viewport.id, panLocation[index] );
+        });
+
         renderingEngine.resize(true, true);
+
+        setTimeout(() => {
+          console.log("Current zoom level:");
+          renderingEngine.getViewports().forEach((viewport, index) => {
+            const camera = viewport.getCamera();
+            camera.parallelScale = zoomLevel[index];
+            viewport.setCamera(camera);
+            console.log(index, viewport.id, camera.parallelScale );
+            viewport.render();
+          });
+
+          console.log("Current pan location:");
+          renderingEngine.getViewports().forEach((viewport, index) => {
+            const camera = viewport.getCamera();
+            camera.position = panLocation[index];
+            viewport.setCamera(camera);
+            console.log(index, viewport.id, camera.position );
+            viewport.render();
+          });
+        
+        }, 50);
       }
+
+      
     });
 
     function setupPanel(panelId) {
