@@ -116,16 +116,16 @@ function ToolsPanel() {
             Volume
           </button>
         </li>
-        <li className=" pt-2 dark:bg-opacity-5  rounded-lg">
+        <li className=" pt-2 mb-4 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleProjectionButtonClick}className={`w-full ${ view === "Projection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             Projection
           </button>
         </li>
-        <li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
+        {/*<li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleAllButtonClick}className={`w-full ${ view === "All" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
             All
           </button>
-        </li>
+        </li>*/}
         <label>Function:</label>
         <li className="pt-1 dark:bg-opacity-5 rounded-lg">
           <button className={`w-full dark:bg-slate-900`}>

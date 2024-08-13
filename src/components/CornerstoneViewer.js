@@ -840,7 +840,7 @@ function CornerstoneViewer({ volumeName,
       t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Volume') {
 
-      container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      container.style.gridTemplateColumns = 'repeat(2, 1fr)';
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set volume viewport panels to be visible
@@ -861,10 +861,21 @@ function CornerstoneViewer({ volumeName,
 
       t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
-      t3dCoronalContent.style.gridColumn = 'span 3';
+
+      // move t3dCoronalContent to the top right cell of the grid
+      t3dCoronalContent.style.gridColumn = 2;
+      t3dCoronalContent.style.gridRow = 1;
+
+      // move volCoronalContent to the bottom left cell of the grid
+      volCoronalContent.style.gridColumn = 1;
+      volCoronalContent.style.gridRow = 2;
+
+
+      
+      // t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Projection') {
 
-      container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      container.style.gridTemplateColumns = 'repeat(2, 1fr)';
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set projection viewport panels to be visible
@@ -884,7 +895,16 @@ function CornerstoneViewer({ volumeName,
 
       t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
-      t3dCoronalContent.style.gridColumn = 'span 3';
+
+      // move t3dCoronalContent to the top right cell of the grid
+      t3dCoronalContent.style.gridColumn = 2;
+      t3dCoronalContent.style.gridRow = 1;
+
+      // move mipCoronalContent to the bottom left cell of the grid
+      mipCoronalContent.style.gridColumn = 1;
+      mipCoronalContent.style.gridRow = 2;
+
+      // t3dCoronalContent.style.gridColumn = 'span 3';
     }
     
   }, [view, filesLoaded]);
@@ -1316,7 +1336,7 @@ function CornerstoneViewer({ volumeName,
           const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
           crosshairsToolInstance.resetCrosshairs();
         }
-      }, 50);
+      }, 100);
     }
   }, [resetViewports]);
 
