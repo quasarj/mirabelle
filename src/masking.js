@@ -52,7 +52,8 @@ export async function flagAsRejected(iec) {
 
 	return details;
 }
-export async function setParameters(iec, { lr, pa, s, i, d }) {
+
+export async function setParameters(iec, { lr, pa, is, w, h, d }) {
 	const response = await fetch(
 		`/papi/v1/masking/${iec}/parameters`,
 		{
@@ -60,13 +61,14 @@ export async function setParameters(iec, { lr, pa, s, i, d }) {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ lr, pa, s, i, d }),
+			body: JSON.stringify({ lr, pa, is, w, h, d }),
 		}
 	);
 	const details = await response.json();
 
 	return details;
 }
+
 export async function getFiles(iec) {
 
 	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
