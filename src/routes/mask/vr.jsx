@@ -31,7 +31,7 @@ export default function MaskVR() {
   const defaultResetViewports = false;
   const defaultLeftPanelVisibility = true;
   const defaultRightPanelVisibility = true;
-  const defaultView = 'Volume';
+  const defaultView = 'All';
 
   const [layout, setLayout] = useState(defaultLayout);
   const [zoom, setZoom] = useState(defaultZoom);

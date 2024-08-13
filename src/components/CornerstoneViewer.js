@@ -836,9 +836,11 @@ function CornerstoneViewer({ volumeName,
 
       t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
+      //set t3dCoronalContent to expand to take up 3 columns
+      t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Volume') {
 
-      container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      container.style.gridTemplateColumns = 'repeat(3, 1fr)';
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set volume viewport panels to be visible
@@ -859,9 +861,10 @@ function CornerstoneViewer({ volumeName,
 
       t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
+      t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Projection') {
 
-      container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      container.style.gridTemplateColumns = 'repeat(3, 1fr)';
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
       // set projection viewport panels to be visible
@@ -881,6 +884,7 @@ function CornerstoneViewer({ volumeName,
 
       t3dCoronalContent.style.visibility = 'visible';
       t3dCoronalContent.style.display = 'block';
+      t3dCoronalContent.style.gridColumn = 'span 3';
     }
     
   }, [view, filesLoaded]);
