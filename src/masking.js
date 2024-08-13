@@ -53,7 +53,11 @@ export async function flagAsRejected(iec) {
 	return details;
 }
 
-export async function setParameters(iec, { lr, pa, is, w, h, d }) {
+export async function setParameters(iec, { lr, pa, is, width, height, depth }) {
+  // The api expects lr,pa,is to be capitalized
+  const body = JSON.stringify({ LR: lr, PA: pa, IS: is, width, height, depth });
+  console.log("setParameters", body);
+
 	const response = await fetch(
 		`/papi/v1/masking/${iec}/parameters`,
 		{
@@ -61,7 +65,7 @@ export async function setParameters(iec, { lr, pa, is, w, h, d }) {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ lr, pa, is, w, h, d }),
+			body: body,
 		}
 	);
 	const details = await response.json();
