@@ -16,7 +16,7 @@ function MiddlelBottomPanel({ onExpand,
   } = useContext(Context);
 
   return (
-    <div id="middleBottomPanel" className="w-full h-12 flex justify-between gap-2">
+    <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
         <MaskerPanel 
           onExpand={onExpand}
           onClear={onClear}
