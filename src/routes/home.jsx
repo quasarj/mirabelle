@@ -79,7 +79,7 @@ export default function Home() {
                     <Link to={`/mask/iec/3`}>Example Mask IEC</Link>
                 </li>
                 <li>
-                    <Link to={`/mask/vr/1`}>Example Mask VR</Link>
+                    <Link to={`/mask/vr/1336`}>Example Mask VR</Link>
                 </li>
             </ul>
             <br />

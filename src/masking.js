@@ -53,9 +53,14 @@ export async function flagAsRejected(iec) {
 	return details;
 }
 
-export async function setParameters(iec, { lr, pa, is, width, height, depth }) {
+export async function setParameters(
+  iec,
+  { lr, pa, is, width, height, depth, form, function: maskFunction }
+) {
   // The api expects lr,pa,is to be capitalized
-  const body = JSON.stringify({ LR: lr, PA: pa, IS: is, width, height, depth });
+  const body = JSON.stringify({ 
+    LR: lr, PA: pa, IS: is, width, height, depth, form, function: maskFunction
+  });
   console.log("setParameters", body);
 
 	const response = await fetch(

@@ -34,7 +34,7 @@ function getOrCreateToolgroup(toolgroup_name) {
 }
 
 //TODO this should probably be moved somewhere else, masking.js maybe?
-async function finalCalc(coords, volumeId, iec) {
+async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
 
     // Experimental adjustment of coordinates for masker
     function invert(val, maxval) {
@@ -99,7 +99,9 @@ async function finalCalc(coords, volumeId, iec) {
         is: centerPointFix[2], // Inferior-Superior position
         width: widthScaled,
         height: heightScaled,
-        depth: depthScaled
+        depth: depthScaled,
+        form: maskForm,
+        function: maskFunction,
     };
 
     console.log(output);
@@ -113,19 +115,8 @@ function CornerstoneViewer({ volumeName,
                              iec }) {
 
   const { 
-    defaultLayout,
-    defaultZoom,
-    defaultOpacity,
-    defaultPresets,
-    defaultSelectedPreset,
-    defaultWindowLevel,
-    defaultCrosshairs,
-    defaultRectangleScissors,
-    defaultViewportNavigation,
-    defaultResetViewports,
-    defaultLeftPanelVisibility,
-    defaultRightPanelVisibility,
-    defaultView,
+
+    defaults,
 
     layout, setLayout,
     zoom, setZoom,
@@ -140,6 +131,7 @@ function CornerstoneViewer({ volumeName,
     viewportNavigation, setViewportNavigation,
     resetViewports, setResetViewports,
     view, setView,
+    maskForm, maskFunction,
   } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
@@ -1270,15 +1262,15 @@ function CornerstoneViewer({ volumeName,
     
     if (resetViewports) {
 
-      setZoom(defaultZoom);
-      setOpacity(defaultOpacity);
-      setSelectedPreset(defaultSelectedPreset);
-      setWindowLevel(defaultWindowLevel);
-      setCrosshairs(defaultCrosshairs);
-      setRectangleScissors(defaultRectangleScissors);
-      setView(defaultView);
-      setViewportNavigation(defaultViewportNavigation);
-      setResetViewports(defaultResetViewports);
+      setZoom(defaults.zoom);
+      setOpacity(defaults.opacity);
+      setSelectedPreset(defaults.selectedPreset);
+      setWindowLevel(defaults.windowLevel);
+      setCrosshairs(defaults.crosshairs);
+      setRectangleScissors(defaults.rectangleScissors);
+      setView(defaults.view);
+      setViewportNavigation(defaults.viewportNavigation);
+      setResetViewports(defaults.resetViewports);
 
       // Remove all segmentations
       const segVolume = cornerstone.cache.getVolume(segId);
@@ -1358,7 +1350,7 @@ function CornerstoneViewer({ volumeName,
       .triggerSegmentationDataModified(segId);
   }
   async function handleAcceptSelection() {
-    await finalCalc(coords, volumeId, iec);
+    await finalCalc(coords, volumeId, iec, maskForm, maskFunction);
   }
   async function handleMarkAccepted() {
     await flagAsAccepted(iec);
