@@ -19,21 +19,21 @@ function FunctionPanel() {
             title="Mask"
             onClick={change}
             className={`w-full ${ maskFunction === "mask" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-          <span className='material-icons'>masks</span>
+          <span className='material-symbols-outlined'>domino_mask</span>
         </button>
         <button 
             name="blackout"
             title="Blackout"
             onClick={change}
             className={`w-full ${ maskFunction === "blackout" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-          <span className='material-icons'>imagesearch_roller</span>
+          <span className='material-symbols-outlined'>imagesearch_roller</span>
         </button>
         <button 
             name="sliceremove" 
             title="Slice Removal"
             onClick={change}
             className={`w-full ${ maskFunction === "sliceremove" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-          <span className='material-icons'>content_cut</span>
+          <span className='material-symbols-outlined'>content_cut</span>
         </button>
       </li>
     </>
