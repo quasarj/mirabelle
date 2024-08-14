@@ -135,9 +135,13 @@ function ToolsPanel() {
           </button>
         </li>*/}
 
-        <FunctionPanel />
-
-        <FormPanel />
+        {
+          layout !== "MaskerReview" &&  
+          <>
+            <FunctionPanel />
+            <FormPanel />
+          </>
+        }
 
         {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
           <label>Zoom:</label>
@@ -163,11 +167,15 @@ function ToolsPanel() {
             Crosshairs
           </button>
         </li>
-        <li className="mb-1 pt-1 rounded-lg">
-          <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            Selection
-          </button>
-        </li>
+
+        {
+          layout !== "MaskerReview" &&  
+          <li className="mb-1 pt-1 rounded-lg">
+            <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+              Selection
+            </button>
+          </li>
+        }
         {/*{ rectangleScissors ? <><li className="pb-1 pt-1 rounded-lg">
           <button className={`w-full bg-slate-900`}>
             Expand

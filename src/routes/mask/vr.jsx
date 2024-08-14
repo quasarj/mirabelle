@@ -34,6 +34,8 @@ export default function MaskVR() {
     leftPanelVisible: true,
     rightPanelVisible: false,
     view: 'Volume',
+    form: 'cylinder',
+    function: 'mask',
   };
 
   const [layout, setLayout] = useState(defaults.layout);
@@ -49,6 +51,8 @@ export default function MaskVR() {
   const [leftPanelVisibility, setLeftPanelVisibility] = useState(defaults.leftPanelVisible);
   const [rightPanelVisibility, setRightPanelVisibility] = useState(defaults.rightPanelVisible);
   const [view, setView] = useState(defaults.view);
+  const [maskFunction, setMaskFunction] = useState(defaults.function);
+  const [maskForm, setMaskForm] = useState(defaults.form);
 
   // Here we just assemble the various panels that we need for this mode
   return (
@@ -69,6 +73,8 @@ export default function MaskVR() {
         viewportNavigation, setViewportNavigation,
         resetViewports, setResetViewports,
         view, setView,
+        maskFunction, setMaskFunction,
+        maskForm, setMaskForm,
         
     }}>
         <Masker iecs={iecs} />

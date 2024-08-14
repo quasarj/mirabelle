@@ -28,7 +28,7 @@ export default function ReviewIEC() {
     rectangleScissors: false,
     viewportNavigation: "Zoom",
     resetViewports: false,
-    leftPanelVisible: false,
+    leftPanelVisible: true,
     rightPanelVisible: false,
     view: 'Volume',
     function: 'mask',

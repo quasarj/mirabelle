@@ -3,10 +3,10 @@ import { Context } from './Context.js';
 
 function MaskerPanel({ onExpand, onClear, onAccept, onMarkAccepted, onMarkRejected }) {
   const {
-    template,
+    layout,
   } = useContext(Context);
 
-  if (template === 'MaskerReview') {
+  if (layout === 'MaskerReview') {
     // The review buttons
     return (
       <div id="maskerPanel" className="h-12 flex justify-center gap-2">
