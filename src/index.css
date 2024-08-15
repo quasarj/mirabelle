@@ -84,3 +84,14 @@ button:focus-visible {
 .mainLogo {
   background-image: url(./assets/mirabelle-logo.png);
 }
+
+/* Custom CSS to hide the scrollbar */
+.no-scrollbars::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.no-scrollbars {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

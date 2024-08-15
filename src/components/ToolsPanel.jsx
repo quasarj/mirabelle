@@ -96,7 +96,7 @@ function ToolsPanel() {
   };
 
   return (
-    <div id="toolsPanel" className="overflow-y-scroll p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
+    <div id="toolsPanel" className="overflow-y-auto no-scrollbars p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
       {/*<div className="mb-2 font-semib  old">Tools</div>*/}
       <ul className=" h-full pb-4">
         <label>IEC:</label>

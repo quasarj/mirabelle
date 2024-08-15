@@ -230,8 +230,8 @@ function CornerstoneViewer({ volumeName,
 
 
     const resizeObserver = new ResizeObserver(() => {
-      console.log("Zoo---------------------------------ming! ")
-      console.log("Previous zoom level:");
+      // console.log("Zoo---------------------------------ming! ")
+      // console.log("Previous zoom level:");
       // save the zoom level in all viewports
       const zoomLevel = [];
       const renderingEngine = renderingEngineRef.current;
@@ -239,7 +239,7 @@ function CornerstoneViewer({ volumeName,
         renderingEngine.getViewports().forEach((viewport, index) => {
           const camera = viewport.getCamera();
           zoomLevel[index] = camera.parallelScale;
-          console.log(index, viewport.id, zoomLevel[index] );
+          // console.log(index, viewport.id, zoomLevel[index] );
         });
 
         // save the pan location in all viewports
@@ -247,27 +247,27 @@ function CornerstoneViewer({ volumeName,
         renderingEngine.getViewports().forEach((viewport, index) => {
           const camera = viewport.getCamera();
           panLocation[index] = camera.position;
-          console.log(index, viewport.id, panLocation[index] );
+          // console.log(index, viewport.id, panLocation[index] );
         });
 
         renderingEngine.resize(true, true);
 
         setTimeout(() => {
-          console.log("Current zoom level:");
+          //console.log("Current zoom level:");
           renderingEngine.getViewports().forEach((viewport, index) => {
             const camera = viewport.getCamera();
             camera.parallelScale = zoomLevel[index];
             viewport.setCamera(camera);
-            console.log(index, viewport.id, camera.parallelScale );
+            // console.log(index, viewport.id, camera.parallelScale );
             viewport.render();
           });
 
-          console.log("Current pan location:");
+          // console.log("Current pan location:");
           renderingEngine.getViewports().forEach((viewport, index) => {
             const camera = viewport.getCamera();
             camera.position = panLocation[index];
             viewport.setCamera(camera);
-            console.log(index, viewport.id, camera.position );
+            // console.log(index, viewport.id, camera.position );
             viewport.render();
           });
         
@@ -320,14 +320,50 @@ function CornerstoneViewer({ volumeName,
       panelWrapper.onmouseout = () => {  resizeButton.style.display = 'none'; };
       
       // on resizeButton click, set the panelWrapper to be full viewport size
-      resizeButton.onclick = () => {
-        panelWrapper.style.width = '100vw';
-        panelWrapper.style.height = '100vh';
-        panelWrapper.style.position = 'fixed';
-        panelWrapper.style.top = '0';
-        panelWrapper.style.left = '0';
-        panelWrapper.style.zIndex = '1000';
-        resizeButton.style.display = 'none';
+      resizeButton.onclick = (event) => {
+        // panelWrapper.style.width = '100vw';
+        // panelWrapper.style.height = '100vh';
+        // panelWrapper.style.position = 'fixed';
+        // panelWrapper.style.top = '0';
+        // panelWrapper.style.left = '0';
+        // panelWrapper.style.zIndex = '1000';
+        // resizeButton.style.display = 'none';
+
+        setTimeout(() => {
+          if (event.target.parentNode.classList.contains('Expanded')) {
+            event.target.parentNode.classList.remove('Expanded');
+            event.target.parentNode.style.gridColumn = 'span 1';
+            event.target.parentNode.style.gridRow = 'span 1';
+            // show all other panelWrappers
+            const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
+            allPanelWrappers.forEach((panelWrapper) => {
+              panelWrapper.style.display = 'block';
+            });
+            // render all viewports
+            renderingEngineRef.current.getViewports().forEach((viewport) => {
+              viewport.render();
+            });
+            console.log('Minimized', event.target.parentNode.id);
+          } else {
+            // console.log (event.target.parentNode.id);
+            event.target.parentNode.classList.add('Expanded');
+            event.target.parentNode.style.gridColumn = 'span 2';
+            event.target.parentNode.style.gridRow = 'span 2';
+            
+            // hide all other panelWrappers
+            const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
+            allPanelWrappers.forEach((panelWrapper) => {
+              if (panelWrapper.id !== event.target.parentNode.id) {
+                panelWrapper.style.display = 'none';
+              }
+            });
+            // render all viewports
+            renderingEngineRef.current.getViewports().forEach((viewport) => {
+              viewport.render();
+            });
+            console.log('Expanded', event.target.parentNode.id);
+          }
+        }, 0);
       };
 
       panel.id = panelId;
@@ -802,7 +838,7 @@ function CornerstoneViewer({ volumeName,
       return;
     }
 
-    console.log("viewports loaded");
+    // console.log("viewports loaded");
     
     const container = containerRef.current;
 
@@ -1318,7 +1354,7 @@ function CornerstoneViewer({ volumeName,
         }
       });
       
-      // Wait 50ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
+      // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
       setTimeout(() => {
         
         // if the viewport parent node is visible, reset camera
