@@ -1,5 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Context } from './Context.js';
+import NavigationPanel from './NavigationPanel';
+import FunctionPanel from './FunctionPanel';
+import FormPanel from './FormPanel';
 
 
 function ToolsPanel() {
@@ -8,7 +11,7 @@ function ToolsPanel() {
     defaultZoom,
     defaultOpacity,
     defaultPresets,
-    defaultSelectedPreset,
+    // defaultSelectedPreset,
     defaultWindowLevel,
     defaultCrosshairs,
     defaultRectangleScissors,
@@ -95,21 +98,26 @@ function ToolsPanel() {
     setResetViewports(true);
   };
 
+  function handleOnNext() {
+    alert("Not yet implemented :(");
+  }
+  function handleOnPrevious() {
+    alert("Not yet implemented :(");
+  }
+
   return (
     <div id="toolsPanel" className="overflow-y-auto no-scrollbars p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
       {/*<div className="mb-2 font-semib  old">Tools</div>*/}
       <ul className=" h-full pb-4">
-        <label>IEC:</label>
-        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full bg-white dark:bg-slate-900`}>
-            Next
-          </button>
-        </li>
-        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full bg-white dark:bg-slate-900`}>
-            Previous
-          </button>
-        </li>
+
+        {
+          layout === "MaskerVR" &&  
+          <NavigationPanel 
+            onNext={handleOnNext}
+            onPrevious={handleOnPrevious}
+          />
+        }
+
         <label>View:</label>
         <li className="pt-1 dark:bg-opacity-5  rounded-lg">
           <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
@@ -126,33 +134,15 @@ function ToolsPanel() {
             All
           </button>
         </li>*/}
-        <label>Function:</label>
-        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Mask
-          </button>
-        </li>
-        <li className=" pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Blackout
-          </button>
-        </li>
-        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Slice Removal
-          </button>
-        </li>
-        <label>Form:</label>
-        <li className="pt-1 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Cuboid
-          </button>
-        </li>
-        <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
-          <button className={`w-full dark:bg-slate-900`}>
-            Cylinder
-          </button>
-        </li>
+
+        {
+          layout !== "MaskerReview" &&  
+          <>
+            <FunctionPanel />
+            <FormPanel />
+          </>
+        }
+
         {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
           <label>Zoom:</label>
           <input
@@ -177,11 +167,15 @@ function ToolsPanel() {
             Crosshairs
           </button>
         </li>
-        <li className="mb-1 pt-1 rounded-lg">
-          <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            Selection
-          </button>
-        </li>
+
+        {
+          layout !== "MaskerReview" &&  
+          <li className="mb-1 pt-1 rounded-lg">
+            <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+              Selection
+            </button>
+          </li>
+        }
         {/*{ rectangleScissors ? <><li className="pb-1 pt-1 rounded-lg">
           <button className={`w-full bg-slate-900`}>
             Expand

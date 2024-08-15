@@ -34,114 +34,89 @@ function getOrCreateToolgroup(toolgroup_name) {
 }
 
 //TODO this should probably be moved somewhere else, masking.js maybe?
-async function finalCalc(coords, volumeId, iec) {
-  // console.log("finalCalc running");
-  // console.log(coords);
+async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
 
-  const volume = cornerstone.cache.getVolume(volumeId);
-  const volumeDims = volume.dimensions;
-  const volumeSpacing = volume.spacing;
+    // Experimental adjustment of coordinates for masker
+    function invert(val, maxval) {
+        return maxval - val;
+    }
 
+    function convertLPStoRAS(point, dims) {
+        const [dimX, dimY, dimZ] = dims;
+        let [x, y, z] = point;
+        x = invert(x, dimX);
+        y = invert(y, dimY);
+        return [x, y, z];
+    }
 
-  // Extracting the coordinates of the corners of the top face
-  const topLeft = [coords.x.min, coords.y.min, coords.z.max];
-  const topRight = [coords.x.max, coords.y.min, coords.z.max];
-  const bottomLeft = [coords.x.min, coords.y.max, coords.z.max];
-  const bottomRight = [coords.x.max, coords.y.max, coords.z.max];
+    function scaleBySpacing(point, spacings) {
+        const [spaceX, spaceY, spaceZ] = spacings;
+        let [x, y, z] = point;
+        return [Math.floor(x * spaceX), Math.floor(y * spaceY), Math.floor(z * spaceZ)];
+    }
 
-  // Top face coordinates for black boxing
-  const bbTopLeft = [coords.x.min, coords.y.min];
-  const bbBottomRight = [coords.x.max, coords.y.max];
+    console.log("finalCalc running");
+    console.log(coords);
 
-  const topFaceCorners = [topLeft, topRight, bottomLeft, bottomRight];
+    const volume = cornerstone.cache.getVolume(volumeId);
 
-  // console.log("Coordinates of the corners of the top face:", topFaceCorners);
+    // Top face corners of the cuboid
+    const topLeftFrontLPS = [coords.x.min, coords.y.min, coords.z.max];
+    const topRightFrontLPS = [coords.x.max, coords.y.min, coords.z.max];
+    const bottomLeftFrontLPS = [coords.x.min, coords.y.max, coords.z.max];
+    const bottomRightFrontLPS = [coords.x.max, coords.y.max, coords.z.max];
 
-  // Calculate the center point
-  const centerX = (topLeft[0] + topRight[0] + bottomLeft[0] + bottomRight[0]) / 4;
-  const centerY = (topLeft[1] + topRight[1] + bottomLeft[1] + bottomRight[1]) / 4;
-  const centerZ = (topLeft[2] + topRight[2] + bottomLeft[2] + bottomRight[2]) / 4;
+    // Bottom face corners (optional for some calculations, included for completeness)
+    const topLeftBackLPS = [coords.x.min, coords.y.min, coords.z.min];
+    const topRightBackLPS = [coords.x.max, coords.y.min, coords.z.min];
+    const bottomLeftBackLPS = [coords.x.min, coords.y.max, coords.z.min];
+    const bottomRightBackLPS = [coords.x.max, coords.y.max, coords.z.min];
 
-  const centerPoint = [centerX, centerY, centerZ];
+    console.log("Coordinates of the corners of the cuboid in LPS:", {
+        topLeftFrontLPS, topRightFrontLPS, bottomLeftFrontLPS, bottomRightFrontLPS,
+        topLeftBackLPS, topRightBackLPS, bottomLeftBackLPS, bottomRightBackLPS
+    });
 
-  // console.log("Center point of the top face:", centerPoint);
+    let centerPoint = [
+        (topLeftFrontLPS[0] + topRightFrontLPS[0]) / 2,
+        (topLeftFrontLPS[1] + bottomLeftFrontLPS[1]) / 2,
+        (topLeftFrontLPS[2] + topLeftBackLPS[2]) / 2
+    ];
 
-  const radius = calculateDistance(topFaceCorners[0], centerPoint);
-  const height = coords.z.max - coords.z.min;
+    let centerPointRAS = convertLPStoRAS(centerPoint, volume.dimensions);
+    let centerPointFix = scaleBySpacing(centerPointRAS, volume.spacing);
 
-  // experimental adjustment of coordinates for masker
-  function invert(val, maxval) {
-    return maxval - val
-  }
-  /*
-    * Convert a point in LPS to RAS.
-    * This just inverts the first two points (which is why it needs
-    * the dims). This is only useful if the input is actually in LPS!
-    */
-  function convertLPStoRAS(point, dims) {
-    const [ dimX, dimY, dimZ ] = dims;
-    let [x, y, z] = point;
-    x = invert(x, dimX);
-    y = invert(y, dimY);
+    // Dimensions calculation
+    const width = Math.abs(coords.x.max - coords.x.min);
+    const height = Math.abs(coords.y.max - coords.y.min);
+    const depth = Math.abs(coords.z.max - coords.z.min);
 
-    return [ x, y, z];
-  }
-  function scaleBySpacing(point, spacings) {
-    const [ spaceX, spaceY, spaceZ ] = spacings;
-    let [x, y, z] = point;
+    const [widthScaled, heightScaled, depthScaled] = scaleBySpacing([width, height, depth], volume.spacing);
 
-    return [ Math.floor(x * spaceX),
-          Math.floor(y * spaceY),
-          Math.floor(z * spaceZ) ];
-  }
+    const output = {
+        lr: centerPointFix[0], // Left-right position
+        pa: centerPointFix[1], // Posterior-anterior position
+        is: centerPointFix[2], // Inferior-Superior position
+        width: widthScaled,
+        height: heightScaled,
+        depth: depthScaled,
+        form: maskForm,
+        function: maskFunction,
+    };
 
-  const [ dimX, dimY, dimZ ] = volumeDims;
-  const [ spaceX, spaceY, spaceZ ] = volumeSpacing;
-
-  // let [x, y, z] = centerPoint;
-  // let x2 = invert(x, dimX) * spaceX;
-  // let y2 = invert(y, dimY) * spaceY;
-  // let z2 = z * spaceZ;
-
-  let centerPointRAS = convertLPStoRAS(centerPoint, volumeDims);
-  let centerPointFix = scaleBySpacing(centerPointRAS, volumeSpacing);
-
-  const diameter = Math.floor((radius * spaceX) * 2);
-  const i = Math.floor((centerPointRAS[2] - height) * spaceZ);
-
-  // LR PA S I diameter
-  const output = {
-    lr: centerPointFix[0],
-    pa: centerPointFix[1],
-    i: centerPointFix[2],
-    s: i,
-    d: diameter,
-  };
-  // console.log(output);
-  await setParameters(iec, output);
-  //TODO need better way for this
-  alert("Submitted for masking!");
-
+    console.log(output);
+    await setParameters(iec, output);
+    alert("Submitted for masking!");
 }
+
 
 function CornerstoneViewer({ volumeName,
                              files,
                              iec }) {
 
   const { 
-    defaultLayout,
-    defaultZoom,
-    defaultOpacity,
-    defaultPresets,
-    defaultSelectedPreset,
-    defaultWindowLevel,
-    defaultCrosshairs,
-    defaultRectangleScissors,
-    defaultViewportNavigation,
-    defaultResetViewports,
-    defaultLeftPanelVisibility,
-    defaultRightPanelVisibility,
-    defaultView,
+
+    defaults,
 
     layout, setLayout,
     zoom, setZoom,
@@ -156,6 +131,7 @@ function CornerstoneViewer({ volumeName,
     viewportNavigation, setViewportNavigation,
     resetViewports, setResetViewports,
     view, setView,
+    maskForm, maskFunction,
   } = useContext(Context);
 
   const [ loading, setLoading ] = useState(true);
@@ -1322,15 +1298,15 @@ function CornerstoneViewer({ volumeName,
     
     if (resetViewports) {
 
-      setZoom(defaultZoom);
-      setOpacity(defaultOpacity);
-      setSelectedPreset(defaultSelectedPreset);
-      setWindowLevel(defaultWindowLevel);
-      setCrosshairs(defaultCrosshairs);
-      setRectangleScissors(defaultRectangleScissors);
-      setView(defaultView);
-      setViewportNavigation(defaultViewportNavigation);
-      setResetViewports(defaultResetViewports);
+      setZoom(defaults.zoom);
+      setOpacity(defaults.opacity);
+      setSelectedPreset(defaults.selectedPreset);
+      setWindowLevel(defaults.windowLevel);
+      setCrosshairs(defaults.crosshairs);
+      setRectangleScissors(defaults.rectangleScissors);
+      setView(defaults.view);
+      setViewportNavigation(defaults.viewportNavigation);
+      setResetViewports(defaults.resetViewports);
 
       // Remove all segmentations
       const segVolume = cornerstone.cache.getVolume(segId);
@@ -1410,7 +1386,7 @@ function CornerstoneViewer({ volumeName,
       .triggerSegmentationDataModified(segId);
   }
   async function handleAcceptSelection() {
-    await finalCalc(coords, volumeId, iec);
+    await finalCalc(coords, volumeId, iec, maskForm, maskFunction);
   }
   async function handleMarkAccepted() {
     await flagAsAccepted(iec);

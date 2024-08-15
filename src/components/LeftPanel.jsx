@@ -9,7 +9,7 @@ function LeftPanel() {
   
   return (
     <div id="leftPanelWrapper" className="grid grid-rows-[1fr] h-full w-72 gap-2">
-      {layout !== 'Masker' && layout !== 'MaskerVR' ? <FilesPanel /> : null }
+      {layout === '???' ? <FilesPanel /> : null }
       {/*<FilesPanel />*/}
       <ToolsPanel />
     </div>

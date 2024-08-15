@@ -19,51 +19,46 @@ export default function MaskVR() {
   const { iecs } = useLoaderData();
 
   // default values for this route/mode
-  const defaultLayout = 'MaskerVR';
-  const defaultZoom = 250;
-  const defaultOpacity = 0.3;
-  const defaultPresets = [];
-  const defaultSelectedPreset = 'CT-MIP';
-  const defaultWindowLevel = true;
-  const defaultCrosshairs = false;
-  const defaultRectangleScissors = false;
-  const defaultViewportNavigation = "Zoom";
-  const defaultResetViewports = false;
-  const defaultLeftPanelVisibility = true;
-  const defaultRightPanelVisibility = true;
-  const defaultView = 'Volume';
 
-  const [layout, setLayout] = useState(defaultLayout);
-  const [zoom, setZoom] = useState(defaultZoom);
-  const [opacity, setOpacity] = useState(defaultOpacity);
-  const [presets, setPresets] = useState(defaultPresets);
-  const [selectedPreset, setSelectedPreset] = useState(defaultSelectedPreset);
-  const [windowLevel, setWindowLevel] = useState(defaultWindowLevel);
-  const [crosshairs, setCrosshairs] = useState(defaultCrosshairs);
-  const [rectangleScissors, setRectangleScissors] = useState(defaultRectangleScissors);
-  const [viewportNavigation, setViewportNavigation] = useState(defaultViewportNavigation);
-  const [resetViewports, setResetViewports] = useState(defaultResetViewports);
-  const [leftPanelVisibility, setLeftPanelVisibility] = useState(defaultLeftPanelVisibility);
-  const [rightPanelVisibility, setRightPanelVisibility] = useState(defaultRightPanelVisibility);
-  const [view, setView] = useState(defaultView);
+  const defaults = {
+    layout: 'MaskerVR',
+    zoom: 250,
+    opacity: 0.3,
+    presets: [],
+    selectedPreset: 'CT-MIP',
+    windowLevel: true,
+    crosshairs: false,
+    rectangleScissors: false,
+    viewportNavigation: "Zoom",
+    resetViewports: false,
+    leftPanelVisible: true,
+    rightPanelVisible: false,
+    view: 'Volume',
+    form: 'cylinder',
+    function: 'mask',
+  };
+
+  const [layout, setLayout] = useState(defaults.layout);
+  const [zoom, setZoom] = useState(defaults.zoom);
+  const [opacity, setOpacity] = useState(defaults.opacity);
+  const [presets, setPresets] = useState(defaults.presets);
+  const [selectedPreset, setSelectedPreset] = useState(defaults.selectedPreset);
+  const [windowLevel, setWindowLevel] = useState(defaults.windowLevel);
+  const [crosshairs, setCrosshairs] = useState(defaults.crosshairs);
+  const [rectangleScissors, setRectangleScissors] = useState(defaults.rectangleScissors);
+  const [viewportNavigation, setViewportNavigation] = useState(defaults.viewportNavigation);
+  const [resetViewports, setResetViewports] = useState(defaults.resetViewports);
+  const [leftPanelVisibility, setLeftPanelVisibility] = useState(defaults.leftPanelVisible);
+  const [rightPanelVisibility, setRightPanelVisibility] = useState(defaults.rightPanelVisible);
+  const [view, setView] = useState(defaults.view);
+  const [maskFunction, setMaskFunction] = useState(defaults.function);
+  const [maskForm, setMaskForm] = useState(defaults.form);
 
   // Here we just assemble the various panels that we need for this mode
   return (
     <Context.Provider value={{
 
-        defaultLayout,
-        defaultZoom,
-        defaultOpacity,
-        defaultPresets,
-        defaultSelectedPreset,
-        defaultWindowLevel,
-        defaultCrosshairs,
-        defaultRectangleScissors,
-        defaultViewportNavigation,
-        defaultResetViewports,
-        defaultLeftPanelVisibility,
-        defaultRightPanelVisibility,
-        defaultView,
+        defaults,
 
         layout, setLayout,
         zoom, setZoom,
@@ -78,6 +73,8 @@ export default function MaskVR() {
         viewportNavigation, setViewportNavigation,
         resetViewports, setResetViewports,
         view, setView,
+        maskFunction, setMaskFunction,
+        maskForm, setMaskForm,
         
     }}>
         <Masker iecs={iecs} />
