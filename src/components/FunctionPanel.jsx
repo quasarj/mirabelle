@@ -6,8 +6,8 @@ function FunctionPanel() {
     maskFunction, setMaskFunction
   } = useContext(Context);
 
-  function change(details) {
-    setMaskFunction(details.target.name);
+  function change(toWhat) {
+    setMaskFunction(toWhat);
   }
 
   return (
@@ -15,23 +15,20 @@ function FunctionPanel() {
       <label>Function:</label>
       <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
         <button 
-            name="mask"
             title="Mask"
-            onClick={change}
+            onClick={() => change("mask")}
             className={`w-full ${ maskFunction === "mask" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
           <span className='material-symbols-outlined'>domino_mask</span>
         </button>
         <button 
-            name="blackout"
             title="Blackout"
-            onClick={change}
+            onClick={() => change("blackout")}
             className={`w-full ${ maskFunction === "blackout" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
           <span className='material-symbols-outlined'>imagesearch_roller</span>
         </button>
         <button 
-            name="sliceremove" 
             title="Slice Removal"
-            onClick={change}
+            onClick={() => change("sliceremove")}
             className={`w-full ${ maskFunction === "sliceremove" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
           <span className='material-symbols-outlined'>content_cut</span>
         </button>
