@@ -139,12 +139,9 @@ function CornerstoneViewer({ volumeName,
 
   // set a state variable that will save each viewport's normal/expanded/minimized state
   const [ expandedViewports, setExpandedViewports ] = useState([
-    { id: 'vol_axial', state: 'normal' },
-    { id: 'vol_sagittal', state: 'normal' },
-    { id: 'vol_coronal', state: 'normal' },
-    { id: 'mip_axial', state: 'normal' },
-    { id: 'mip_sagittal', state: 'normal' },
-    { id: 'mip_coronal', state: 'normal' },
+    { id: 'axial', state: 'normal' },
+    { id: 'sagittal', state: 'normal' },
+    { id: 'coronal', state: 'normal' },
     { id: 't3d_coronal', state: 'normal' },
   ]);
 
@@ -348,6 +345,7 @@ function CornerstoneViewer({ volumeName,
           event.target.parentNode.style.gridColumn = 'span 2';
           event.target.parentNode.style.gridRow = 'span 2';
           event.target.parentNode.classList.add('Expanded');
+          expandedViewports.id = event.target.parentNode.id;
           
           // hide all other visible panelWrappers
           const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
@@ -904,6 +902,13 @@ function CornerstoneViewer({ volumeName,
       t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Volume') {
 
+      // remove all viewports Minimized and Expanded classes
+      const allPanelWrappers = container.childNodes;
+      allPanelWrappers.forEach((panelWrapper) => {
+        panelWrapper.classList.remove('Minimized');
+        panelWrapper.classList.remove('Expanded');
+      });
+
       container.style.gridTemplateColumns = 'repeat(2, 1fr)';
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
@@ -942,6 +947,13 @@ function CornerstoneViewer({ volumeName,
       
       // t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Projection') {
+
+      // remove all viewports Minimized and Expanded classes
+      const allPanelWrappers = container.childNodes;
+      allPanelWrappers.forEach((panelWrapper) => {
+        panelWrapper.classList.remove('Minimized');
+        panelWrapper.classList.remove('Expanded');
+      });
 
       container.style.gridTemplateColumns = 'repeat(2, 1fr)';
       container.style.gridTemplateRows = 'repeat(2, 1fr)';
@@ -1366,7 +1378,10 @@ function CornerstoneViewer({ volumeName,
       setWindowLevel(defaults.windowLevel);
       setCrosshairs(defaults.crosshairs);
       setRectangleScissors(defaults.rectangleScissors);
-      setView(defaults.view);
+      setView(defaults.view + " "); // force a re-render
+      setTimeout(() => {
+       setView(defaults.view);
+      }, 50);
       setViewportNavigation(defaults.viewportNavigation);
       setResetViewports(defaults.resetViewports);
 
@@ -1410,7 +1425,7 @@ function CornerstoneViewer({ volumeName,
           const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
           crosshairsToolInstance.resetCrosshairs();
         }
-      }, 100);
+      }, 150);
     }
   }, [resetViewports]);
 
