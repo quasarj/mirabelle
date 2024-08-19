@@ -904,6 +904,8 @@ function CornerstoneViewer({ volumeName,
       t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Volume') {
 
+      // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+      
       // remove all viewports Minimized and Expanded classes
       const allPanelWrappers = container.childNodes;
       allPanelWrappers.forEach((panelWrapper) => {
@@ -949,6 +951,8 @@ function CornerstoneViewer({ volumeName,
       
       // t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Projection') {
+
+      // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
 
       // remove all viewports Minimized and Expanded classes
       const allPanelWrappers = container.childNodes;
@@ -1380,10 +1384,13 @@ function CornerstoneViewer({ volumeName,
       setWindowLevel(defaults.windowLevel);
       setCrosshairs(defaults.crosshairs);
       setRectangleScissors(defaults.rectangleScissors);
+
+      // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
       setView(defaults.view + " "); // force a re-render
       setTimeout(() => {
        setView(defaults.view);
       }, 50);
+
       setViewportNavigation(defaults.viewportNavigation);
       setResetViewports(defaults.resetViewports);
 
