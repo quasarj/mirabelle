@@ -312,6 +312,8 @@ function CornerstoneViewer({ volumeName,
         // panelWrapper.style.left = '0';
         // panelWrapper.style.zIndex = '1000';
         // resizeButton.style.display = 'none';
+
+        // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
         
         // Minimization
         if (event.target.parentNode.classList.contains('Expanded')) {
