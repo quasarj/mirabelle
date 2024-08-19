@@ -137,6 +137,17 @@ function CornerstoneViewer({ volumeName,
   const [ loading, setLoading ] = useState(true);
   const [ filesLoaded, setFilesLoaded ] = useState(false);
 
+  // set a state variable that will save each viewport's normal/expanded/minimized state
+  const [ expandedViewports, setExpandedViewports ] = useState([
+    { id: 'vol_axial', state: 'normal' },
+    { id: 'vol_sagittal', state: 'normal' },
+    { id: 'vol_coronal', state: 'normal' },
+    { id: 'mip_axial', state: 'normal' },
+    { id: 'mip_sagittal', state: 'normal' },
+    { id: 'mip_coronal', state: 'normal' },
+    { id: 't3d_coronal', state: 'normal' },
+  ]);
+
   const containerRef = useRef(null);
   const renderingEngineRef = useRef(null);
 
@@ -304,53 +315,56 @@ function CornerstoneViewer({ volumeName,
         // panelWrapper.style.left = '0';
         // panelWrapper.style.zIndex = '1000';
         // resizeButton.style.display = 'none';
+        
+        // Minimization
+        if (event.target.parentNode.classList.contains('Expanded')) {
+          event.target.parentNode.classList.remove('Expanded');
+          event.target.parentNode.style.gridColumn = 'span 1';
+          event.target.parentNode.style.gridRow = 'span 1';
+          // set the gridArea of the panelWrapper to the saved gridArea
+          event.target.parentNode.style.gridArea = event.target.parentNode.getAttribute('data-gridArea');
+          
+          // Show all other minimized panelWrappers
+          const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
+          allPanelWrappers.forEach((panelWrapper) => {
+            if (panelWrapper.classList.contains('Minimized')) {
+              panelWrapper.style.visibility = 'visible';
+              panelWrapper.style.display = 'block';
+              panelWrapper.classList.remove('Minimized');
+            }
+          });
+          // render all viewports
+          renderingEngineRef.current.getViewports().forEach((viewport) => {
+            viewport.render();
+          });
+          console.log('Minimized', event.target.parentNode.id);
 
-        setTimeout(() => { // This setTimeout is just for testing purposes
-          // Minimization
-          if (event.target.parentNode.classList.contains('Expanded')) {
-            event.target.parentNode.classList.remove('Expanded');
-            event.target.parentNode.style.gridColumn = 'span 1';
-            event.target.parentNode.style.gridRow = 'span 1';
-            // set the gridArea of the panelWrapper to the saved gridArea
-            event.target.parentNode.style.gridArea = event.target.parentNode.getAttribute('data-gridArea');
-            
-            // Show all other hidden panelWrappers
-            const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
-            allPanelWrappers.forEach((panelWrapper) => {
-              if (panelWrapper.style.visibility === 'hidden' && panelWrapper.style.display === 'block') {
-                panelWrapper.style.visibility = 'visible';
-              }
-            });
-            // render all viewports
-            renderingEngineRef.current.getViewports().forEach((viewport) => {
-              viewport.render();
-            });
-            console.log('Minimized', event.target.parentNode.id);
-          } else { // Maximization
-            // console.log (event.target.parentNode.id);
-            // Get the gridArea of the panelWrapper
-            const gridArea = event.target.parentNode.style.gridArea;
-            // save the gridArea into the panelWrapper
-            event.target.parentNode.setAttribute('data-gridArea', gridArea);
-            event.target.parentNode.style.gridColumn = 'span 2';
-            event.target.parentNode.style.gridRow = 'span 2';
-            event.target.parentNode.classList.add('Expanded');
-            
-            // hide all other visible panelWrappers
-            const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
-            allPanelWrappers.forEach((panelWrapper) => {
-              if (panelWrapper.id !== event.target.parentNode.id && panelWrapper.style.visibility === 'visible') {
-                panelWrapper.style.visibility = 'hidden';
-                panelWrapper.style.display = 'none';
-              }
-            });
-            // render all viewports
-            renderingEngineRef.current.getViewports().forEach((viewport) => {
-              viewport.render();
-            });
-            console.log('Expanded', event.target.parentNode.id);
-          }
-        }, 0);
+        } else { // Maximization
+          // console.log (event.target.parentNode.id);
+          // Get the gridArea of the panelWrapper
+          const gridArea = event.target.parentNode.style.gridArea;
+          // save the gridArea into the panelWrapper
+          event.target.parentNode.setAttribute('data-gridArea', gridArea);
+          event.target.parentNode.style.gridColumn = 'span 2';
+          event.target.parentNode.style.gridRow = 'span 2';
+          event.target.parentNode.classList.add('Expanded');
+          
+          // hide all other visible panelWrappers
+          const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
+          allPanelWrappers.forEach((panelWrapper) => {
+            if (panelWrapper.id !== event.target.parentNode.id && panelWrapper.style.visibility === 'visible') {
+              panelWrapper.style.visibility = 'hidden';
+              panelWrapper.style.display = 'none';
+              panelWrapper.classList.add('Minimized');
+            }
+          });
+          // render all viewports
+          renderingEngineRef.current.getViewports().forEach((viewport) => {
+            viewport.render();
+          });
+          console.log('Expanded', event.target.parentNode.id);
+        }
+        
       };
 
       panel.id = panelId;
