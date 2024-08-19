@@ -305,31 +305,42 @@ function CornerstoneViewer({ volumeName,
         // panelWrapper.style.zIndex = '1000';
         // resizeButton.style.display = 'none';
 
-        setTimeout(() => {
+        setTimeout(() => { // This setTimeout is just for testing purposes
+          // Minimization
           if (event.target.parentNode.classList.contains('Expanded')) {
             event.target.parentNode.classList.remove('Expanded');
             event.target.parentNode.style.gridColumn = 'span 1';
             event.target.parentNode.style.gridRow = 'span 1';
-            // show all other panelWrappers
+            // set the gridArea of the panelWrapper to the saved gridArea
+            event.target.parentNode.style.gridArea = event.target.parentNode.getAttribute('data-gridArea');
+            
+            // Show all other hidden panelWrappers
             const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
             allPanelWrappers.forEach((panelWrapper) => {
-              panelWrapper.style.display = 'block';
+              if (panelWrapper.style.visibility === 'hidden' && panelWrapper.style.display === 'block') {
+                panelWrapper.style.visibility = 'visible';
+              }
             });
             // render all viewports
             renderingEngineRef.current.getViewports().forEach((viewport) => {
               viewport.render();
             });
             console.log('Minimized', event.target.parentNode.id);
-          } else {
+          } else { // Maximization
             // console.log (event.target.parentNode.id);
-            event.target.parentNode.classList.add('Expanded');
+            // Get the gridArea of the panelWrapper
+            const gridArea = event.target.parentNode.style.gridArea;
+            // save the gridArea into the panelWrapper
+            event.target.parentNode.setAttribute('data-gridArea', gridArea);
             event.target.parentNode.style.gridColumn = 'span 2';
             event.target.parentNode.style.gridRow = 'span 2';
+            event.target.parentNode.classList.add('Expanded');
             
-            // hide all other panelWrappers
+            // hide all other visible panelWrappers
             const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
             allPanelWrappers.forEach((panelWrapper) => {
-              if (panelWrapper.id !== event.target.parentNode.id) {
+              if (panelWrapper.id !== event.target.parentNode.id && panelWrapper.style.visibility === 'visible') {
+                panelWrapper.style.visibility = 'hidden';
                 panelWrapper.style.display = 'none';
               }
             });
@@ -403,6 +414,15 @@ function CornerstoneViewer({ volumeName,
           ],
         });
       }
+
+      // Pan
+      t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [
+              {
+                  mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+              },
+          ],
+      });
 
       // Segmentation Display
       // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
@@ -509,6 +529,15 @@ function CornerstoneViewer({ volumeName,
           ],
         });
       }
+
+      // Pan
+      group.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [
+              {
+                  mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+              },
+          ],
+      });
 
       // Window Level
       group.addTool(cornerstoneTools.WindowLevelTool.toolName);
@@ -645,6 +674,15 @@ function CornerstoneViewer({ volumeName,
           ],
         });
       }
+
+      // Pan
+      group.setToolActive(cornerstoneTools.PanTool.toolName, {
+          bindings: [
+              {
+                  mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+              },
+          ],
+      });
 
       // Window Level
       group.addTool(cornerstoneTools.WindowLevelTool.toolName);
@@ -882,7 +920,11 @@ function CornerstoneViewer({ volumeName,
       volCoronalContent.style.gridColumn = 1;
       volCoronalContent.style.gridRow = 2;
 
+      volSagittalContent.style.gridColumn = 2;
+      volSagittalContent.style.gridRow = 2;
 
+      volAxialContent.style.gridColumn = 1;
+      volAxialContent.style.gridRow = 1;
       
       // t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Projection') {
@@ -915,6 +957,12 @@ function CornerstoneViewer({ volumeName,
       // move mipCoronalContent to the bottom left cell of the grid
       mipCoronalContent.style.gridColumn = 1;
       mipCoronalContent.style.gridRow = 2;
+
+      mipSagittalContent.style.gridColumn = 2;
+      mipSagittalContent.style.gridRow = 2;
+
+      mipAxialContent.style.gridColumn = 1;
+      mipAxialContent.style.gridRow = 1;
 
       // t3dCoronalContent.style.gridColumn = 'span 3';
     }
