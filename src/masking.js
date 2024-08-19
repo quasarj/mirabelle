@@ -52,6 +52,28 @@ export async function flagAsRejected(iec) {
 
 	return details;
 }
+export async function flagAsSkipped(iec) {
+	const response = await fetch(
+		`/papi/v1/masking/${iec}/skip`,
+		{
+			method: "POST",
+		}
+	);
+	const details = await response.json();
+
+	return details;
+}
+export async function flagAsNonmaskable(iec) {
+	const response = await fetch(
+		`/papi/v1/masking/${iec}/nonmaskable`,
+		{
+			method: "POST",
+		}
+	);
+	const details = await response.json();
+
+	return details;
+}
 
 export async function setParameters(
   iec,

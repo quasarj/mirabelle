@@ -10,7 +10,9 @@ function MiddlelBottomPanel({ onExpand,
                               onNext, 
                               onPrevious,
                               onMarkAccepted,
-                              onMarkRejected }) {
+                              onMarkRejected,
+                              onMarkSkip,
+                              onMarkNonMaskable }) {
   const {
     template,
   } = useContext(Context);
@@ -23,6 +25,8 @@ function MiddlelBottomPanel({ onExpand,
           onAccept={onAccept}
           onMarkAccepted={onMarkAccepted}
           onMarkRejected={onMarkRejected}
+          onMarkSkip={onMarkSkip}
+          onMarkNonMaskable={onMarkNonMaskable}
         />
         {template === "MaskerVR" && (
           <NavigationPanel 

@@ -20,7 +20,7 @@ import {
 	calculateDistance,
 } from '../utilities';
 
-import { setParameters, loaded, flagAsAccepted, flagAsRejected } from '../masking';
+import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable } from '../masking';
 
 import resizeButtonLogo from '../assets/resize-button.svg';
 import { defaults } from 'autoprefixer';
@@ -1396,6 +1396,15 @@ function CornerstoneViewer({ volumeName,
     await flagAsRejected(iec);
     alert("Marked as rejected!");
   }
+  async function handleMarkSkipped() {
+    await flagAsSkipped(iec);
+    alert("Marked as skipped!");
+  }
+  async function handleMarkNonmaskable() {
+    await flagAsNonmaskable(iec);
+    alert("Marked as Non-Maskable!");
+  }
+
 
   return (
     <>
@@ -1408,6 +1417,8 @@ function CornerstoneViewer({ volumeName,
         onExpand={handleExpandSelection}
         onMarkAccepted={handleMarkAccepted}
         onMarkRejected={handleMarkRejected}
+        onMarkSkip={handleMarkSkipped}
+        onMarkNonMaskable={handleMarkNonmaskable}
       />
     </>
   );

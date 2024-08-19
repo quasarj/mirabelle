@@ -1,7 +1,10 @@
 import React, { useContext } from 'react';
 import { Context } from './Context.js';
 
-function MaskerPanel({ onExpand, onClear, onAccept, onMarkAccepted, onMarkRejected }) {
+function MaskerPanel({ 
+  onExpand, onClear, 
+  onAccept, onMarkAccepted, onMarkRejected, onMarkSkip, onMarkNonMaskable,
+}) {
   const {
     layout,
   } = useContext(Context);
@@ -18,6 +21,12 @@ function MaskerPanel({ onExpand, onClear, onAccept, onMarkAccepted, onMarkReject
           id="markRejected"
           onClick={onMarkRejected}
           className="text-white bg-red-700 hover:bg-red-800">Reject Mask</button>
+        <button
+          onClick={onMarkSkip}
+          className="text-white bg-slate-500 hover:bg-red-800">Skip Mask</button>
+        <button
+          onClick={onMarkNonMaskable}
+          className="text-white bg-slate-500 hover:bg-red-800">Non Maskable</button>
       </div>
     );
   } else {
