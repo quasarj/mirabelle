@@ -214,49 +214,53 @@ function CornerstoneViewer({ volumeName,
 
 
     const resizeObserver = new ResizeObserver(() => {
+      const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+      if (renderingEngine) {
+          renderingEngine.resize(true, true);
+      }
       // console.log("Zoo---------------------------------ming! ")
       // console.log("Previous zoom level:");
       // save the zoom level in all viewports
-      const zoomLevel = [];
-      const renderingEngine = renderingEngineRef.current;
-      if (renderingEngine) {
-        renderingEngine.getViewports().forEach((viewport, index) => {
-          const camera = viewport.getCamera();
-          zoomLevel[index] = camera.parallelScale;
-          // console.log(index, viewport.id, zoomLevel[index] );
-        });
+      // const zoomLevel = [];
+      // const renderingEngine = renderingEngineRef.current;
+      // if (renderingEngine) {
+      //   renderingEngine.getViewports().forEach((viewport, index) => {
+      //     const camera = viewport.getCamera();
+      //     zoomLevel[index] = camera.parallelScale;
+      //     // console.log(index, viewport.id, zoomLevel[index] );
+      //   });
 
-        // save the pan location in all viewports
-        const panLocation = [];
-        renderingEngine.getViewports().forEach((viewport, index) => {
-          const camera = viewport.getCamera();
-          panLocation[index] = camera.position;
-          // console.log(index, viewport.id, panLocation[index] );
-        });
+      //   // save the pan location in all viewports
+      //   const panLocation = [];
+      //   renderingEngine.getViewports().forEach((viewport, index) => {
+      //     const camera = viewport.getCamera();
+      //     panLocation[index] = camera.position;
+      //     // console.log(index, viewport.id, panLocation[index] );
+      //   });
 
-        renderingEngine.resize(true, true);
+      //   renderingEngine.resize(true, true);
 
-        setTimeout(() => {
-          //console.log("Current zoom level:");
-          renderingEngine.getViewports().forEach((viewport, index) => {
-            const camera = viewport.getCamera();
-            camera.parallelScale = zoomLevel[index];
-            viewport.setCamera(camera);
-            // console.log(index, viewport.id, camera.parallelScale );
-            viewport.render();
-          });
+      //   setTimeout(() => {
+      //     //console.log("Current zoom level:");
+      //     renderingEngine.getViewports().forEach((viewport, index) => {
+      //       const camera = viewport.getCamera();
+      //       camera.parallelScale = zoomLevel[index];
+      //       viewport.setCamera(camera);
+      //       // console.log(index, viewport.id, camera.parallelScale );
+      //       viewport.render();
+      //     });
 
-          // console.log("Current pan location:");
-          renderingEngine.getViewports().forEach((viewport, index) => {
-            const camera = viewport.getCamera();
-            camera.position = panLocation[index];
-            viewport.setCamera(camera);
-            // console.log(index, viewport.id, camera.position );
-            viewport.render();
-          });
+      //     // console.log("Current pan location:");
+      //     renderingEngine.getViewports().forEach((viewport, index) => {
+      //       const camera = viewport.getCamera();
+      //       camera.position = panLocation[index];
+      //       viewport.setCamera(camera);
+      //       // console.log(index, viewport.id, camera.position );
+      //       viewport.render();
+      //     });
         
-        }, 50);
-      }
+      //   }, 50);
+      // }
 
       
     });
@@ -286,12 +290,15 @@ function CornerstoneViewer({ volumeName,
 
       // set resizeButton backgorund image to the resizeButtonLogo
       resizeButton.id = panelId + '_resize_button';
-      resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
+      resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white; line-height: 0">fullscreen</span>';
+      resizeButton.style.backgroundColor = 'blue';
+      // resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
       resizeButton.style.backgroundSize = 'contain';
       resizeButton.style.backgroundRepeat = 'no-repeat';
       resizeButton.style.backgroundPosition = 'center';
-      resizeButton.style.width = '30px';
-      resizeButton.style.height = '30px';
+      resizeButton.style.padding = '5px';
+      ///resizeButton.style.width = '30px';
+      //resizeButton.style.height = '30px';
       resizeButton.style.position = 'absolute';
       resizeButton.style.top = '10px';
       resizeButton.style.left = '10px';
@@ -905,7 +912,7 @@ function CornerstoneViewer({ volumeName,
     } else if (view === 'Volume') {
 
       // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
-      
+
       // remove all viewports Minimized and Expanded classes
       const allPanelWrappers = container.childNodes;
       allPanelWrappers.forEach((panelWrapper) => {
