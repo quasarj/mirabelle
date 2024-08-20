@@ -336,7 +336,8 @@ function CornerstoneViewer({ volumeName,
         
         // Minimization
         if (event.currentTarget.parentNode.classList.contains('Expanded')) {
-          event.currentTarget.childNodes[0].innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
+          event.currentTarget.textContent = 'open_in_full';
+          event.currentTarget.title = 'Maximize';
           event.currentTarget.parentNode.classList.remove('Expanded');
           event.currentTarget.parentNode.style.gridColumn = 'span 1';
           event.currentTarget.parentNode.style.gridRow = 'span 1';
@@ -348,6 +349,7 @@ function CornerstoneViewer({ volumeName,
           const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
           allPanelWrappers.forEach((panelWrapper) => {
             if (panelWrapper.classList.contains('Minimized')) {
+              panelWrapper.querySelector('button').title = 'Maximize';
               panelWrapper.style.visibility = 'visible';
               panelWrapper.style.display = 'block';
               panelWrapper.classList.remove('Minimized');
@@ -369,12 +371,14 @@ function CornerstoneViewer({ volumeName,
           event.currentTarget.parentNode.style.gridRow = 'span 2';
           event.currentTarget.parentNode.classList.add('Expanded');
           expandedViewports.id = event.currentTarget.parentNode.id;
-          event.currentTarget.childNodes[0].innerHTML = '<span class="material-symbols-rounded" style="color: white">close_fullscreen</span>';
+          event.currentTarget.textContent = 'close_fullscreen';
+          event.currentTarget.title = 'Minimize';
           
           // hide all other visible panelWrappers
           const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
           allPanelWrappers.forEach((panelWrapper) => {
             if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
+              panelWrapper.querySelector('button').title = 'Minimize';
               panelWrapper.style.visibility = 'hidden';
               panelWrapper.style.display = 'none';
               panelWrapper.classList.add('Minimized');
@@ -933,6 +937,8 @@ function CornerstoneViewer({ volumeName,
       allPanelWrappers.forEach((panelWrapper) => {
         panelWrapper.classList.remove('Minimized');
         panelWrapper.classList.remove('Expanded');
+        panelWrapper.querySelector('button').textContent = 'open_in_full';
+        panelWrapper.querySelector('button').title = 'Maximize';
       });
 
       container.style.gridTemplateColumns = 'repeat(2, 1fr)';
