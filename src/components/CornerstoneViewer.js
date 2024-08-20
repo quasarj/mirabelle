@@ -333,11 +333,13 @@ function CornerstoneViewer({ volumeName,
         
         // Minimization
         if (event.currentTarget.parentNode.classList.contains('Expanded')) {
+          event.currentTarget.childNodes[0].innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
           event.currentTarget.parentNode.classList.remove('Expanded');
           event.currentTarget.parentNode.style.gridColumn = 'span 1';
           event.currentTarget.parentNode.style.gridRow = 'span 1';
           // set the gridArea of the panelWrapper to the saved gridArea
           event.currentTarget.parentNode.style.gridArea = event.currentTarget.parentNode.getAttribute('data-gridArea');
+          
           
           // Show all other minimized panelWrappers
           const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
@@ -364,6 +366,7 @@ function CornerstoneViewer({ volumeName,
           event.currentTarget.parentNode.style.gridRow = 'span 2';
           event.currentTarget.parentNode.classList.add('Expanded');
           expandedViewports.id = event.currentTarget.parentNode.id;
+          event.currentTarget.childNodes[0].innerHTML = '<span class="material-symbols-rounded" style="color: white">close_fullscreen</span>';
           
           // hide all other visible panelWrappers
           const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
