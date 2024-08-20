@@ -286,18 +286,21 @@ function CornerstoneViewer({ volumeName,
       resizeButton.style.outline = 'none';
       resizeButton.style.cursor = 'pointer';
       resizeButton.style.backgroundColor = 'transparent';
-      resizeButton.style.padding = '0';
+      resizeButton.style.padding = '8px';
 
       // set resizeButton backgorund image to the resizeButtonLogo
       resizeButton.id = panelId + '_resize_button';
-      resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
+      //resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
       resizeButton.style.backgroundColor = '#424242';
+      resizeButton.style.color = 'white';
+      resizeButton.classList.add('material-symbols-rounded');
+      resizeButton.textContent = 'open_in_full';
       // resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
-      resizeButton.style.backgroundSize = 'contain';
-      resizeButton.style.backgroundRepeat = 'no-repeat';
-      resizeButton.style.backgroundPosition = 'center';
-      resizeButton.style.padding = '8px 8px';
-      resizeButton.style.paddingBottom = '3px';
+      // resizeButton.style.backgroundSize = 'contain';
+      // resizeButton.style.backgroundRepeat = 'no-repeat';
+      // resizeButton.style.backgroundPosition = 'center';
+      // resizeButton.style.padding = '8px 8px';
+      // resizeButton.style.paddingBottom = '3px';
       ///resizeButton.style.width = '30px';
       //resizeButton.style.height = '30px';
       resizeButton.style.position = 'absolute';
