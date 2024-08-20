@@ -7,7 +7,7 @@ function NavigationPanel({ onNext, onPrevious }) {
       <li className="pt-1 dark:bg-opacity-5 rounded-lg">
         <button onClick={onNext} className={`w-full bg-white dark:bg-slate-900`}
         title='Next'>
-          <span class="material-symbols-rounded">
+          <span className="material-symbols-rounded">
             chevron_right
           </span>
         </button>
@@ -15,7 +15,7 @@ function NavigationPanel({ onNext, onPrevious }) {
       <li className="pb-4 pt-2 dark:bg-opacity-5 rounded-lg">
         <button onClick={onPrevious} className={`w-full bg-white dark:bg-slate-900`}
         title='Previous'>
-          <span class="material-symbols-rounded">
+          <span className="material-symbols-rounded">
             chevron_left
           </span>
         </button>

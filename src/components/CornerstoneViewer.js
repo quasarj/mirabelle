@@ -290,13 +290,14 @@ function CornerstoneViewer({ volumeName,
 
       // set resizeButton backgorund image to the resizeButtonLogo
       resizeButton.id = panelId + '_resize_button';
-      resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white; line-height: 0">fullscreen</span>';
-      resizeButton.style.backgroundColor = 'blue';
+      resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
+      resizeButton.style.backgroundColor = '#424242';
       // resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
       resizeButton.style.backgroundSize = 'contain';
       resizeButton.style.backgroundRepeat = 'no-repeat';
       resizeButton.style.backgroundPosition = 'center';
-      resizeButton.style.padding = '5px';
+      resizeButton.style.padding = '8px 8px';
+      resizeButton.style.paddingBottom = '3px';
       ///resizeButton.style.width = '30px';
       //resizeButton.style.height = '30px';
       resizeButton.style.position = 'absolute';
@@ -304,6 +305,14 @@ function CornerstoneViewer({ volumeName,
       resizeButton.style.left = '10px';
       resizeButton.style.zIndex = '1000';
       resizeButton.style.display = 'none';
+
+      resizeButton.onmouseover = () => {  
+        resizeButton.style.backgroundColor = 'rgb(59 130 246)';
+      };
+      resizeButton.onmouseleave = () => {  
+        resizeButton.style.backgroundColor = '#424242';
+      };
+
       // set button to show when mouse is over panelWrapper
       panelWrapper.onmouseover = () => {  
         resizeButton.style.display = 'block';
@@ -323,15 +332,15 @@ function CornerstoneViewer({ volumeName,
         // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
         
         // Minimization
-        if (event.target.parentNode.classList.contains('Expanded')) {
-          event.target.parentNode.classList.remove('Expanded');
-          event.target.parentNode.style.gridColumn = 'span 1';
-          event.target.parentNode.style.gridRow = 'span 1';
+        if (event.currentTarget.parentNode.classList.contains('Expanded')) {
+          event.currentTarget.parentNode.classList.remove('Expanded');
+          event.currentTarget.parentNode.style.gridColumn = 'span 1';
+          event.currentTarget.parentNode.style.gridRow = 'span 1';
           // set the gridArea of the panelWrapper to the saved gridArea
-          event.target.parentNode.style.gridArea = event.target.parentNode.getAttribute('data-gridArea');
+          event.currentTarget.parentNode.style.gridArea = event.currentTarget.parentNode.getAttribute('data-gridArea');
           
           // Show all other minimized panelWrappers
-          const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
+          const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
           allPanelWrappers.forEach((panelWrapper) => {
             if (panelWrapper.classList.contains('Minimized')) {
               panelWrapper.style.visibility = 'visible';
@@ -343,23 +352,23 @@ function CornerstoneViewer({ volumeName,
           renderingEngineRef.current.getViewports().forEach((viewport) => {
             viewport.render();
           });
-          console.log('Minimized', event.target.parentNode.id);
+          console.log('Minimized', event.currentTarget.parentNode.id);
 
         } else { // Maximization
-          // console.log (event.target.parentNode.id);
+          // console.log (event.currentTarget.parentNode.id);
           // Get the gridArea of the panelWrapper
-          const gridArea = event.target.parentNode.style.gridArea;
+          const gridArea = event.currentTarget.parentNode.style.gridArea;
           // save the gridArea into the panelWrapper
-          event.target.parentNode.setAttribute('data-gridArea', gridArea);
-          event.target.parentNode.style.gridColumn = 'span 2';
-          event.target.parentNode.style.gridRow = 'span 2';
-          event.target.parentNode.classList.add('Expanded');
-          expandedViewports.id = event.target.parentNode.id;
+          event.currentTarget.parentNode.setAttribute('data-gridArea', gridArea);
+          event.currentTarget.parentNode.style.gridColumn = 'span 2';
+          event.currentTarget.parentNode.style.gridRow = 'span 2';
+          event.currentTarget.parentNode.classList.add('Expanded');
+          expandedViewports.id = event.currentTarget.parentNode.id;
           
           // hide all other visible panelWrappers
-          const allPanelWrappers = event.target.parentNode.parentNode.childNodes;
+          const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
           allPanelWrappers.forEach((panelWrapper) => {
-            if (panelWrapper.id !== event.target.parentNode.id && panelWrapper.style.visibility === 'visible') {
+            if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
               panelWrapper.style.visibility = 'hidden';
               panelWrapper.style.display = 'none';
               panelWrapper.classList.add('Minimized');
@@ -369,7 +378,7 @@ function CornerstoneViewer({ volumeName,
           renderingEngineRef.current.getViewports().forEach((viewport) => {
             viewport.render();
           });
-          console.log('Expanded', event.target.parentNode.id);
+          console.log('Expanded', event.currentTarget.parentNode.id);
         }
         
       };

@@ -197,7 +197,7 @@ function ToolsPanel() {
         <li className="pb-1 pt-1 rounded-lg">
           <button onClick={handleZoomButtonClick} className={`w-full ${ viewportNavigation === "Zoom" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
           title='Zoom'>
-            <span class="material-symbols-rounded">
+            <span className="material-symbols-rounded">
               search
             </span>
           </button>
@@ -205,7 +205,7 @@ function ToolsPanel() {
         <li className="pb-1 pt-1 rounded-lg">
           <button onClick={handlePanButtonClick} className={`w-full ${ viewportNavigation === "Pan" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
           title='Pan'>
-            <span class="material-symbols-rounded">
+            <span className="material-symbols-rounded">
               pan_tool
             </span>
           </button>
@@ -234,7 +234,7 @@ function ToolsPanel() {
         <li className="mb-2 pb-2 pt-4 rounded-lg">
           <button onClick={handleResetViewportsButtonClick}className="w-full text-white bg-red-600"
           title='Reset Viewports'>
-            <span class="material-symbols-rounded">
+            <span className="material-symbols-rounded">
               refresh
             </span>
           </button>
