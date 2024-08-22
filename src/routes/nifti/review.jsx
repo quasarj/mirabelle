@@ -13,7 +13,8 @@ export async function loader({ params }) {
 	return { details, files, iec: params.iec };
 }
 
-export default function ReviewIEC() {
+export default function ReviewNIFTI() {
+  console.log("ReviewNIFTI");
   const { details, files, iec } = useLoaderData();
 
   // default values for this route/mode
@@ -33,6 +34,7 @@ export default function ReviewIEC() {
     view: 'Volume',
     function: 'mask',
     form: 'cylinder',
+    title: 'Review NIFTI',
   };
 
   const [layout, setLayout] = useState(defaults.layout);
@@ -56,7 +58,6 @@ export default function ReviewIEC() {
     <Context.Provider value={{
 
         defaults,
-
         layout, setLayout,
         zoom, setZoom,
         opacity, setOpacity,
@@ -72,6 +73,7 @@ export default function ReviewIEC() {
         view, setView,
         maskFunction, setMaskFunction,
         maskForm, setMaskForm,
+        title: defaults.title,
         
     }}>
         <Masker files={files} iec={iec} />
