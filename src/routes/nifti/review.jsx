@@ -14,7 +14,7 @@ export async function loader({ params }) {
 }
 
 export default function ReviewNIFTI() {
-  console.log("ReviewNIFTI");
+  // console.log("ReviewNIFTI");
   const { details, files, iec } = useLoaderData();
 
   // default values for this route/mode
