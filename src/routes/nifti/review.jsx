@@ -3,19 +3,21 @@ import { useLoaderData, Link } from 'react-router-dom';
 import Masker from '../../components/Masker.jsx';
 import { Context } from '../../components/Context';
 
-import { getReviewFiles, getDetails } from '../../masking.js';
+import { getFiles, getDetails } from '../../masking.js';
 
 export async function loader({ params }) {
 
 	const details = await getDetails(params.iec);
-  const files = await getReviewFiles(params.iec);
+  const files = await getFiles(params.iec);
 
 	return { details, files, iec: params.iec };
 }
 
 export default function ReviewNIFTI() {
-  // console.log("ReviewNIFTI");
+
   const { details, files, iec } = useLoaderData();
+
+  console.log("files=", files, "iec=", iec);
 
   // default values for this route/mode
   const defaults = {

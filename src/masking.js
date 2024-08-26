@@ -114,6 +114,7 @@ export async function getReviewFiles(iec) {
 
 	return details;
 }
+
 export async function getIECsForVR(visual_review_id) {
 
 	const response = await fetch(

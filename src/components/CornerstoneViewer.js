@@ -1,32 +1,35 @@
+// React
 import React, { useContext, useState, useEffect, useLayoutEffect, useRef } from 'react';
+
+// Components
 import MiddlelBottomPanel from './MiddlelBottomPanel.jsx';
 
+// Context
 import { Context } from './Context.js';
 
+// Cornerstone
 import * as cornerstone from '@cornerstonejs/core';
-import { CONSTANTS, cache } from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
-
-
 import {
   cornerstoneStreamingImageVolumeLoader,
   cornerstoneStreamingDynamicImageVolumeLoader,
 } from '@cornerstonejs/streaming-image-volume-loader';
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dicomParser from 'dicom-parser';
+import {
+  cornerstoneNiftiImageVolumeLoader,
+  Enums as NiftiEnums,
+} from '@cornerstonejs/nifti-image-loader';
 
+// Utilities
 import {
 	expandSegTo3D,
 	calculateDistance,
 } from '../utilities';
-
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable } from '../masking';
-
-import resizeButtonLogo from '../assets/resize-button.svg';
-import { defaults } from 'autoprefixer';
-
-//import { add, subtract, multiply, dotMultiply, inv, min, max, map } from 'mathjs';
 import * as math from 'mathjs';
+
+
 
 function getOrCreateToolgroup(toolgroup_name) {
   let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -293,7 +296,7 @@ function CornerstoneViewer({ volumeName,
   // Load presets when component mounts
   useEffect(() => {
     const loadPresets = () => {
-      const fetchedPresets = CONSTANTS.VIEWPORT_PRESETS.map((preset) => preset.name);
+      const fetchedPresets = cornerstone.CONSTANTS.VIEWPORT_PRESETS.map((preset) => preset.name);
       setPresets(fetchedPresets);
     };
 
@@ -302,7 +305,7 @@ function CornerstoneViewer({ volumeName,
 
   useLayoutEffect(() => {
     let volume = null;
-    cache.purgeCache();
+    cornerstone.cache.purgeCache();
 
     const { volumeLoader } = cornerstone;
 
@@ -1012,7 +1015,7 @@ function CornerstoneViewer({ volumeName,
     run();
 
     return () => {
-      cache.purgeCache();
+      cornerstone.cache.purgeCache();
       resizeObserver.disconnect();
     };
   }, [layout]);
@@ -1164,7 +1167,7 @@ function CornerstoneViewer({ volumeName,
   // Load the actual volume into the display here
   useEffect(() => {
     
-    cache.purgeCache();
+    cornerstone.cache.purgeCache();
 
     // do nothing if Cornerstone is still loading
     if (loading) {
@@ -1179,12 +1182,15 @@ function CornerstoneViewer({ volumeName,
     const renderingEngine = renderingEngineRef.current;
 
     async function getFileData() {
+      console.log('getfiledata');
+
       let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
       // TODO: could probably use a better way to generate unique volumeIds
       volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
     }
 
     async function doit() {
+      console.log('doit');
       window.cornerstone = cornerstone;
       window.cornerstoneTools = cornerstoneTools;
       await getFileData();
