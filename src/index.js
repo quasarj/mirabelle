@@ -52,7 +52,7 @@ const router = createBrowserRouter([
 		loader: iecReviewLoader,
 	},
 	{
-		path: "review/nifti/:iec",
+		path: "review/nifti/:fileId",
 		element: <ReviewNIFTI />,
 		loader: niftiReviewLoader,
 	},

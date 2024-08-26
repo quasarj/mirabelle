@@ -3,21 +3,18 @@ import { useLoaderData, Link } from 'react-router-dom';
 import Masker from '../../components/Masker.jsx';
 import { Context } from '../../components/Context';
 
-import { getFiles, getDetails } from '../../masking.js';
+import { getNiftiFiles, getDetails } from '../../masking.js';
 
 export async function loader({ params }) {
-
-	const details = await getDetails(params.iec);
-  const files = await getFiles(params.iec);
-
-	return { details, files, iec: params.iec };
+  console.log("loader params=", params);
+	return { files: [params.fileId] };
 }
 
 export default function ReviewNIFTI() {
 
-  const { details, files, iec } = useLoaderData();
+  const { files } = useLoaderData();
 
-  console.log("files=", files, "iec=", iec);
+  console.log("nifti files=", files);
 
   // default values for this route/mode
   const defaults = {
@@ -78,7 +75,7 @@ export default function ReviewNIFTI() {
         title: defaults.title,
         
     }}>
-        <Masker files={files} iec={iec} />
+        <Masker files={files} />
     </Context.Provider>
   );
 }

@@ -19,12 +19,12 @@ import dicomParser from 'dicom-parser';
 import {
   cornerstoneNiftiImageVolumeLoader,
   Enums as NiftiEnums,
-} from '@cornerstonejs/nifti-image-loader';
+} from '@cornerstonejs/nifti-volume-loader';
 
 // Utilities
 import {
-	expandSegTo3D,
-	calculateDistance,
+  expandSegTo3D,
+  calculateDistance,
 } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable } from '../masking';
 import * as math from 'mathjs';
@@ -42,217 +42,216 @@ function getOrCreateToolgroup(toolgroup_name) {
 //TODO this should probably be moved somewhere else, masking.js maybe?
 async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
 
-    // Experimental adjustment of coordinates for masker
-    function invert(val, maxval) {
-        return maxval - val;
-    }
+  // Experimental adjustment of coordinates for masker
+  function invert(val, maxval) {
+    return maxval - val;
+  }
 
-    function convertLPStoRAS(point, dims) {
-        const [dimX, dimY, dimZ] = dims;
-        let [x, y, z] = point;
-        x = invert(x, dimX);
-        y = invert(y, dimY);
-        return [x, y, z];
-    }
+  function convertLPStoRAS(point, dims) {
+    const [dimX, dimY, dimZ] = dims;
+    let [x, y, z] = point;
+    x = invert(x, dimX);
+    y = invert(y, dimY);
+    return [x, y, z];
+  }
 
-    function scaleBySpacing(point, spacings) {
-        const [spaceX, spaceY, spaceZ] = spacings;
-        let [x, y, z] = point;
-        return [Math.floor(x * spaceX), Math.floor(y * spaceY), Math.floor(z * spaceZ)];
-    }
+  function scaleBySpacing(point, spacings) {
+    const [spaceX, spaceY, spaceZ] = spacings;
+    let [x, y, z] = point;
+    return [Math.floor(x * spaceX), Math.floor(y * spaceY), Math.floor(z * spaceZ)];
+  }
 
-    function convertCoordinates(
-        coords,                    // The input coordinates (min/max for x, y, z)
-        volume,                    // The image volume
-        targetDirection,           // The direction matrix of the target space
-    ) {
+  function convertCoordinates(
+    coords,                    // The input coordinates (min/max for x, y, z)
+    volume,                    // The image volume
+    targetDirection,           // The direction matrix of the target space
+  ) {
 
-        // Add 1 to max values to ensure that the max values are inclusive
-        coords = Object.keys(coords).reduce((acc, axis) => {
-            acc[axis] = {
-                min: coords[axis].min,
-                max: coords[axis].max + 1
-            };
-            return acc;
-        }, {});
+    // Add 1 to max values to ensure that the max values are inclusive
+    coords = Object.keys(coords).reduce((acc, axis) => {
+      acc[axis] = {
+        min: coords[axis].min,
+        max: coords[axis].max + 1
+      };
+      return acc;
+    }, {});
 
-        const sourceDimensions = volume.dimensions
-        const sourceOrigin = volume.origin
-        const sourceSpacing = volume.spacing
-        const sourceDirection = [
-            [volume.direction[0], volume.direction[1], volume.direction[2]],
-            [volume.direction[3], volume.direction[4], volume.direction[5]],
-            [volume.direction[6], volume.direction[7], volume.direction[8]]
-        ];
-        const sourceDimensionsPhysical = math.dotMultiply(sourceDimensions, sourceSpacing) 
+    const sourceDimensions = volume.dimensions
+    const sourceOrigin = volume.origin
+    const sourceSpacing = volume.spacing
+    const sourceDirection = [
+      [volume.direction[0], volume.direction[1], volume.direction[2]],
+      [volume.direction[3], volume.direction[4], volume.direction[5]],
+      [volume.direction[6], volume.direction[7], volume.direction[8]]
+    ];
+    const sourceDimensionsPhysical = math.dotMultiply(sourceDimensions, sourceSpacing)
 
-        // Calculate the transformation matrix from source to target direction
-        const transformationMatrix = math.multiply(
-            math.inv(targetDirection),  // Inverse of the target direction matrix
-            math.inv(sourceDirection)   // Multiplied by inverse of source direction matrix
-        );
+    // Calculate the transformation matrix from source to target direction
+    const transformationMatrix = math.multiply(
+      math.inv(targetDirection),  // Inverse of the target direction matrix
+      math.inv(sourceDirection)   // Multiplied by inverse of source direction matrix
+    );
 
-        // Transform origin / spacing / dimensions based on the transformation matrix
-        const targetOrigin = math.multiply(transformationMatrix, sourceOrigin)
-        const targetSpacing = math.abs(math.dotMultiply(transformationMatrix, sourceSpacing)).map(row => math.sum(row))
-        const targetDimensions = math.round(math.dotDivide(math.abs(math.multiply(transformationMatrix, math.dotMultiply(sourceDimensions, sourceSpacing))), targetSpacing))
-        const targetDimensionsPhysical = math.dotMultiply(targetDimensions, targetSpacing)
+    // Transform origin / spacing / dimensions based on the transformation matrix
+    const targetOrigin = math.multiply(transformationMatrix, sourceOrigin)
+    const targetSpacing = math.abs(math.dotMultiply(transformationMatrix, sourceSpacing)).map(row => math.sum(row))
+    const targetDimensions = math.round(math.dotDivide(math.abs(math.multiply(transformationMatrix, math.dotMultiply(sourceDimensions, sourceSpacing))), targetSpacing))
+    const targetDimensionsPhysical = math.dotMultiply(targetDimensions, targetSpacing)
 
-        // Define the 8 corners of the cuboid in the source voxel space
-        const sourceVoxelCorners = [
-            [coords.x.min, coords.y.min, coords.z.min],  // Bottom-front-left corner
-            [coords.x.min, coords.y.min, coords.z.max],  // Bottom-front-right corner
-            [coords.x.min, coords.y.max, coords.z.min],  // Top-front-left corner
-            [coords.x.min, coords.y.max, coords.z.max],  // Top-front-right corner
-            [coords.x.max, coords.y.min, coords.z.min],  // Bottom-back-left corner
-            [coords.x.max, coords.y.min, coords.z.max],  // Bottom-back-right corner
-            [coords.x.max, coords.y.max, coords.z.min],  // Top-back-left corner
-            [coords.x.max, coords.y.max, coords.z.max]   // Top-back-right corner
-        ];
-
-        // Scale voxel coordinates to physical space (updated to include origin for non-standard translations)
-        const sourcePhysicalCorners = sourceVoxelCorners.map(corner =>
-            math.add(
-                sourceOrigin,                             // Add the origin of the source space
-                math.dotMultiply(corner, sourceSpacing)   // Scale the corner coordinates by the source spacing
-            )
-        );
-
-        // Apply the transformation matrix to convert physical coordinates from source to target space
-        let targetPhysicalCorners = sourcePhysicalCorners.map(corner =>
-            math.add(
-                math.multiply(
-                    transformationMatrix,                 // Apply the transformation matrix
-                    math.subtract(corner, sourceOrigin)   // Subtract the source origin from the physical coordinates
-                ),
-                targetOrigin                              // Add the target origin to the transformed coordinates
-            )
-        );
-
-        // Reapply the target origin to the transformed corners(comment out if not applying above)
-        targetPhysicalCorners = math.subtract(targetPhysicalCorners, targetOrigin)
-
-        // Reflect both min and max if min is negative (flip to other end of axis)
-        for (let i = 0; i < 3; i++) {  // Iterate over x, y, z dimensions
-            let column = math.column(targetPhysicalCorners, i).flat();  // Extract the i-th column (corresponding to x, y, or z)
-            let minVal = math.min(column);  // Find the minimum value in this dimension
-
-            if (minVal < 0) {  // If the minimum value is negative, reflect the coordinates
-                targetPhysicalCorners =
-                    targetPhysicalCorners.map(corner => {
-                        // Reflect the negative value by adding the target dimension
-                        corner[i] = targetDimensionsPhysical[i] + corner[i];
-                        return corner;  // Return the modified corner
-                });
-            }
-        }
-
-        // Clip the voxel coordinates to ensure they stay within the target dimensions
-        targetPhysicalCorners =
-            targetPhysicalCorners.map(corner =>
-                corner.map((value, index) =>
-                    math.max(0, math.min(value, targetDimensionsPhysical[index]))
-                )
-            );
-
-        // Applying rounding to get final physical coordinates
-        targetPhysicalCorners = targetPhysicalCorners.map(corner =>
-            corner.map(coord => math.round(coord))
-        );
-
-        // Convert physical corners to voxel space in the target plane
-        // Not used, only for debugging
-        let targetVoxelCorners = targetPhysicalCorners.map(corner =>
-            corner.map((coord, index) => math.round(coord / targetSpacing[index]))
-        );
-
-        // Compute the final transformed coordinates (min/max for x, y, z)
-        const transformedCoords = {
-            x: {
-                min: math.min(targetPhysicalCorners.map(corner => corner[0])),  // Minimum x-coordinate
-                max: math.max(targetPhysicalCorners.map(corner => corner[0]))   // Maximum x-coordinate
-            },
-            y: {
-                min: math.min(targetPhysicalCorners.map(corner => corner[1])),  // Minimum y-coordinate
-                max: math.max(targetPhysicalCorners.map(corner => corner[1]))   // Maximum y-coordinate
-            },
-            z: {
-                min: math.min(targetPhysicalCorners.map(corner => corner[2])),  // Minimum z-coordinate
-                max: math.max(targetPhysicalCorners.map(corner => corner[2]))   // Maximum z-coordinate
-            }
-        };
-
-        // Return the transformed coordinates
-        return transformedCoords;
-    }
-
-    console.log("finalCalc running");
-    console.log(coords);
-
-    const volume = cornerstone.cache.getVolume(volumeId);
-
-    //// sagittal plane
-    //// 1.3.6.1.4.1.14519.5.2.1.1600.1206.239190725826528812824420431561: 6994
-    //const volume_test = {
-    //    dimensions: [512, 512, 200],
-    //    direction: [0, 1, 0, 0, 0, -1, -1, 0, 0],
-    //    origin: [247.1846313, -816.7918091, 1671.210083],
-    //    spacing: [3.192499876, 3.192499876, 2.5]
-    //}
-    //const coords_test = { x: { min: 231, max: 260 }, y: { min: 0, max: 221 }, z: { min: 0, max: 199 } };
-
-    const targetDirection = [[-1, 0, 0], [0, -1, 0], [0, 0, 1]];  // RAS Axial
-
-    const transformedCoords = convertCoordinates(coords, volume, targetDirection);
-
-    console.log("Transformed coordinates in the target plane:");
-    console.log(transformedCoords);
-
-    let cornerPoints = {
-        l: transformedCoords.x.min,
-        r: transformedCoords.x.max,
-        p: transformedCoords.y.min,
-        a: transformedCoords.y.max,
-        i: transformedCoords.z.min,
-        s: transformedCoords.z.max
-    }
-
-    let centerPoint = [
-        math.round((transformedCoords.x.max + transformedCoords.x.min) / 2),
-        math.round((transformedCoords.y.max + transformedCoords.y.min) / 2),
-        math.round((transformedCoords.z.max + transformedCoords.z.min) / 2)
+    // Define the 8 corners of the cuboid in the source voxel space
+    const sourceVoxelCorners = [
+      [coords.x.min, coords.y.min, coords.z.min],  // Bottom-front-left corner
+      [coords.x.min, coords.y.min, coords.z.max],  // Bottom-front-right corner
+      [coords.x.min, coords.y.max, coords.z.min],  // Top-front-left corner
+      [coords.x.min, coords.y.max, coords.z.max],  // Top-front-right corner
+      [coords.x.max, coords.y.min, coords.z.min],  // Bottom-back-left corner
+      [coords.x.max, coords.y.min, coords.z.max],  // Bottom-back-right corner
+      [coords.x.max, coords.y.max, coords.z.min],  // Top-back-left corner
+      [coords.x.max, coords.y.max, coords.z.max]   // Top-back-right corner
     ];
 
-    // Dimensions calculation
-    const width = math.round(math.abs(transformedCoords.x.max - transformedCoords.x.min));
-    const height = math.round(math.abs(transformedCoords.y.max - transformedCoords.y.min));
-    const depth = math.round(math.abs(transformedCoords.z.max - transformedCoords.z.min));
+    // Scale voxel coordinates to physical space (updated to include origin for non-standard translations)
+    const sourcePhysicalCorners = sourceVoxelCorners.map(corner =>
+      math.add(
+        sourceOrigin,                             // Add the origin of the source space
+        math.dotMultiply(corner, sourceSpacing)   // Scale the corner coordinates by the source spacing
+      )
+    );
 
-    const output = {
-        lr: centerPoint[0], // Left-right position
-        pa: centerPoint[1], // Posterior-anterior position
-        is: centerPoint[2], // Inferior-Superior position
-        width: width,
-        height: height,
-        depth: depth,
-        form: maskForm,
-        function: maskFunction,
+    // Apply the transformation matrix to convert physical coordinates from source to target space
+    let targetPhysicalCorners = sourcePhysicalCorners.map(corner =>
+      math.add(
+        math.multiply(
+          transformationMatrix,                 // Apply the transformation matrix
+          math.subtract(corner, sourceOrigin)   // Subtract the source origin from the physical coordinates
+        ),
+        targetOrigin                              // Add the target origin to the transformed coordinates
+      )
+    );
+
+    // Reapply the target origin to the transformed corners(comment out if not applying above)
+    targetPhysicalCorners = math.subtract(targetPhysicalCorners, targetOrigin)
+
+    // Reflect both min and max if min is negative (flip to other end of axis)
+    for (let i = 0; i < 3; i++) {  // Iterate over x, y, z dimensions
+      let column = math.column(targetPhysicalCorners, i).flat();  // Extract the i-th column (corresponding to x, y, or z)
+      let minVal = math.min(column);  // Find the minimum value in this dimension
+
+      if (minVal < 0) {  // If the minimum value is negative, reflect the coordinates
+        targetPhysicalCorners =
+          targetPhysicalCorners.map(corner => {
+            // Reflect the negative value by adding the target dimension
+            corner[i] = targetDimensionsPhysical[i] + corner[i];
+            return corner;  // Return the modified corner
+          });
+      }
+    }
+
+    // Clip the voxel coordinates to ensure they stay within the target dimensions
+    targetPhysicalCorners =
+      targetPhysicalCorners.map(corner =>
+        corner.map((value, index) =>
+          math.max(0, math.min(value, targetDimensionsPhysical[index]))
+        )
+      );
+
+    // Applying rounding to get final physical coordinates
+    targetPhysicalCorners = targetPhysicalCorners.map(corner =>
+      corner.map(coord => math.round(coord))
+    );
+
+    // Convert physical corners to voxel space in the target plane
+    // Not used, only for debugging
+    let targetVoxelCorners = targetPhysicalCorners.map(corner =>
+      corner.map((coord, index) => math.round(coord / targetSpacing[index]))
+    );
+
+    // Compute the final transformed coordinates (min/max for x, y, z)
+    const transformedCoords = {
+      x: {
+        min: math.min(targetPhysicalCorners.map(corner => corner[0])),  // Minimum x-coordinate
+        max: math.max(targetPhysicalCorners.map(corner => corner[0]))   // Maximum x-coordinate
+      },
+      y: {
+        min: math.min(targetPhysicalCorners.map(corner => corner[1])),  // Minimum y-coordinate
+        max: math.max(targetPhysicalCorners.map(corner => corner[1]))   // Maximum y-coordinate
+      },
+      z: {
+        min: math.min(targetPhysicalCorners.map(corner => corner[2])),  // Minimum z-coordinate
+        max: math.max(targetPhysicalCorners.map(corner => corner[2]))   // Maximum z-coordinate
+      }
     };
 
-    console.log(output);
-    await setParameters(iec, output);
-    alert("Submitted for masking!");
+    // Return the transformed coordinates
+    return transformedCoords;
+  }
+
+  console.log("finalCalc running");
+  console.log(coords);
+
+  const volume = cornerstone.cache.getVolume(volumeId);
+
+  //// sagittal plane
+  //// 1.3.6.1.4.1.14519.5.2.1.1600.1206.239190725826528812824420431561: 6994
+  //const volume_test = {
+  //    dimensions: [512, 512, 200],
+  //    direction: [0, 1, 0, 0, 0, -1, -1, 0, 0],
+  //    origin: [247.1846313, -816.7918091, 1671.210083],
+  //    spacing: [3.192499876, 3.192499876, 2.5]
+  //}
+  //const coords_test = { x: { min: 231, max: 260 }, y: { min: 0, max: 221 }, z: { min: 0, max: 199 } };
+
+  const targetDirection = [[-1, 0, 0], [0, -1, 0], [0, 0, 1]];  // RAS Axial
+
+  const transformedCoords = convertCoordinates(coords, volume, targetDirection);
+
+  console.log("Transformed coordinates in the target plane:");
+  console.log(transformedCoords);
+
+  let cornerPoints = {
+    l: transformedCoords.x.min,
+    r: transformedCoords.x.max,
+    p: transformedCoords.y.min,
+    a: transformedCoords.y.max,
+    i: transformedCoords.z.min,
+    s: transformedCoords.z.max
+  }
+
+  let centerPoint = [
+    math.round((transformedCoords.x.max + transformedCoords.x.min) / 2),
+    math.round((transformedCoords.y.max + transformedCoords.y.min) / 2),
+    math.round((transformedCoords.z.max + transformedCoords.z.min) / 2)
+  ];
+
+  // Dimensions calculation
+  const width = math.round(math.abs(transformedCoords.x.max - transformedCoords.x.min));
+  const height = math.round(math.abs(transformedCoords.y.max - transformedCoords.y.min));
+  const depth = math.round(math.abs(transformedCoords.z.max - transformedCoords.z.min));
+
+  const output = {
+    lr: centerPoint[0], // Left-right position
+    pa: centerPoint[1], // Posterior-anterior position
+    is: centerPoint[2], // Inferior-Superior position
+    width: width,
+    height: height,
+    depth: depth,
+    form: maskForm,
+    function: maskFunction,
+  };
+
+  console.log(output);
+  await setParameters(iec, output);
+  alert("Submitted for masking!");
 }
 
 
 function CornerstoneViewer({ volumeName,
-                             files,
-                             iec }) {
+  files,
+  iec }) {
 
-  const { 
+  const {
 
     defaults,
-
     layout, setLayout,
     zoom, setZoom,
     opacity, setOpacity,
@@ -267,13 +266,14 @@ function CornerstoneViewer({ volumeName,
     resetViewports, setResetViewports,
     view, setView,
     maskForm, maskFunction,
+    title,
   } = useContext(Context);
 
-  const [ loading, setLoading ] = useState(true);
-  const [ filesLoaded, setFilesLoaded ] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [filesLoaded, setFilesLoaded] = useState(false);
 
   // set a state variable that will save each viewport's normal/expanded/minimized state
-  const [ expandedViewports, setExpandedViewports ] = useState([
+  const [expandedViewports, setExpandedViewports] = useState([
     { id: 'axial', state: 'normal' },
     { id: 'sagittal', state: 'normal' },
     { id: 'coronal', state: 'normal' },
@@ -291,7 +291,14 @@ function CornerstoneViewer({ volumeName,
 
   let coords;
   let segId = 'seg' + volumeName;
-  let volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
+  let volumeId;
+
+  if (title) {
+    volumeId = `nifti:/papi/v1/files/${files[0]}/data`;
+  } else {
+    volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
+  }
+
 
   // Load presets when component mounts
   useEffect(() => {
@@ -313,6 +320,7 @@ function CornerstoneViewer({ volumeName,
       volumeLoader.registerUnknownVolumeLoader(cornerstoneStreamingImageVolumeLoader);
       volumeLoader.registerVolumeLoader('cornerstoneStreamingImageVolume', cornerstoneStreamingImageVolumeLoader);
       volumeLoader.registerVolumeLoader('cornerstoneStreamingDynamicImageVolume', cornerstoneStreamingDynamicImageVolumeLoader);
+      volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
     }
 
     function initCornerstoneDICOMImageLoader() {
@@ -351,7 +359,7 @@ function CornerstoneViewer({ volumeName,
     const resizeObserver = new ResizeObserver(() => {
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
       if (renderingEngine) {
-          renderingEngine.resize(true, true);
+        renderingEngine.resize(true, true);
       }
       // console.log("Zoo---------------------------------ming! ")
       // console.log("Previous zoom level:");
@@ -393,11 +401,11 @@ function CornerstoneViewer({ volumeName,
       //       // console.log(index, viewport.id, camera.position );
       //       viewport.render();
       //     });
-        
+
       //   }, 50);
       // }
 
-      
+
     });
 
     function setupPanel(panelId) {
@@ -444,19 +452,19 @@ function CornerstoneViewer({ volumeName,
       resizeButton.style.zIndex = '1000';
       resizeButton.style.display = 'none';
 
-      resizeButton.onmouseover = () => {  
+      resizeButton.onmouseover = () => {
         resizeButton.style.backgroundColor = 'rgb(59 130 246)';
       };
-      resizeButton.onmouseleave = () => {  
+      resizeButton.onmouseleave = () => {
         resizeButton.style.backgroundColor = '#424242';
       };
 
       // set button to show when mouse is over panelWrapper
-      panelWrapper.onmouseover = () => {  
+      panelWrapper.onmouseover = () => {
         resizeButton.style.display = 'block';
       };
-      panelWrapper.onmouseout = () => {  resizeButton.style.display = 'none'; };
-      
+      panelWrapper.onmouseout = () => { resizeButton.style.display = 'none'; };
+
       // on resizeButton click, set the panelWrapper to be full viewport size
       resizeButton.onclick = (event) => {
         // panelWrapper.style.width = '100vw';
@@ -468,7 +476,7 @@ function CornerstoneViewer({ volumeName,
         // resizeButton.style.display = 'none';
 
         // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
-        
+
         // Minimization
         if (event.currentTarget.parentNode.classList.contains('Expanded')) {
           event.currentTarget.textContent = 'open_in_full';
@@ -478,8 +486,8 @@ function CornerstoneViewer({ volumeName,
           event.currentTarget.parentNode.style.gridRow = 'span 1';
           // set the gridArea of the panelWrapper to the saved gridArea
           event.currentTarget.parentNode.style.gridArea = event.currentTarget.parentNode.getAttribute('data-gridArea');
-          
-          
+
+
           // Show all other minimized panelWrappers
           const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
           allPanelWrappers.forEach((panelWrapper) => {
@@ -508,7 +516,7 @@ function CornerstoneViewer({ volumeName,
           expandedViewports.id = event.currentTarget.parentNode.id;
           event.currentTarget.textContent = 'close_fullscreen';
           event.currentTarget.title = 'Minimize';
-          
+
           // hide all other visible panelWrappers
           const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
           allPanelWrappers.forEach((panelWrapper) => {
@@ -525,7 +533,7 @@ function CornerstoneViewer({ volumeName,
           });
           console.log('Expanded', event.currentTarget.parentNode.id);
         }
-        
+
       };
 
       panel.id = panelId;
@@ -592,11 +600,11 @@ function CornerstoneViewer({ volumeName,
 
       // Pan
       t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-          bindings: [
-              {
-                  mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-              },
-          ],
+        bindings: [
+          {
+            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+          },
+        ],
       });
 
       // Segmentation Display
@@ -614,43 +622,43 @@ function CornerstoneViewer({ volumeName,
       };
 
       const viewportReferenceLineControllable = [
-          'vol_axial',
-          'vol_sagittal',
-          'vol_coronal',
+        'vol_axial',
+        'vol_sagittal',
+        'vol_coronal',
       ];
 
       const viewportReferenceLineDraggableRotatable = [
-          'vol_axial',
-          'vol_sagittal',
-          'vol_coronal',
+        'vol_axial',
+        'vol_sagittal',
+        'vol_coronal',
       ];
 
       const viewportReferenceLineSlabThicknessControlsOn = [
-          'vol_axial',
-          'vol_sagittal',
-          'vol_coronal',
+        'vol_axial',
+        'vol_sagittal',
+        'vol_coronal',
       ];
 
       function getReferenceLineColor(viewportId) {
-          return viewportColors[viewportId];
+        return viewportColors[viewportId];
       }
 
       function getReferenceLineControllable(viewportId) {
-          const index = viewportReferenceLineControllable.indexOf(viewportId);
-          return index !== -1;
+        const index = viewportReferenceLineControllable.indexOf(viewportId);
+        return index !== -1;
       }
 
       function getReferenceLineDraggableRotatable(viewportId) {
-          const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
-          return index !== -1;
+        const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+        return index !== -1;
       }
 
       function getReferenceLineSlabThicknessControlsOn(viewportId) {
-          const index =
-              viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
-          return index !== -1;
+        const index =
+          viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+        return index !== -1;
       }
-      
+
       try {
         cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
         cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
@@ -680,13 +688,13 @@ function CornerstoneViewer({ volumeName,
 
       group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-      if (rectangleScissors)  {
+      if (rectangleScissors) {
         group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
           bindings: [
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
           ]
         });
-      } 
+      }
 
       group.addTool(cornerstoneTools.PanTool.toolName);
       group.addTool(cornerstoneTools.ZoomTool.toolName);
@@ -707,11 +715,11 @@ function CornerstoneViewer({ volumeName,
 
       // Pan
       group.setToolActive(cornerstoneTools.PanTool.toolName, {
-          bindings: [
-              {
-                  mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-              },
-          ],
+        bindings: [
+          {
+            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+          },
+        ],
       });
 
       // Window Level
@@ -719,14 +727,14 @@ function CornerstoneViewer({ volumeName,
 
       if (windowLevel) {
         group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-            bindings: [
-                {
-                    mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
-                },
-            ],
+          bindings: [
+            {
+              mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+            },
+          ],
         });
       }
-      
+
       group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
         getReferenceLineColor,
         getReferenceLineControllable,
@@ -745,7 +753,7 @@ function CornerstoneViewer({ volumeName,
       const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
 
       ['vol_axial', 'vol_sagittal', 'vol_coronal'].forEach((viewport) => {
-          volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+        volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
       });
 
     }
@@ -759,43 +767,43 @@ function CornerstoneViewer({ volumeName,
       };
 
       const viewportReferenceLineControllable = [
-          'mip_axial',
-          'mip_sagittal',
-          'mip_coronal',
+        'mip_axial',
+        'mip_sagittal',
+        'mip_coronal',
       ];
 
       const viewportReferenceLineDraggableRotatable = [
-          'mip_axial',
-          'mip_sagittal',
-          'mip_coronal',
+        'mip_axial',
+        'mip_sagittal',
+        'mip_coronal',
       ];
 
       const viewportReferenceLineSlabThicknessControlsOn = [
-          'mip_axial',
-          'mip_sagittal',
-          'mip_coronal',
+        'mip_axial',
+        'mip_sagittal',
+        'mip_coronal',
       ];
 
       function getReferenceLineColor(viewportId) {
-          return viewportColors[viewportId];
+        return viewportColors[viewportId];
       }
 
       function getReferenceLineControllable(viewportId) {
-          const index = viewportReferenceLineControllable.indexOf(viewportId);
-          return index !== -1;
+        const index = viewportReferenceLineControllable.indexOf(viewportId);
+        return index !== -1;
       }
 
       function getReferenceLineDraggableRotatable(viewportId) {
-          const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
-          return index !== -1;
+        const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+        return index !== -1;
       }
 
       function getReferenceLineSlabThicknessControlsOn(viewportId) {
-          const index =
-              viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
-          return index !== -1;
+        const index =
+          viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+        return index !== -1;
       }
-      
+
       try {
         cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
         cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
@@ -825,13 +833,13 @@ function CornerstoneViewer({ volumeName,
 
       group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-      if (rectangleScissors)  {
+      if (rectangleScissors) {
         group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
           bindings: [
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
           ]
         });
-      } 
+      }
 
       group.addTool(cornerstoneTools.PanTool.toolName);
       group.addTool(cornerstoneTools.ZoomTool.toolName);
@@ -852,11 +860,11 @@ function CornerstoneViewer({ volumeName,
 
       // Pan
       group.setToolActive(cornerstoneTools.PanTool.toolName, {
-          bindings: [
-              {
-                  mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-              },
-          ],
+        bindings: [
+          {
+            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+          },
+        ],
       });
 
       // Window Level
@@ -864,14 +872,14 @@ function CornerstoneViewer({ volumeName,
 
       if (windowLevel) {
         group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-            bindings: [
-                {
-                    mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
-                },
-            ],
+          bindings: [
+            {
+              mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+            },
+          ],
         });
       }
-      
+
       group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
         getReferenceLineColor,
         getReferenceLineControllable,
@@ -890,17 +898,29 @@ function CornerstoneViewer({ volumeName,
       const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("mip_voi_syncronizer");
 
       ['mip_axial', 'mip_sagittal', 'mip_coronal'].forEach((viewport) => {
-          mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+        mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
       });
 
     }
 
     async function run() {
+
       if (!loaded.loaded) {
         await cornerstone.init();
-        await cornerstoneTools.init();
-        await initVolumeLoader();
-        await initCornerstoneDICOMImageLoader();
+        cornerstoneTools.init();
+        initVolumeLoader();
+        initCornerstoneDICOMImageLoader();
+
+        // if (title) {
+        //   console.log("title is set to:", title);
+        //   cornerstone.volumeLoader.registerVolumeLoader('nifti', cornerstoneStreamingImageVolumeLoader);
+        // } else {
+        //   console.log("title is set to:", title);
+        //   await initVolumeLoader();
+        //   await initCornerstoneDICOMImageLoader();
+        // }
+
+
         loaded.loaded = true;
       }
 
@@ -933,7 +953,7 @@ function CornerstoneViewer({ volumeName,
         const mipSagittalContent = setupPanel('mip_sagittal');
         const mipCoronalContent = setupPanel('mip_coronal');
         const t3dCoronalContent = setupPanel('t3d_coronal');
-        
+
         container.appendChild(volAxialContent);
         container.appendChild(volSagittalContent);
         container.appendChild(volCoronalContent);
@@ -950,7 +970,7 @@ function CornerstoneViewer({ volumeName,
             defaultOptions: {
               orientation: cornerstone.Enums.OrientationAxis.AXIAL,
             },
-          },  
+          },
           {
             viewportId: 'vol_sagittal',
             type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
@@ -1009,7 +1029,7 @@ function CornerstoneViewer({ volumeName,
       setup3dViewportTools();
 
       setLoading(false);
-      
+
     }
 
     run();
@@ -1021,14 +1041,13 @@ function CornerstoneViewer({ volumeName,
   }, [layout]);
 
   useEffect(() => {
-    
     // check if files are loaded before setting viewports
     if (!filesLoaded) {
       return;
     }
 
     // console.log("viewports loaded");
-    
+
     const container = containerRef.current;
 
     const volAxialContent = document.getElementById('vol_axial_wrapper');
@@ -1111,7 +1130,7 @@ function CornerstoneViewer({ volumeName,
 
       volAxialContent.style.gridColumn = 1;
       volAxialContent.style.gridRow = 1;
-      
+
       // t3dCoronalContent.style.gridColumn = 'span 3';
     } else if (view === 'Projection') {
 
@@ -1134,7 +1153,7 @@ function CornerstoneViewer({ volumeName,
       volAxialContent.style.display = 'none';
       volSagittalContent.style.display = 'none';
       volCoronalContent.style.display = 'none';
-      
+
       mipAxialContent.style.visibility = 'visible';
       mipSagittalContent.style.visibility = 'visible';
       mipCoronalContent.style.visibility = 'visible';
@@ -1161,12 +1180,12 @@ function CornerstoneViewer({ volumeName,
 
       // t3dCoronalContent.style.gridColumn = 'span 3';
     }
-    
+
   }, [view, filesLoaded]);
 
   // Load the actual volume into the display here
   useEffect(() => {
-    
+
     cornerstone.cache.purgeCache();
 
     // do nothing if Cornerstone is still loading
@@ -1182,11 +1201,15 @@ function CornerstoneViewer({ volumeName,
     const renderingEngine = renderingEngineRef.current;
 
     async function getFileData() {
-      console.log('getfiledata');
-
-      let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
       // TODO: could probably use a better way to generate unique volumeIds
-      volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
+      if (title) {
+        console.log("volumeId:", volumeId);
+        volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
+      } else {
+        let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
+        volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
+      }
+
     }
 
     async function doit() {
@@ -1194,47 +1217,47 @@ function CornerstoneViewer({ volumeName,
       window.cornerstone = cornerstone;
       window.cornerstoneTools = cornerstoneTools;
       await getFileData();
-      
+
       volume.load();
-      
+
       // console.log("about to setVolumes for rendering engine:", renderingEngine);
-      
+
       await cornerstone.setVolumesForViewports(
-          renderingEngine,
-          [{ volumeId: volumeId }],
-          ['vol_axial', 'vol_sagittal', 'vol_coronal']
+        renderingEngine,
+        [{ volumeId: volumeId }],
+        ['vol_axial', 'vol_sagittal', 'vol_coronal']
       );
 
       const volDimensions = volume.dimensions;
 
       const volSlab = Math.sqrt(
-          volDimensions[0] * volDimensions[0] +
-          volDimensions[1] * volDimensions[1] +
-          volDimensions[2] * volDimensions[2]
+        volDimensions[0] * volDimensions[0] +
+        volDimensions[1] * volDimensions[1] +
+        volDimensions[2] * volDimensions[2]
       );
 
       // Add volumes to MIP viewports
       await cornerstone.setVolumesForViewports(
-          renderingEngine,
-          [
-              //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
-              {
-                  volumeId: volumeId,
-                  blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
-                  slabThickness: volSlab,
-              },
-          ],
-          ['mip_axial', 'mip_sagittal', 'mip_coronal']
+        renderingEngine,
+        [
+          //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+          {
+            volumeId: volumeId,
+            blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+            slabThickness: volSlab,
+          },
+        ],
+        ['mip_axial', 'mip_sagittal', 'mip_coronal']
       );
 
       await cornerstone.setVolumesForViewports(
-        renderingEngine, 
-        [{ volumeId: volumeId }], 
+        renderingEngine,
+        [{ volumeId: volumeId }],
         ['t3d_coronal']
       ).then(() => {
         const viewport = renderingEngine.getViewport('t3d_coronal');
         viewport.setProperties({ preset: selectedPreset });
-      });        
+      });
 
       // create and bind a new segmentation
       await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
@@ -1278,7 +1301,7 @@ function CornerstoneViewer({ volumeName,
       );
 
       setFilesLoaded(true);
-      
+
     }
 
     doit();
@@ -1350,16 +1373,16 @@ function CornerstoneViewer({ volumeName,
 
     if (volToolGroup) {
       // Add the WindowLevelTool if it hasn't been added already
-      
+
       if (!volToolGroup.getToolInstance(cornerstoneTools.WindowLevelTool.toolName)) {
-        
+
         cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
         volToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
       }
 
       // Activate or deactivate the WindowLevelTool based on the windowLevel state
       if (windowLevel) {
-        
+
         volToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
           bindings: [
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
@@ -1375,16 +1398,16 @@ function CornerstoneViewer({ volumeName,
 
     if (mipToolGroup) {
       // Add the WindowLevelTool if it hasn't been added already
-      
+
       if (!mipToolGroup.getToolInstance(cornerstoneTools.WindowLevelTool.toolName)) {
-        
+
         cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
         mipToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
       }
 
       // Activate or deactivate the WindowLevelTool based on the windowLevel state
       if (windowLevel) {
-        
+
         mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
           bindings: [
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
@@ -1400,7 +1423,7 @@ function CornerstoneViewer({ volumeName,
 
     // Volumes
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-    
+
     if (volToolGroup) {
 
       // Activate or deactivate the CrosshairsTool based on the crosshairs state
@@ -1417,7 +1440,7 @@ function CornerstoneViewer({ volumeName,
 
     // MIPs
     const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
-    
+
     if (mipToolGroup) {
       // Activate or deactivate the CrosshairsTool based on the crosshairs state
       if (crosshairs) {
@@ -1439,22 +1462,22 @@ function CornerstoneViewer({ volumeName,
 
     if (volToolGroup) {
       // Add the RectangleScissorsTool if it hasn't been added already
-      
+
       if (!volToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
-        
+
         cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
         volToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
       }
 
       // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
       if (rectangleScissors) {
-        
+
         volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
           bindings: [
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
           ],
         });
-        
+
       } else {
         volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
       }
@@ -1465,22 +1488,22 @@ function CornerstoneViewer({ volumeName,
 
     if (mipToolGroup) {
       // Add the RectangleScissorsTool if it hasn't been added already
-      
+
       if (!mipToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
-        
+
         cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
         mipToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
       }
 
       // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
       if (rectangleScissors) {
-        
+
         mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
           bindings: [
             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
           ],
         });
-        
+
       } else {
         mipToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
       }
@@ -1493,29 +1516,29 @@ function CornerstoneViewer({ volumeName,
     const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
     if (viewportNavigation === 'Pan') {
       if (volToolGroup) {
-        
+
         volToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
         volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+          bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
         });
         // access the t3d_tool_group and do the same
         const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
         t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
         t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+          bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
         });
       }
     } else {
       if (volToolGroup) {
         volToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
         volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+          bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
         });
         // access the t3d_tool_group and do the same
         const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
         t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
         t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+          bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
         });
       }
     }
@@ -1524,24 +1547,24 @@ function CornerstoneViewer({ volumeName,
     const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
     if (viewportNavigation === 'Pan') {
       if (mipToolGroup) {
-        
+
         mipToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
         mipToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+          bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
         });
       }
     } else {
       if (mipToolGroup) {
         mipToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
         mipToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-          bindings: [ { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary } ],
+          bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
         });
       }
     }
   }, [viewportNavigation]);
 
   useEffect(() => {
-    
+
     if (resetViewports) {
 
       setZoom(defaults.zoom);
@@ -1554,7 +1577,7 @@ function CornerstoneViewer({ volumeName,
       // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
       setView(defaults.view + " "); // force a re-render
       setTimeout(() => {
-       setView(defaults.view);
+        setView(defaults.view);
       }, 50);
 
       setViewportNavigation(defaults.viewportNavigation);
@@ -1570,7 +1593,7 @@ function CornerstoneViewer({ volumeName,
       cornerstoneTools.segmentation
         .triggerSegmentationEvents
         .triggerSegmentationDataModified(segId);
-  
+
       // reset cameras for all the viewports that its wrapper is visible
       const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
       renderingEngine.getViewports().forEach((viewport) => {
@@ -1581,10 +1604,10 @@ function CornerstoneViewer({ volumeName,
           viewport.render();
         }
       });
-      
+
       // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
       setTimeout(() => {
-        
+
         // if the viewport parent node is visible, reset camera
         renderingEngine.getViewports().forEach((viewport) => {
           const viewportElement = document.getElementById(viewport.id);
@@ -1614,16 +1637,16 @@ function CornerstoneViewer({ volumeName,
 
     await cornerstoneTools.segmentation.addSegmentationRepresentations(
       't3d_tool_group', [
-        {
-          segmentationId: segId,
-          type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
-          options: {
-            polySeg: {
-              enabled: true,
-            }
+      {
+        segmentationId: segId,
+        type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
+        options: {
+          polySeg: {
+            enabled: true,
           }
         }
-      ]
+      }
+    ]
     );
   }
 
@@ -1661,9 +1684,9 @@ function CornerstoneViewer({ volumeName,
   return (
     <>
       <div ref={containerRef}
-           style={{ width: '100%', height: '100%' }}
-           id="container"></div>
-      <MiddlelBottomPanel 
+        style={{ width: '100%', height: '100%' }}
+        id="container"></div>
+      <MiddlelBottomPanel
         onAccept={handleAcceptSelection}
         onClear={handleClearSelection}
         onExpand={handleExpandSelection}

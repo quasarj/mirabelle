@@ -124,6 +124,14 @@ export async function getIECsForVR(visual_review_id) {
 	return details;
 }
 
+export async function getNiftiFiles(iec) {
+	console.log("getNiftiFiles", iec);
+	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
+	const details = await response.json();
+
+	return details.file_ids;
+}
+
 
 export async function tests() {
 	const iec = 3;
