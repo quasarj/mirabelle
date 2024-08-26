@@ -186,8 +186,8 @@ async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
     return transformedCoords;
   }
 
-  console.log("finalCalc running");
-  console.log(coords);
+  // console.log("finalCalc running");
+  // console.log(coords);
 
   const volume = cornerstone.cache.getVolume(volumeId);
 
@@ -205,8 +205,8 @@ async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
 
   const transformedCoords = convertCoordinates(coords, volume, targetDirection);
 
-  console.log("Transformed coordinates in the target plane:");
-  console.log(transformedCoords);
+  // console.log("Transformed coordinates in the target plane:");
+  // console.log(transformedCoords);
 
   let cornerPoints = {
     l: transformedCoords.x.min,
@@ -239,7 +239,7 @@ async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
     function: maskFunction,
   };
 
-  console.log(output);
+  // console.log(output);
   await setParameters(iec, output);
   alert("Submitted for masking!");
 }
@@ -292,8 +292,11 @@ function CornerstoneViewer({ volumeName,
   let coords;
   let segId = 'seg' + volumeName;
   let volumeId;
+  
+  // if the browser url contains the word nifti, then set a nifti variable to true
+  let nifti = window.location.href.includes('nifti');
 
-  if (title) {
+  if (nifti) {
     volumeId = `nifti:/papi/v1/files/${files[0]}/data`;
   } else {
     volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
@@ -502,7 +505,7 @@ function CornerstoneViewer({ volumeName,
           renderingEngineRef.current.getViewports().forEach((viewport) => {
             viewport.render();
           });
-          console.log('Minimized', event.currentTarget.parentNode.id);
+          // console.log('Minimized', event.currentTarget.parentNode.id);
 
         } else { // Maximization
           // console.log (event.currentTarget.parentNode.id);
@@ -531,7 +534,7 @@ function CornerstoneViewer({ volumeName,
           renderingEngineRef.current.getViewports().forEach((viewport) => {
             viewport.render();
           });
-          console.log('Expanded', event.currentTarget.parentNode.id);
+          // console.log('Expanded', event.currentTarget.parentNode.id);
         }
 
       };
@@ -910,17 +913,6 @@ function CornerstoneViewer({ volumeName,
         cornerstoneTools.init();
         initVolumeLoader();
         initCornerstoneDICOMImageLoader();
-
-        // if (title) {
-        //   console.log("title is set to:", title);
-        //   cornerstone.volumeLoader.registerVolumeLoader('nifti', cornerstoneStreamingImageVolumeLoader);
-        // } else {
-        //   console.log("title is set to:", title);
-        //   await initVolumeLoader();
-        //   await initCornerstoneDICOMImageLoader();
-        // }
-
-
         loaded.loaded = true;
       }
 
@@ -1202,8 +1194,8 @@ function CornerstoneViewer({ volumeName,
 
     async function getFileData() {
       // TODO: could probably use a better way to generate unique volumeIds
-      if (title) {
-        console.log("volumeId:", volumeId);
+      if (nifti) {
+        // console.log("volumeId:", volumeId);
         volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
       } else {
         let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
@@ -1213,7 +1205,7 @@ function CornerstoneViewer({ volumeName,
     }
 
     async function doit() {
-      console.log('doit');
+      //console.log('doit');
       window.cornerstone = cornerstone;
       window.cornerstoneTools = cornerstoneTools;
       await getFileData();
@@ -1256,8 +1248,12 @@ function CornerstoneViewer({ volumeName,
         ['t3d_coronal']
       ).then(() => {
         const viewport = renderingEngine.getViewport('t3d_coronal');
-        viewport.setProperties({ preset: selectedPreset });
-      });
+        if (nifti) { 
+          viewport.setProperties({ preset: 'MR-Default' });
+        } else {
+          viewport.setProperties({ preset: selectedPreset });
+        }
+        });
 
       // create and bind a new segmentation
       await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(

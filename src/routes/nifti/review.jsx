@@ -6,7 +6,7 @@ import { Context } from '../../components/Context';
 import { getNiftiFiles, getDetails } from '../../masking.js';
 
 export async function loader({ params }) {
-  console.log("loader params=", params);
+  // console.log("loader params=", params);
 	return { files: [params.fileId] };
 }
 
@@ -14,7 +14,7 @@ export default function ReviewNIFTI() {
 
   const { files } = useLoaderData();
 
-  console.log("nifti files=", files);
+  // console.log("nifti files=", files);
 
   // default values for this route/mode
   const defaults = {

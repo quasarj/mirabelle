@@ -22,7 +22,7 @@ function MiddlePanel({ files, iecs, iec }) {
     const doTheThing = async () => {
       
       // console.log(">>> MiddlePanel useEffect firing, iecOffset=", iecOffset);
-      console.log("files=", files, "iec=", iec);
+      // console.log("files=", files, "iec=", iec);
       if (files === undefined) {
         
         const iecfiles = await getFiles(iecs[iecOffset]);
