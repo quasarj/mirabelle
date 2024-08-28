@@ -71,27 +71,27 @@ function ToolsPanel() {
 
   const handleZoomButtonClick = () => {
     setViewportNavigation("Zoom");
-    console.log('Zoom button clicked');
+    // console.log('Zoom button clicked');
   };
 
   const handlePanButtonClick = () => {
     setViewportNavigation("Pan");
-    console.log('Pan button clicked');
+    // console.log('Pan button clicked');
   };
 
   const handleVolumeButtonClick = () => {
     setView("Volume");
-    console.log('Volume button clicked');
+    // console.log('Volume button clicked');
   };
 
   const handleProjectionButtonClick = () => {
     setView("Projection");
-    console.log('Projection button clicked');
+    // console.log('Projection button clicked');
   };
 
   const handleAllButtonClick = () => {
     setView("All");
-    console.log('All button clicked');
+    // console.log('All button clicked');
   };
 
   const handleResetViewportsButtonClick = () => {
