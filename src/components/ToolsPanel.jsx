@@ -136,7 +136,7 @@ function ToolsPanel() {
         </li>*/}
 
         {
-          layout !== "MaskerReview" &&  
+          layout === "Masker" &&  
           <>
             <FunctionPanel />
             <FormPanel />
@@ -169,7 +169,7 @@ function ToolsPanel() {
         </li>
 
         {
-          layout !== "MaskerReview" &&  
+          layout === "Masker" &&  
           <li className="mb-1 pt-1 rounded-lg">
             <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
               Selection
