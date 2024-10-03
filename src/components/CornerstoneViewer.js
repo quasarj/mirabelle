@@ -262,7 +262,7 @@ function CornerstoneViewer({ volumeName,
         navigationPanelVisible, setNavigationPanelVisible,
         searchPanelVisible, setSearchPanelVisible,
         maskerPanelVisible, setMaskerPanelVisible,
-        markPanelVisible, setMarkPanelVisible,
+        reviewPanelVisible, setReviewPanelVisible,
         viewToolGroupVisible, setViewToolGroupVisible,
         viewToolGroupValue, setViewToolGroupValue,
         viewToolVolumeVisible, setViewToolVolumeVisible,
@@ -1231,7 +1231,7 @@ function CornerstoneViewer({ volumeName,
                 ['t3d_coronal']
             ).then(() => {
                 const viewport = renderingEngine.getViewport('t3d_coronal');
-                viewport.setProperties({ preset: selectedPreset });
+                viewport.setProperties({ preset: presetToolValue });
 
             });
 

@@ -13,19 +13,19 @@ import { Context } from './Context.js';
 function VisualReview({ files, iecs, iec }) {
 
     const {
-        leftPanelVisibility,
-        setLeftPanelVisibility,
-        rightPanelVisibility,
-        setRightPanelVisibility,
+        leftPanelVisible,
+        setLeftPanelVisible,
+        rightPanelVisible,
+        setRightPanelVisible,
         layout,
 
     } = useContext(Context);
 
-    const gridTemplate = leftPanelVisibility && rightPanelVisibility
+    const gridTemplate = leftPanelVisible && rightPanelVisible
         ? 'grid-cols-[18rem,1fr,18rem]'
-        : leftPanelVisibility
+        : leftPanelVisible
             ? 'grid-cols-[18rem,1fr,0rem]'
-            : rightPanelVisibility
+            : rightPanelVisible
                 ? 'grid-cols-[0rem,1fr,18rem]'
                 : 'grid-cols-[0rem,1fr,0rem]';
 
@@ -37,11 +37,11 @@ function VisualReview({ files, iecs, iec }) {
                 <div id="leftPanel" className={`w-full h-full rounded-lg overflow-hidden`}>
                     <LeftPanel />
                 </div>
-                {/*{leftPanelVisibility && (
-          <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisibility ? 'slide-in' : 'slide-out'}`} >
-            <LeftPanel />
-          </div>
-        )}*/}
+                {/*{leftPanelVisible && (
+                  <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisible ? 'slide-in' : 'slide-out'}`} >
+                    <LeftPanel />
+                  </div>
+                )}*/}
                 <MiddlePanel
                     files={files}
                     iecs={iecs}
@@ -50,24 +50,24 @@ function VisualReview({ files, iecs, iec }) {
                 <div id="rightPanel" className="w-full h-full rounded-lg overflow-hidden">
                     <RightPanel />
                 </div>
-                {/*{rightPanelVisibility && (
-          <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
-            <RightPanel />
-          </div>
-        )}*/}
+                {/*{rightPanelVisible && (
+                  <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
+                    <RightPanel />
+                  </div>
+                )}*/}
             </div>
             <button
                 id="leftPanelButton"
-                onClick={() => setLeftPanelVisibility(!leftPanelVisibility)}
-                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisibility ? 'translate-x-0' : 'rotate-180 -translate-x-72'}`}
+                onClick={() => setLeftPanelVisible(!leftPanelVisible)}
+                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisible ? 'translate-x-0' : 'rotate-180 -translate-x-72'}`}
 
             >
                 <span className="material-symbols-rounded rounded-full leading-5 text-white">chevron_left</span>
             </button>
             <button
                 id="rightPanelButton"
-                onClick={() => setRightPanelVisibility(!rightPanelVisibility)}
-                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisibility ? 'translate-x-0' : 'rotate-180 translate-x-72'}`}
+                onClick={() => setRightPanelVisible(!rightPanelVisible)}
+                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisible ? 'translate-x-0' : 'rotate-180 translate-x-72'}`}
 
             >
                 <span className="material-symbols-rounded rounded-full leading-5 text-white">chevron_right</span>

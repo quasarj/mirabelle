@@ -26,23 +26,22 @@ export default function MaskIEC() {
 
         // panels
         // ----------------------------------
-
         leftPanelVisible: true,
         toolsPanelVisible: true,
         filesPanelVisible: false,
         rightPanelVisible: false,
+        descriptionPanelVisible: true,
         navigationPanelVisible: false,
         searchPanelVisible: false,
         maskerPanelVisible: true,
-        markPanelVisible: false,
+        reviewPanelVisible: false,
 
         // tools
         // ----------------------------------
 
         // view
-        //view: 'Volume',
         viewToolGroupVisible: true,
-        viewToolGroupValue: 'Volume',
+        viewToolGroupValue: 'volume',
         viewToolVolumeVisible: true,
         viewToolProjectionVisible: true,
 
@@ -67,7 +66,7 @@ export default function MaskIEC() {
         //rectangleScissors: true,
 
         leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'Selection',
+        leftClickToolGroupValue: 'selection', // windowlevel, crosshairs, or selection
         leftClickToolWindowLevelVisible: true,
         leftClickToolCrossHairsVisible: true,
         leftClickToolRectangleScissorsVisible: true,
@@ -75,7 +74,7 @@ export default function MaskIEC() {
         // right click
         //viewportNavigation: 'Zoom',
         rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'Zoom',
+        rightClickToolGroupValue: 'zoom',
         rightClickToolZoomVisible: true,
         rightClickToolPanVisible: true,
 
@@ -94,13 +93,11 @@ export default function MaskIEC() {
         presetToolList: [],
         presetToolValue: 'CT-MIP',
 
-
+        // reset viewports
         //resetViewports: false,
         resetViewportsVisible: true,
         resetViewportsValue: false,
 
-        // viewports
-        //stackv
     };
 
     const [layout, setLayout] = useState(defaults.layout);
@@ -109,10 +106,11 @@ export default function MaskIEC() {
     const [toolsPanelVisible, setToolsPanelVisible] = useState(defaults.toolsPanelVisible);
     const [filesPanelVisible, setFilesPanelVisible] = useState(defaults.filesPanelVisible);
     const [rightPanelVisible, setRightPanelVisible] = useState(defaults.rightPanelVisible);
+    const [descriptionPanelVisible, setDescriptionPanelVisible] = useState(defaults.descriptionPanelVisible);
     const [navigationPanelVisible, setNavigationPanelVisible] = useState(defaults.navigationPanelVisible);
     const [searchPanelVisible, setSearchPanelVisible] = useState(defaults.searchPanelVisible);
     const [maskerPanelVisible, setMaskerPanelVisible] = useState(defaults.maskerPanelVisible);
-    const [markPanelVisible, setMarkPanelVisible] = useState(defaults.markPanelVisible);
+    const [reviewPanelVisible, setReviewPanelVisible] = useState(defaults.reviewPanelVisible);
     const [viewToolGroupVisible, setViewToolGroupVisible] = useState(defaults.viewToolGroupVisible);
     const [viewToolGroupValue, setViewToolGroupValue] = useState(defaults.viewToolGroupValue);
     const [viewToolVolumeVisible, setViewToolVolumeVisible] = useState(defaults.viewToolVolumeVisible);
@@ -160,11 +158,12 @@ export default function MaskIEC() {
             filesPanelVisible, setFilesPanelVisible,
 
             rightPanelVisible, setRightPanelVisible,
+            descriptionPanelVisible, setDescriptionPanelVisible,
 
             navigationPanelVisible, setNavigationPanelVisible,
             searchPanelVisible, setSearchPanelVisible,
             maskerPanelVisible, setMaskerPanelVisible,
-            markPanelVisible, setMarkPanelVisible,
+            reviewPanelVisible, setReviewPanelVisible,
 
             viewToolGroupVisible, setViewToolGroupVisible,
             viewToolGroupValue, setViewToolGroupValue,

@@ -14,7 +14,7 @@ function ToolsPanel() {
         navigationPanelVisible, setNavigationPanelVisible,
         searchPanelVisible, setSearchPanelVisible,
         maskerPanelVisible, setMaskerPanelVisible,
-        markPanelVisible, setMarkPanelVisible,
+        reviewPanelVisible, setReviewPanelVisible,
         viewToolGroupVisible, setViewToolGroupVisible,
         viewToolGroupValue, setViewToolGroupValue,
         viewToolVolumeVisible, setViewToolVolumeVisible,
