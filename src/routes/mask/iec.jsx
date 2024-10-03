@@ -10,10 +10,10 @@ import { getDetails, getFiles } from '../../masking.js';
 export async function loader({ params }) {
 
 
-	const details = await getDetails(params.iec);
+  const details = await getDetails(params.iec);
   const files = await getFiles(params.iec);
 
-	return { details, files, iec: params.iec };
+  return { details, files, iec: params.iec };
 }
 
 export default function MaskIEC() {
@@ -58,26 +58,26 @@ export default function MaskIEC() {
   return (
     <Context.Provider value={{
 
-        defaults,
+      defaults,
 
-        layout, setLayout,
-        zoom, setZoom,
-        opacity, setOpacity,
-        presets, setPresets,
-        selectedPreset, setSelectedPreset,
-        leftPanelVisibility, setLeftPanelVisibility,
-        rightPanelVisibility, setRightPanelVisibility,
-        windowLevel, setWindowLevel,
-        crosshairs, setCrosshairs,
-        rectangleScissors, setRectangleScissors,
-        viewportNavigation, setViewportNavigation,
-        resetViewports, setResetViewports,
-        view, setView,
-        maskFunction, setMaskFunction,
-        maskForm, setMaskForm,
-        
+      layout, setLayout,
+      zoom, setZoom,
+      opacity, setOpacity,
+      presets, setPresets,
+      selectedPreset, setSelectedPreset,
+      leftPanelVisibility, setLeftPanelVisibility,
+      rightPanelVisibility, setRightPanelVisibility,
+      windowLevel, setWindowLevel,
+      crosshairs, setCrosshairs,
+      rectangleScissors, setRectangleScissors,
+      viewportNavigation, setViewportNavigation,
+      resetViewports, setResetViewports,
+      view, setView,
+      maskFunction, setMaskFunction,
+      maskForm, setMaskForm,
+
     }}>
-        <Masker files={files} iec={iec} />
+      <Masker files={files} iec={iec} />
     </Context.Provider>
   );
 }
