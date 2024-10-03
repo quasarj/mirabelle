@@ -91,7 +91,7 @@ function ToolsPanel() {
                                 <li className="pt-1 dark:bg-opacity-5  rounded-lg">
                                     <button 
                                         title="Volume"
-                                        onClick={setViewToolGroupValue("volume")} 
+                                        onClick={() => setViewToolGroupValue("volume")}
                                         className={`w-full ${viewToolGroupValue === "volume" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         Volume
                                     </button>
@@ -102,7 +102,7 @@ function ToolsPanel() {
                                 <li className=" pt-2 mb-4 dark:bg-opacity-5  rounded-lg">
                                     <button 
                                         title="Projection"
-                                        onClick={setViewToolGroupValue("projection")} 
+                                        onClick={() => setViewToolGroupValue("projection")} 
                                         className={`w-full ${viewToolGroupValue === "projection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         Projection
                                     </button>
@@ -122,7 +122,7 @@ function ToolsPanel() {
                                     functionToolMaskVisible &&
                                     <button
                                         title="Mask"
-                                        onClick={setFunctionToolGroupValue("mask")} 
+                                        onClick={() => setFunctionToolGroupValue("mask")} 
                                         className={`w-full ${functionToolGroupValue === "mask" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         <span className='material-symbols-rounded'>domino_mask</span>
                                     </button>
@@ -131,7 +131,7 @@ function ToolsPanel() {
                                     functionToolBlackoutVisible &&
                                     <button
                                         title="Blackout"
-                                        onClick={setFunctionToolGroupValue("blackout")} 
+                                        onClick={() => setFunctionToolGroupValue("blackout")} 
                                         className={`w-full ${functionToolGroupValue === "blackout" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         <span className='material-symbols-rounded'>imagesearch_roller</span>
                                     </button>
@@ -140,7 +140,7 @@ function ToolsPanel() {
                                     functionToolSliceRemoveVisible &&
                                     <button
                                         title="Slice Removal"
-                                        onClick={setFunctionToolGroupValue("sliceremove")} 
+                                        onClick={() => setFunctionToolGroupValue("sliceremove")} 
                                         className={`w-full ${functionToolGroupValue === "sliceremove" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         <span className='material-symbols-rounded'>content_cut</span>
                                     </button>
@@ -160,7 +160,7 @@ function ToolsPanel() {
                                     formToolCuboidVisible &&
                                     <button
                                         title="Cuboid"
-                                        onClick={setFormToolGroupValue("cuboid")}
+                                        onClick={() => setFormToolGroupValue("cuboid")}
                                         className={`w-full ${formToolGroupValue === "cuboid" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         <span className='material-symbols-rounded'>square</span>
                                     </button>
@@ -169,7 +169,7 @@ function ToolsPanel() {
                                     formToolCylinderVisible &&
                                     <button
                                         title="Cylinder"
-                                        onClick={setFormToolGroupValue("cylinder")}
+                                        onClick={() => setFormToolGroupValue("cylinder")}
                                         className={`w-full ${formToolGroupValue === "cylinder" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         <span className='material-symbols-rounded'>circle</span>
                                     </button>
@@ -189,7 +189,7 @@ function ToolsPanel() {
                                 <li className="pb-1 pt-1 rounded-lg">
                                     <button 
                                         title="Window Level"
-                                        onClick={setLeftClickToolGroupValue("windowlevel")} 
+                                        onClick={() => setLeftClickToolGroupValue("windowlevel")} 
                                         className={`w-full ${leftClickToolGroupValue === "windowlevel" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         Window Level
                                     </button>
@@ -200,7 +200,7 @@ function ToolsPanel() {
                                 <li className="pb-1 pt-1 rounded-lg">
                                     <button 
                                         title="CrossHairs"
-                                        onClick={setLeftClickToolGroupValue("crosshairs")} 
+                                        onClick={() => setLeftClickToolGroupValue("crosshairs")} 
                                         className={`w-full ${leftClickToolGroupValue === "crosshairs" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         Crosshairs
                                     </button>
@@ -211,7 +211,7 @@ function ToolsPanel() {
                                 <li className="mb-1 pt-1 rounded-lg">
                                     <button 
                                         title="Selection"
-                                        onClick={setLeftClickToolGroupValue("selection")} 
+                                        onClick={() => setLeftClickToolGroupValue("selection")} 
                                         className={`w-full ${leftClickToolGroupValue === "selection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
                                         Selection
                                     </button>
@@ -231,7 +231,7 @@ function ToolsPanel() {
                                 rightClickToolZoomVisible &&
                                 <li className="pb-1 pt-1 rounded-lg">
                                     <button
-                                        onClick={setRightClickToolGroupValue("zoom")} 
+                                        onClick={() => setRightClickToolGroupValue("zoom")} 
                                         className={`w-full ${rightClickToolGroupValue === "zoom" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
                                         title='Zoom'>
                                         <span className="material-symbols-rounded">
@@ -244,7 +244,7 @@ function ToolsPanel() {
                                 rightClickToolPanVisible &&
                                 <li className="pb-1 pt-1 rounded-lg">
                                     <button
-                                        onClick={setRightClickToolGroupValue("pan")} 
+                                        onClick={() => setRightClickToolGroupValue("pan")} 
                                         className={`w-full ${rightClickToolGroupValue === "pan" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
                                         title='Pan'>
                                         <span className="material-symbols-rounded">
@@ -294,7 +294,7 @@ function ToolsPanel() {
                     resetViewportsVisible &&
                     <li className="mb-2 pb-2 pt-4 rounded-lg">
                         <button 
-                            onClick={setResetViewportsValue(true)}
+                            onClick={() => setResetViewportsValue(true)}
                             className="w-full text-white bg-red-600"
                             title='Reset Viewports'>
                             <span className="material-symbols-rounded">
