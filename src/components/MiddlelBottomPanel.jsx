@@ -21,10 +21,10 @@ function MiddlelBottomPanel({ onExpand,
     onMarkOther}) {
 
     const {
-        layout,
+        layout, maskerPanelVisible, reviewPanelVisible, navigationPanelVisible
     } = useContext(Context);
 
-    if (layout === "Masker" || layout === "MaskerVR" || layout === "MaskerReview") {
+    if (maskerPanelVisible) {
         return (
             <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
                 <MaskerPanel
@@ -36,7 +36,7 @@ function MiddlelBottomPanel({ onExpand,
                     onMarkSkip={onMarkSkip}
                     onMarkNonMaskable={onMarkNonMaskable}
                 />
-                {layout === "MaskerVR" && (
+                {navigationPanelVisible && (
                     <NavigationPanel
                         onNext={onNext}
                         onPrevious={onPrevious}
@@ -46,7 +46,7 @@ function MiddlelBottomPanel({ onExpand,
         );
     }
 
-    else if (layout === "NiftiReview" || layout === "DicomReview") {
+    else if (reviewPanelVisible) {
         return (
             <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
                 <ReviewPanel
@@ -56,10 +56,12 @@ function MiddlelBottomPanel({ onExpand,
                     onMarkScout={onMarkScout}
                     onMarkOther={onMarkOther}
                 />
-                {/*<NavigationPanel*/}
-                {/*    onNext={onNext}*/}
-                {/*    onPrevious={onPrevious}*/}
-                {/*/>*/}
+                {navigationPanelVisible && (
+                    <NavigationPanel
+                        onNext={onNext}
+                        onPrevious={onPrevious}
+                    />
+                )}
             </div>
         );
     }

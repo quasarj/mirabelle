@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { Context } from './Context.js';
 
 
-import EditViewPanel from "./EditViewPanel.jsx";
 import NavigationPanel from "./NavigationPanel.jsx";
 
 function MiddleTopPanel({ iecs, onIecChange }) {
@@ -11,7 +10,6 @@ function MiddleTopPanel({ iecs, onIecChange }) {
   return (
     <div id="middleTopPanel" className="w-full flex justify-center items-center">
         {layout === "MaskerVR" && <NavigationPanel iecs={iecs} onIecChange={onIecChange}/>}
-        {/*<EditViewPanel />*/}
       </div>
   );
 }
