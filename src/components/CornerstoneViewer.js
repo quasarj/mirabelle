@@ -250,6 +250,9 @@ function CornerstoneViewer({ volumeName,
     files,
     iec }) {
 
+    console.log(files);
+    console.log(volumeName);
+
     const {
 
         defaults,
@@ -312,12 +315,6 @@ function CornerstoneViewer({ volumeName,
     const containerRef = useRef(null);
     const renderingEngineRef = useRef(null);
 
-    // console.log(
-    //   ">>>>>>>>>>>>>>>>>>>>>>",
-    //   "CornerstoneViewer() running",
-    //   "loading is set to:", loading,
-    // );
-
     let coords;
     let segId = 'seg' + volumeName;
     let volumeId;
@@ -330,7 +327,7 @@ function CornerstoneViewer({ volumeName,
     } else {
         volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
     }
-
+    console.log(volumeId);
 
     // Load presets when component mounts
     useEffect(() => {
@@ -394,6 +391,36 @@ function CornerstoneViewer({ volumeName,
                 renderingEngine.resize(true, true);
             }
         });
+
+        function setupSingleImageViewer(singleImageViewerId) {
+            const panelWrapper = document.createElement('div');
+            const panel = document.createElement('div');
+
+            // set panelWrapper styles
+            panelWrapper.id = singleImageViewerId + '_wrapper';
+            panelWrapper.style.display = 'block';
+            panelWrapper.style.width = '100%';
+            panelWrapper.style.height = '100%';
+            panelWrapper.style.position = 'relative';
+            panelWrapper.style.borderRadius = '8px';
+            panelWrapper.style.overflow = 'hidden';
+            panelWrapper.style.backgroundColor = 'black';
+            // panelWrapper.style.visibility = 'hidden';
+
+            panel.id = singleImageViewerId;
+            panel.style.display = 'block';
+            panel.style.width = '100%';
+            panel.style.height = '100%';
+            panel.style.borderRadius = '8px';
+            panel.style.overflow = 'hidden';
+            panel.style.backgroundColor = 'black';
+            panel.oncontextmenu = e => e.preventDefault();
+            resizeObserver.observe(panel);
+
+            panelWrapper.appendChild(panel);
+
+            return panelWrapper;
+        }
 
         function setupPanel(panelId) {
             const panelWrapper = document.createElement('div');
@@ -906,7 +933,56 @@ function CornerstoneViewer({ volumeName,
             container.innerHTML = ''; // Clear previous content
 
             if (layout === 'Masker' || layout === 'MaskerVR' || layout === 'MaskerReview' || layout === 'NiftiReview') {
+                
                 const viewportInput = [];
+
+                if ((files.length === 1) && !nifti) {
+
+                    // Single dicom image viewer
+
+                    // Container
+                    container.style.display = 'block';
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+
+                    // Viewer
+                    const singleImageViewer = setupSingleImageViewer('singleImageViewer');
+                    container.appendChild(singleImageViewer);
+
+                    // Viewport
+                    const renderingEngineId = 'viewer_render_engine';
+                    const renderingEngine = new cornerstone.RenderingEngine(renderingEngineId);
+
+                    const viewportId = 'CT_STACK';
+                    const viewportInput = {
+                        viewportId,
+                        type: cornerstone.Enums.ViewportType.STACK,
+                        element: singleImageViewer.childNodes[0],
+                    }
+
+                    renderingEngine.enableElement(viewportInput);
+
+                    const viewport = renderingEngine.getViewport(viewportId);
+
+                    const stack = [files[0]];
+
+                    // await viewport.setStack(stack);
+
+                    viewport.render();
+
+
+
+                    // setupSingleImageViewerTools();
+                    
+                    // setLoading(false);
+                    
+                    console.log('loading non-nifti single dicom image');
+                    console.log(stack);
+
+                    // stop implementation here
+                    return;
+
+                }
 
                 container.style.display = 'grid';
                 if (viewToolGroupValue === 'all') {
