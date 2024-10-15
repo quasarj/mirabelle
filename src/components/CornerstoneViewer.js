@@ -249,6 +249,8 @@ async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
 function CornerstoneViewer({ volumeName,
     files,
     iec }) {
+    
+    console.log(files);
 
     const {
 
@@ -396,147 +398,178 @@ function CornerstoneViewer({ volumeName,
         });
 
         function setupPanel(panelId) {
-            const panelWrapper = document.createElement('div');
-            const resizeButton = document.createElement('button');
-            const panel = document.createElement('div');
+            if (files.length > 1) {
+                const panelWrapper = document.createElement('div');
+                const resizeButton = document.createElement('button');
+                const panel = document.createElement('div');
 
-            // set panelWrapper styles
-            panelWrapper.id = panelId + '_wrapper';
-            panelWrapper.style.display = 'block';
-            panelWrapper.style.width = '100%';
-            panelWrapper.style.height = '100%';
-            panelWrapper.style.position = 'relative';
-            panelWrapper.style.borderRadius = '8px';
-            panelWrapper.style.overflow = 'hidden';
-            panelWrapper.style.backgroundColor = 'black';
-            panelWrapper.style.visibility = 'hidden';
+                // set panelWrapper styles
+                panelWrapper.id = panelId + '_wrapper';
+                panelWrapper.style.display = 'block';
+                panelWrapper.style.width = '100%';
+                panelWrapper.style.height = '100%';
+                panelWrapper.style.position = 'relative';
+                panelWrapper.style.borderRadius = '8px';
+                panelWrapper.style.overflow = 'hidden';
+                panelWrapper.style.backgroundColor = 'black';
+                panelWrapper.style.visibility = 'hidden';
 
-            // remove default button styling
-            resizeButton.style.border = 'none';
-            resizeButton.style.outline = 'none';
-            resizeButton.style.cursor = 'pointer';
-            resizeButton.style.backgroundColor = 'transparent';
-            resizeButton.style.padding = '8px';
+                // remove default button styling
+                resizeButton.style.border = 'none';
+                resizeButton.style.outline = 'none';
+                resizeButton.style.cursor = 'pointer';
+                resizeButton.style.backgroundColor = 'transparent';
+                resizeButton.style.padding = '8px';
 
-            // set resizeButton backgorund image to the resizeButtonLogo
-            resizeButton.id = panelId + '_resize_button';
-            //resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
-            resizeButton.style.backgroundColor = '#424242';
-            resizeButton.style.color = 'white';
-            resizeButton.classList.add('material-symbols-rounded');
-            resizeButton.textContent = 'open_in_full';
-            // resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
-            // resizeButton.style.backgroundSize = 'contain';
-            // resizeButton.style.backgroundRepeat = 'no-repeat';
-            // resizeButton.style.backgroundPosition = 'center';
-            // resizeButton.style.padding = '8px 8px';
-            // resizeButton.style.paddingBottom = '3px';
-            ///resizeButton.style.width = '30px';
-            //resizeButton.style.height = '30px';
-            resizeButton.style.position = 'absolute';
-            resizeButton.style.top = '10px';
-            resizeButton.style.left = '10px';
-            resizeButton.style.zIndex = '1000';
-            resizeButton.style.display = 'none';
-
-            resizeButton.onmouseover = () => {
-                resizeButton.style.backgroundColor = 'rgb(59 130 246)';
-            };
-            resizeButton.onmouseleave = () => {
+                // set resizeButton backgorund image to the resizeButtonLogo
+                resizeButton.id = panelId + '_resize_button';
+                //resizeButton.innerHTML = '<span class="material-symbols-rounded" style="color: white">open_in_full</span>';
                 resizeButton.style.backgroundColor = '#424242';
-            };
+                resizeButton.style.color = 'white';
+                resizeButton.classList.add('material-symbols-rounded');
+                resizeButton.textContent = 'open_in_full';
+                // resizeButton.style.backgroundImage = `url(${resizeButtonLogo})`;
+                // resizeButton.style.backgroundSize = 'contain';
+                // resizeButton.style.backgroundRepeat = 'no-repeat';
+                // resizeButton.style.backgroundPosition = 'center';
+                // resizeButton.style.padding = '8px 8px';
+                // resizeButton.style.paddingBottom = '3px';
+                ///resizeButton.style.width = '30px';
+                //resizeButton.style.height = '30px';
+                resizeButton.style.position = 'absolute';
+                resizeButton.style.top = '10px';
+                resizeButton.style.left = '10px';
+                resizeButton.style.zIndex = '1000';
+                resizeButton.style.display = 'none';
 
-            // set button to show when mouse is over panelWrapper
-            panelWrapper.onmouseover = () => {
-                resizeButton.style.display = 'block';
-            };
-            panelWrapper.onmouseout = () => { resizeButton.style.display = 'none'; };
+                resizeButton.onmouseover = () => {
+                    resizeButton.style.backgroundColor = 'rgb(59 130 246)';
+                };
+                resizeButton.onmouseleave = () => {
+                    resizeButton.style.backgroundColor = '#424242';
+                };
 
-            // on resizeButton click, set the panelWrapper to be full viewport size
-            resizeButton.onclick = (event) => {
-                // panelWrapper.style.width = '100vw';
-                // panelWrapper.style.height = '100vh';
-                // panelWrapper.style.position = 'fixed';
-                // panelWrapper.style.top = '0';
-                // panelWrapper.style.left = '0';
-                // panelWrapper.style.zIndex = '1000';
-                // resizeButton.style.display = 'none';
+                // set button to show when mouse is over panelWrapper
+                panelWrapper.onmouseover = () => {
+                    resizeButton.style.display = 'block';
+                };
+                panelWrapper.onmouseout = () => { resizeButton.style.display = 'none'; };
 
-                // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                // on resizeButton click, set the panelWrapper to be full viewport size
+                resizeButton.onclick = (event) => {
+                    // panelWrapper.style.width = '100vw';
+                    // panelWrapper.style.height = '100vh';
+                    // panelWrapper.style.position = 'fixed';
+                    // panelWrapper.style.top = '0';
+                    // panelWrapper.style.left = '0';
+                    // panelWrapper.style.zIndex = '1000';
+                    // resizeButton.style.display = 'none';
 
-                // Minimization
-                if (event.currentTarget.parentNode.classList.contains('Expanded')) {
-                    event.currentTarget.textContent = 'open_in_full';
-                    event.currentTarget.title = 'Maximize';
-                    event.currentTarget.parentNode.classList.remove('Expanded');
-                    event.currentTarget.parentNode.style.gridColumn = 'span 1';
-                    event.currentTarget.parentNode.style.gridRow = 'span 1';
-                    // set the gridArea of the panelWrapper to the saved gridArea
-                    event.currentTarget.parentNode.style.gridArea = event.currentTarget.parentNode.getAttribute('data-gridArea');
+                    // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+
+                    // Minimization
+                    if (event.currentTarget.parentNode.classList.contains('Expanded')) {
+                        event.currentTarget.textContent = 'open_in_full';
+                        event.currentTarget.title = 'Maximize';
+                        event.currentTarget.parentNode.classList.remove('Expanded');
+                        event.currentTarget.parentNode.style.gridColumn = 'span 1';
+                        event.currentTarget.parentNode.style.gridRow = 'span 1';
+                        // set the gridArea of the panelWrapper to the saved gridArea
+                        event.currentTarget.parentNode.style.gridArea = event.currentTarget.parentNode.getAttribute('data-gridArea');
 
 
-                    // Show all other minimized panelWrappers
-                    const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
-                    allPanelWrappers.forEach((panelWrapper) => {
-                        if (panelWrapper.classList.contains('Minimized')) {
-                            panelWrapper.querySelector('button').title = 'Maximize';
-                            panelWrapper.style.visibility = 'visible';
-                            panelWrapper.style.display = 'block';
-                            panelWrapper.classList.remove('Minimized');
-                        }
-                    });
-                    // render all viewports
-                    renderingEngineRef.current.getViewports().forEach((viewport) => {
-                        viewport.render();
-                    });
-                    // console.log('Minimized', event.currentTarget.parentNode.id);
+                        // Show all other minimized panelWrappers
+                        const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
+                        allPanelWrappers.forEach((panelWrapper) => {
+                            if (panelWrapper.classList.contains('Minimized')) {
+                                panelWrapper.querySelector('button').title = 'Maximize';
+                                panelWrapper.style.visibility = 'visible';
+                                panelWrapper.style.display = 'block';
+                                panelWrapper.classList.remove('Minimized');
+                            }
+                        });
+                        // render all viewports
+                        renderingEngineRef.current.getViewports().forEach((viewport) => {
+                            viewport.render();
+                        });
+                        // console.log('Minimized', event.currentTarget.parentNode.id);
 
-                } else { // Maximization
-                    // console.log (event.currentTarget.parentNode.id);
-                    // Get the gridArea of the panelWrapper
-                    const gridArea = event.currentTarget.parentNode.style.gridArea;
-                    // save the gridArea into the panelWrapper
-                    event.currentTarget.parentNode.setAttribute('data-gridArea', gridArea);
-                    event.currentTarget.parentNode.style.gridColumn = 'span 2';
-                    event.currentTarget.parentNode.style.gridRow = 'span 2';
-                    event.currentTarget.parentNode.classList.add('Expanded');
-                    expandedViewports.id = event.currentTarget.parentNode.id;
-                    event.currentTarget.textContent = 'close_fullscreen';
-                    event.currentTarget.title = 'Minimize';
+                    } else { // Maximization
+                        // console.log (event.currentTarget.parentNode.id);
+                        // Get the gridArea of the panelWrapper
+                        const gridArea = event.currentTarget.parentNode.style.gridArea;
+                        // save the gridArea into the panelWrapper
+                        event.currentTarget.parentNode.setAttribute('data-gridArea', gridArea);
+                        event.currentTarget.parentNode.style.gridColumn = 'span 2';
+                        event.currentTarget.parentNode.style.gridRow = 'span 2';
+                        event.currentTarget.parentNode.classList.add('Expanded');
+                        expandedViewports.id = event.currentTarget.parentNode.id;
+                        event.currentTarget.textContent = 'close_fullscreen';
+                        event.currentTarget.title = 'Minimize';
 
-                    // hide all other visible panelWrappers
-                    const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
-                    allPanelWrappers.forEach((panelWrapper) => {
-                        if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
-                            panelWrapper.querySelector('button').title = 'Minimize';
-                            panelWrapper.style.visibility = 'hidden';
-                            panelWrapper.style.display = 'none';
-                            panelWrapper.classList.add('Minimized');
-                        }
-                    });
-                    // render all viewports
-                    renderingEngineRef.current.getViewports().forEach((viewport) => {
-                        viewport.render();
-                    });
-                    // console.log('Expanded', event.currentTarget.parentNode.id);
-                }
-            };
+                        // hide all other visible panelWrappers
+                        const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
+                        allPanelWrappers.forEach((panelWrapper) => {
+                            if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
+                                panelWrapper.querySelector('button').title = 'Minimize';
+                                panelWrapper.style.visibility = 'hidden';
+                                panelWrapper.style.display = 'none';
+                                panelWrapper.classList.add('Minimized');
+                            }
+                        });
+                        // render all viewports
+                        renderingEngineRef.current.getViewports().forEach((viewport) => {
+                            viewport.render();
+                        });
+                        // console.log('Expanded', event.currentTarget.parentNode.id);
+                    }
+                };
 
-            panel.id = panelId;
-            panel.style.display = 'block';
-            panel.style.width = '100%';
-            panel.style.height = '100%';
-            panel.style.borderRadius = '8px';
-            panel.style.overflow = 'hidden';
-            panel.style.backgroundColor = 'black';
-            panel.oncontextmenu = e => e.preventDefault();
-            resizeObserver.observe(panel);
+                panel.id = panelId;
+                panel.style.display = 'block';
+                panel.style.width = '100%';
+                panel.style.height = '100%';
+                panel.style.borderRadius = '8px';
+                panel.style.overflow = 'hidden';
+                panel.style.backgroundColor = 'black';
+                panel.oncontextmenu = e => e.preventDefault();
+                resizeObserver.observe(panel);
 
-            // add resizebutton and panel to panelWrapper
-            panelWrapper.appendChild(panel);
-            panelWrapper.appendChild(resizeButton);
+                // add resizebutton and panel to panelWrapper
+                panelWrapper.appendChild(panel);
+                panelWrapper.appendChild(resizeButton);
 
-            return panelWrapper;
+                return panelWrapper;
+            } else {
+                const panelWrapper = document.createElement('div');
+                const panel = document.createElement('div');
+
+                // set panelWrapper styles
+                panelWrapper.id = panelId + '_wrapper';
+                panelWrapper.style.display = 'block';
+                panelWrapper.style.width = '100%';
+                panelWrapper.style.height = '100%';
+                panelWrapper.style.position = 'relative';
+                panelWrapper.style.borderRadius = '8px';
+                panelWrapper.style.overflow = 'hidden';
+                panelWrapper.style.backgroundColor = 'black';
+                panelWrapper.style.visibility = 'hidden';
+
+                panel.id = panelId;
+                panel.style.display = 'block';
+                panel.style.width = '100%';
+                panel.style.height = '100%';
+                panel.style.borderRadius = '8px';
+                panel.style.overflow = 'hidden';
+                panel.style.backgroundColor = 'black';
+                panel.oncontextmenu = e => e.preventDefault();
+                resizeObserver.observe(panel);
+
+                // add resizebutton and panel to panelWrapper
+                panelWrapper.appendChild(panel);
+
+                return panelWrapper;                
+            }
         }
 
         function setup3dViewportTools() {
@@ -601,291 +634,560 @@ function CornerstoneViewer({ volumeName,
 
         function setupVolViewportTools() {
 
-            const viewportColors = {
-                ['vol_axial']: 'rgb(200, 0, 0)',
-                ['vol_sagittal']: 'rgb(200, 200, 0)',
-                ['vol_coronal']: 'rgb(0, 200, 0)',
-            };
+            if (files.length > 1) {
 
-            const viewportReferenceLineControllable = [
-                'vol_axial',
-                'vol_sagittal',
-                'vol_coronal',
-            ];
+                const viewportColors = {
+                    ['vol_axial']: 'rgb(200, 0, 0)',
+                    ['vol_sagittal']: 'rgb(200, 200, 0)',
+                    ['vol_coronal']: 'rgb(0, 200, 0)',
+                };
 
-            const viewportReferenceLineDraggableRotatable = [
-                'vol_axial',
-                'vol_sagittal',
-                'vol_coronal',
-            ];
+                const viewportReferenceLineControllable = [
+                    'vol_axial',
+                    'vol_sagittal',
+                    'vol_coronal',
+                ];
 
-            const viewportReferenceLineSlabThicknessControlsOn = [
-                'vol_axial',
-                'vol_sagittal',
-                'vol_coronal',
-            ];
+                const viewportReferenceLineDraggableRotatable = [
+                    'vol_axial',
+                    'vol_sagittal',
+                    'vol_coronal',
+                ];
 
-            function getReferenceLineColor(viewportId) {
-                return viewportColors[viewportId];
-            }
+                const viewportReferenceLineSlabThicknessControlsOn = [
+                    'vol_axial',
+                    'vol_sagittal',
+                    'vol_coronal',
+                ];
 
-            function getReferenceLineControllable(viewportId) {
-                const index = viewportReferenceLineControllable.indexOf(viewportId);
-                return index !== -1;
-            }
+                function getReferenceLineColor(viewportId) {
+                    return viewportColors[viewportId];
+                }
 
-            function getReferenceLineDraggableRotatable(viewportId) {
-                const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
-                return index !== -1;
-            }
+                function getReferenceLineControllable(viewportId) {
+                    const index = viewportReferenceLineControllable.indexOf(viewportId);
+                    return index !== -1;
+                }
 
-            function getReferenceLineSlabThicknessControlsOn(viewportId) {
-                const index =
-                    viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
-                return index !== -1;
-            }
+                function getReferenceLineDraggableRotatable(viewportId) {
+                    const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+                    return index !== -1;
+                }
 
-            try {
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-                cornerstoneTools.addTool(cornerstoneTools.PanTool);
-                cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
-                cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
-                cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-            } catch (error) {
-                // console.log("errors while loading tools:", error);
-            }
+                function getReferenceLineSlabThicknessControlsOn(viewportId) {
+                    const index =
+                        viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+                    return index !== -1;
+                }
 
-            // Create group and add viewports
-            // TODO: should the render engine be coming from a var instead?
-            const group = getOrCreateToolgroup('vol_tool_group');
-            group.addViewport('vol_axial', 'viewer_render_engine');
-            group.addViewport('vol_sagittal', 'viewer_render_engine');
-            group.addViewport('vol_coronal', 'viewer_render_engine');
+                try {
+                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                    cornerstoneTools.addTool(cornerstoneTools.PanTool);
+                    cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+                    cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+                } catch (error) {
+                    // console.log("errors while loading tools:", error);
+                }
 
-            // Stack Scroll Tool
-            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+                // Create group and add viewports
+                // TODO: should the render engine be coming from a var instead?
+                const group = getOrCreateToolgroup('vol_tool_group');
+                group.addViewport('vol_axial', 'viewer_render_engine');
+                group.addViewport('vol_sagittal', 'viewer_render_engine');
+                group.addViewport('vol_coronal', 'viewer_render_engine');
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
-            // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // Stack Scroll Tool
+                group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+                group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
 
-            group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+                group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-            if (leftClickToolGroupValue === 'selection') {
-                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ]
-                });
-            }
+                group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-            group.addTool(cornerstoneTools.PanTool.toolName);
-            group.addTool(cornerstoneTools.ZoomTool.toolName);
+                if (leftClickToolGroupValue === 'selection') {
+                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ]
+                    });
+                }
 
-            if (rightClickToolGroupValue === 'pan') {
+                group.addTool(cornerstoneTools.PanTool.toolName);
+                group.addTool(cornerstoneTools.ZoomTool.toolName);
+
+                if (rightClickToolGroupValue === 'pan') {
+                    group.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                } else {
+                    group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                }
+
+                // Pan
                 group.setToolActive(cornerstoneTools.PanTool.toolName, {
                     bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-                    ],
-                });
-            } else {
-                group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-                    ],
-                });
-            }
-
-            // Pan
-            group.setToolActive(cornerstoneTools.PanTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-                    },
-                ],
-            });
-
-            // Window Level
-            group.addTool(cornerstoneTools.WindowLevelTool.toolName);
-
-            if (leftClickToolGroupValue === 'windowlevel') {
-                group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-                    bindings: [
                         {
-                            mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
                         },
                     ],
                 });
-            }
 
-            group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
-                getReferenceLineColor,
-                getReferenceLineControllable,
-                getReferenceLineDraggableRotatable,
-                getReferenceLineSlabThicknessControlsOn,
-            });
+                // Window Level
+                group.addTool(cornerstoneTools.WindowLevelTool.toolName);
 
-            if (leftClickToolGroupValue === 'crosshairs') {
-                group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                if (leftClickToolGroupValue === 'windowlevel') {
+                    group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            {
+                                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                            },
+                        ],
+                    });
+                }
+
+                group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+                    getReferenceLineColor,
+                    getReferenceLineControllable,
+                    getReferenceLineDraggableRotatable,
+                    getReferenceLineSlabThicknessControlsOn,
+                });
+
+                if (leftClickToolGroupValue === 'crosshairs') {
+                    group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                }
+
+                const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
+
+                ['vol_axial', 'vol_sagittal', 'vol_coronal'].forEach((viewport) => {
+                    volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+                });
+
+            } else {
+
+                const viewportColors = {
+                    ['vol_axial']: 'rgb(200, 0, 0)',
+                };
+
+                const viewportReferenceLineControllable = [
+                    'vol_axial',
+                ];
+
+                const viewportReferenceLineDraggableRotatable = [
+                    'vol_axial',
+                ];
+
+                const viewportReferenceLineSlabThicknessControlsOn = [
+                    'vol_axial',
+                ];
+
+                function getReferenceLineColor(viewportId) {
+                    return viewportColors[viewportId];
+                }
+
+                function getReferenceLineControllable(viewportId) {
+                    const index = viewportReferenceLineControllable.indexOf(viewportId);
+                    return index !== -1;
+                }
+
+                function getReferenceLineDraggableRotatable(viewportId) {
+                    const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+                    return index !== -1;
+                }
+
+                function getReferenceLineSlabThicknessControlsOn(viewportId) {
+                    const index =
+                        viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+                    return index !== -1;
+                }
+
+                try {
+                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                    cornerstoneTools.addTool(cornerstoneTools.PanTool);
+                    cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+                    cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+                } catch (error) {
+                    // console.log("errors while loading tools:", error);
+                }
+
+                // Create group and add viewports
+                // TODO: should the render engine be coming from a var instead?
+                const group = getOrCreateToolgroup('vol_tool_group');
+                group.addViewport('vol_axial', 'viewer_render_engine');
+
+                // Stack Scroll Tool
+                group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+                group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+
+                group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+
+                group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+
+                if (leftClickToolGroupValue === 'selection') {
+                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ]
+                    });
+                }
+
+                group.addTool(cornerstoneTools.PanTool.toolName);
+                group.addTool(cornerstoneTools.ZoomTool.toolName);
+
+                if (rightClickToolGroupValue === 'pan') {
+                    group.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                } else {
+                    group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                }
+
+                // Pan
+                group.setToolActive(cornerstoneTools.PanTool.toolName, {
                     bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        {
+                            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+                        },
                     ],
                 });
+
+                // Window Level
+                group.addTool(cornerstoneTools.WindowLevelTool.toolName);
+
+                if (leftClickToolGroupValue === 'windowlevel') {
+                    group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            {
+                                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                            },
+                        ],
+                    });
+                }
+
+                group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+                    getReferenceLineColor,
+                    getReferenceLineControllable,
+                    getReferenceLineDraggableRotatable,
+                    getReferenceLineSlabThicknessControlsOn,
+                });
+
+                if (leftClickToolGroupValue === 'crosshairs') {
+                    group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                }
+
+                const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
+
+                ['vol_axial'].forEach((viewport) => {
+                    volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+                });
+
             }
-
-            const volVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
-
-            ['vol_axial', 'vol_sagittal', 'vol_coronal'].forEach((viewport) => {
-                volVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
-            });
-
         }
 
         function setupMipViewportTools() {
 
-            const viewportColors = {
-                ['mip_axial']: 'rgb(200, 0, 0)',
-                ['mip_sagittal']: 'rgb(200, 200, 0)',
-                ['mip_coronal']: 'rgb(0, 200, 0)',
-            };
+            if (files.length > 1) {
+                const viewportColors = {
+                    ['mip_axial']: 'rgb(200, 0, 0)',
+                    ['mip_sagittal']: 'rgb(200, 200, 0)',
+                    ['mip_coronal']: 'rgb(0, 200, 0)',
+                };
 
-            const viewportReferenceLineControllable = [
-                'mip_axial',
-                'mip_sagittal',
-                'mip_coronal',
-            ];
+                const viewportReferenceLineControllable = [
+                    'mip_axial',
+                    'mip_sagittal',
+                    'mip_coronal',
+                ];
 
-            const viewportReferenceLineDraggableRotatable = [
-                'mip_axial',
-                'mip_sagittal',
-                'mip_coronal',
-            ];
+                const viewportReferenceLineDraggableRotatable = [
+                    'mip_axial',
+                    'mip_sagittal',
+                    'mip_coronal',
+                ];
 
-            const viewportReferenceLineSlabThicknessControlsOn = [
-                'mip_axial',
-                'mip_sagittal',
-                'mip_coronal',
-            ];
+                const viewportReferenceLineSlabThicknessControlsOn = [
+                    'mip_axial',
+                    'mip_sagittal',
+                    'mip_coronal',
+                ];
 
-            function getReferenceLineColor(viewportId) {
-                return viewportColors[viewportId];
-            }
+                function getReferenceLineColor(viewportId) {
+                    return viewportColors[viewportId];
+                }
 
-            function getReferenceLineControllable(viewportId) {
-                const index = viewportReferenceLineControllable.indexOf(viewportId);
-                return index !== -1;
-            }
+                function getReferenceLineControllable(viewportId) {
+                    const index = viewportReferenceLineControllable.indexOf(viewportId);
+                    return index !== -1;
+                }
 
-            function getReferenceLineDraggableRotatable(viewportId) {
-                const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
-                return index !== -1;
-            }
+                function getReferenceLineDraggableRotatable(viewportId) {
+                    const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+                    return index !== -1;
+                }
 
-            function getReferenceLineSlabThicknessControlsOn(viewportId) {
-                const index =
-                    viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
-                return index !== -1;
-            }
+                function getReferenceLineSlabThicknessControlsOn(viewportId) {
+                    const index =
+                        viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+                    return index !== -1;
+                }
 
-            try {
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-                cornerstoneTools.addTool(cornerstoneTools.PanTool);
-                cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
-                cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
-                cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-            } catch (error) {
-                // console.log("errors while loading tools:", error);
-            }
+                try {
+                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                    cornerstoneTools.addTool(cornerstoneTools.PanTool);
+                    cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+                    cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+                } catch (error) {
+                    // console.log("errors while loading tools:", error);
+                }
 
-            // Create group and add viewports
-            // TODO: should the render engine be coming from a var instead?
-            const group = getOrCreateToolgroup('mip_tool_group');
-            group.addViewport('mip_axial', 'viewer_render_engine');
-            group.addViewport('mip_sagittal', 'viewer_render_engine');
-            group.addViewport('mip_coronal', 'viewer_render_engine');
+                // Create group and add viewports
+                // TODO: should the render engine be coming from a var instead?
+                const group = getOrCreateToolgroup('mip_tool_group');
+                group.addViewport('mip_axial', 'viewer_render_engine');
+                group.addViewport('mip_sagittal', 'viewer_render_engine');
+                group.addViewport('mip_coronal', 'viewer_render_engine');
 
-            // Stack Scroll Tool
-            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+                // Stack Scroll Tool
+                group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+                group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
-            // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+                group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-            group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+                group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-            if (leftClickToolGroupValue === 'selection') {
-                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ]
-                });
-            }
+                if (leftClickToolGroupValue === 'selection') {
+                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ]
+                    });
+                }
 
-            group.addTool(cornerstoneTools.PanTool.toolName);
-            group.addTool(cornerstoneTools.ZoomTool.toolName);
+                group.addTool(cornerstoneTools.PanTool.toolName);
+                group.addTool(cornerstoneTools.ZoomTool.toolName);
 
-            if (rightClickToolGroupValue === 'pan') {
+                if (rightClickToolGroupValue === 'pan') {
+                    group.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                } else {
+                    group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                }
+
+                // Pan
                 group.setToolActive(cornerstoneTools.PanTool.toolName, {
                     bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-                    ],
-                });
-            } else {
-                group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-                    ],
-                });
-            }
-
-            // Pan
-            group.setToolActive(cornerstoneTools.PanTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
-                    },
-                ],
-            });
-
-            // Window Level
-            group.addTool(cornerstoneTools.WindowLevelTool.toolName);
-
-            if (leftClickToolGroupValue === 'windowlevel') {
-                group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-                    bindings: [
                         {
-                            mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
                         },
                     ],
                 });
-            }
 
-            group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
-                getReferenceLineColor,
-                getReferenceLineControllable,
-                getReferenceLineDraggableRotatable,
-                getReferenceLineSlabThicknessControlsOn,
-            });
+                // Window Level
+                group.addTool(cornerstoneTools.WindowLevelTool.toolName);
 
-            if (leftClickToolGroupValue === 'crosshairs') {
-                group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                if (leftClickToolGroupValue === 'windowlevel') {
+                    group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            {
+                                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                            },
+                        ],
+                    });
+                }
+
+                group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+                    getReferenceLineColor,
+                    getReferenceLineControllable,
+                    getReferenceLineDraggableRotatable,
+                    getReferenceLineSlabThicknessControlsOn,
+                });
+
+                if (leftClickToolGroupValue === 'crosshairs') {
+                    group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                }
+
+                const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("mip_voi_syncronizer");
+
+                ['mip_axial', 'mip_sagittal', 'mip_coronal'].forEach((viewport) => {
+                    mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+                });
+            } else {
+                const viewportColors = {
+                    ['mip_axial']: 'rgb(200, 0, 0)',
+                };
+
+                const viewportReferenceLineControllable = [
+                    'mip_axial',
+                ];
+
+                const viewportReferenceLineDraggableRotatable = [
+                    'mip_axial',
+                ];
+
+                const viewportReferenceLineSlabThicknessControlsOn = [
+                    'mip_axial',
+                ];
+
+                function getReferenceLineColor(viewportId) {
+                    return viewportColors[viewportId];
+                }
+
+                function getReferenceLineControllable(viewportId) {
+                    const index = viewportReferenceLineControllable.indexOf(viewportId);
+                    return index !== -1;
+                }
+
+                function getReferenceLineDraggableRotatable(viewportId) {
+                    const index = viewportReferenceLineDraggableRotatable.indexOf(viewportId);
+                    return index !== -1;
+                }
+
+                function getReferenceLineSlabThicknessControlsOn(viewportId) {
+                    const index =
+                        viewportReferenceLineSlabThicknessControlsOn.indexOf(viewportId);
+                    return index !== -1;
+                }
+
+                try {
+                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                    cornerstoneTools.addTool(cornerstoneTools.PanTool);
+                    cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+                    cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
+                    cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+                } catch (error) {
+                    // console.log("errors while loading tools:", error);
+                }
+
+                // Create group and add viewports
+                // TODO: should the render engine be coming from a var instead?
+                const group = getOrCreateToolgroup('mip_tool_group');
+                group.addViewport('mip_axial', 'viewer_render_engine');
+
+                // Stack Scroll Tool
+                group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+                group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+
+                group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+                // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+
+                group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+
+                if (leftClickToolGroupValue === 'selection') {
+                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ]
+                    });
+                }
+
+                group.addTool(cornerstoneTools.PanTool.toolName);
+                group.addTool(cornerstoneTools.ZoomTool.toolName);
+
+                if (rightClickToolGroupValue === 'pan') {
+                    group.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                } else {
+                    group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                        ],
+                    });
+                }
+
+                // Pan
+                group.setToolActive(cornerstoneTools.PanTool.toolName, {
                     bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        {
+                            mouseButton: cornerstoneTools.Enums.MouseBindings.Auxiliary, // Middle Click
+                        },
                     ],
                 });
+
+                // Window Level
+                group.addTool(cornerstoneTools.WindowLevelTool.toolName);
+
+                if (leftClickToolGroupValue === 'windowlevel') {
+                    group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            {
+                                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+                            },
+                        ],
+                    });
+                }
+
+                group.addTool(cornerstoneTools.CrosshairsTool.toolName, {
+                    getReferenceLineColor,
+                    getReferenceLineControllable,
+                    getReferenceLineDraggableRotatable,
+                    getReferenceLineSlabThicknessControlsOn,
+                });
+
+                if (leftClickToolGroupValue === 'crosshairs') {
+                    group.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                }
+
+                const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("mip_voi_syncronizer");
+
+                ['mip_axial'].forEach((viewport) => {
+                    mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
+                });
             }
-
-            const mipVOISyncronizer = cornerstoneTools.synchronizers.createVOISynchronizer("mip_voi_syncronizer");
-
-            ['mip_axial', 'mip_sagittal', 'mip_coronal'].forEach((viewport) => {
-                mipVOISyncronizer.add({ renderingEngineId: 'viewer_render_engine', viewportId: viewport });
-            });
 
         }
 
@@ -908,100 +1210,145 @@ function CornerstoneViewer({ volumeName,
             if (layout === 'Masker' || layout === 'MaskerVR' || layout === 'MaskerReview' || layout === 'NiftiReview') {
                 const viewportInput = [];
 
-                container.style.display = 'grid';
-                if (viewToolGroupValue === 'all') {
-                    container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-                    container.style.gridTemplateRows = 'repeat(3, 1fr)';
+                if (files.length === 1) {
+                    
+                    setLeftClickToolGroupVisible(false);
+                    setOpacityToolVisible(false);
+                    setPresetToolVisible(false);
+
+                    container.style.display = 'block';
+
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+
+                    const volAxialContent = setupPanel('vol_axial');
+                    const mipAxialContent = setupPanel('mip_axial');
+
+                    container.appendChild(volAxialContent);
+                    container.appendChild(mipAxialContent);
+
+                    viewportInput.push(
+                        {
+                            viewportId: 'vol_axial',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: volAxialContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                            },
+                        },
+                        {
+                            viewportId: 'mip_axial',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: mipAxialContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                            },
+                        },
+                    );
+
+                    renderingEngine.setViewports(viewportInput);
+
+                    setupVolViewportTools();
+                    setupMipViewportTools();
+
                 } else {
-                    container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                    container.style.gridTemplateRows = 'repeat(2, 1fr)';
-                }
 
-                container.style.gridGap = '6px';
-                container.style.width = '100%';
-                container.style.height = '100%';
-
-                const volAxialContent = setupPanel('vol_axial');
-                const volSagittalContent = setupPanel('vol_sagittal');
-                const volCoronalContent = setupPanel('vol_coronal');
-                const mipAxialContent = setupPanel('mip_axial');
-                const mipSagittalContent = setupPanel('mip_sagittal');
-                const mipCoronalContent = setupPanel('mip_coronal');
-                const t3dCoronalContent = setupPanel('t3d_coronal');
-
-                container.appendChild(volAxialContent);
-                container.appendChild(volSagittalContent);
-                container.appendChild(volCoronalContent);
-                container.appendChild(mipAxialContent);
-                container.appendChild(mipSagittalContent);
-                container.appendChild(mipCoronalContent);
-                container.appendChild(t3dCoronalContent);
-
-                viewportInput.push(
-                    {
-                        viewportId: 'vol_axial',
-                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                        element: volAxialContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-                        },
-                    },
-                    {
-                        viewportId: 'vol_sagittal',
-                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                        element: volSagittalContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-                        },
-                    },
-                    {
-                        viewportId: 'vol_coronal',
-                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                        element: volCoronalContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-                        },
-                    },
-                    {
-                        viewportId: 'mip_axial',
-                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                        element: mipAxialContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-                        },
-                    },
-                    {
-                        viewportId: 'mip_sagittal',
-                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                        element: mipSagittalContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-                        },
-                    },
-                    {
-                        viewportId: 'mip_coronal',
-                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                        element: mipCoronalContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-                        },
-                    },
-                    {
-                        viewportId: 't3d_coronal',
-                        type: cornerstone.Enums.ViewportType.VOLUME_3D,
-                        element: t3dCoronalContent.childNodes[0],
-                        defaultOptions: {
-                            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-                        },
+                    container.style.display = 'grid';
+                    if (viewToolGroupValue === 'all') {
+                        container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                        container.style.gridTemplateRows = 'repeat(3, 1fr)';
+                    } else {
+                        container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                        container.style.gridTemplateRows = 'repeat(2, 1fr)';
                     }
-                );
 
-                renderingEngine.setViewports(viewportInput);
+                    container.style.gridGap = '6px';
+
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+                
+                    const volAxialContent = setupPanel('vol_axial');
+                    const volSagittalContent = setupPanel('vol_sagittal');
+                    const volCoronalContent = setupPanel('vol_coronal');
+                    const mipAxialContent = setupPanel('mip_axial');
+                    const mipSagittalContent = setupPanel('mip_sagittal');
+                    const mipCoronalContent = setupPanel('mip_coronal');
+                    const t3dCoronalContent = setupPanel('t3d_coronal');
+
+                    container.appendChild(volAxialContent);
+                    container.appendChild(volSagittalContent);
+                    container.appendChild(volCoronalContent);
+                    container.appendChild(mipAxialContent);
+                    container.appendChild(mipSagittalContent);
+                    container.appendChild(mipCoronalContent);
+                    container.appendChild(t3dCoronalContent);
+
+                    viewportInput.push(
+                        {
+                            viewportId: 'vol_axial',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: volAxialContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                            },
+                        },
+                        {
+                            viewportId: 'vol_sagittal',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: volSagittalContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                            },
+                        },
+                        {
+                            viewportId: 'vol_coronal',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: volCoronalContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                            },
+                        },
+                        {
+                            viewportId: 'mip_axial',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: mipAxialContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                            },
+                        },
+                        {
+                            viewportId: 'mip_sagittal',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: mipSagittalContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                            },
+                        },
+                        {
+                            viewportId: 'mip_coronal',
+                            type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                            element: mipCoronalContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                            },
+                        },
+                        {
+                            viewportId: 't3d_coronal',
+                            type: cornerstone.Enums.ViewportType.VOLUME_3D,
+                            element: t3dCoronalContent.childNodes[0],
+                            defaultOptions: {
+                                orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                            },
+                        }
+                    );
+
+                    renderingEngine.setViewports(viewportInput);
+
+                    setupVolViewportTools();
+                    setupMipViewportTools();
+                    setup3dViewportTools();
+                }
             }
-
-            setupVolViewportTools();
-            setupMipViewportTools();
-            setup3dViewportTools();
 
             setLoading(false);
 
@@ -1023,137 +1370,187 @@ function CornerstoneViewer({ volumeName,
 
         // console.log("viewports loaded");
 
-        const container = containerRef.current;
+        if (files.length > 1) {
+            const container = containerRef.current;
 
-        const volAxialContent = document.getElementById('vol_axial_wrapper');
-        const volSagittalContent = document.getElementById('vol_sagittal_wrapper');
-        const volCoronalContent = document.getElementById('vol_coronal_wrapper');
-        const mipAxialContent = document.getElementById('mip_axial_wrapper');
-        const mipSagittalContent = document.getElementById('mip_sagittal_wrapper');
-        const mipCoronalContent = document.getElementById('mip_coronal_wrapper');
-        const t3dCoronalContent = document.getElementById('t3d_coronal_wrapper');
+            const volAxialContent = document.getElementById('vol_axial_wrapper');
+            const volSagittalContent = document.getElementById('vol_sagittal_wrapper');
+            const volCoronalContent = document.getElementById('vol_coronal_wrapper');
+            const mipAxialContent = document.getElementById('mip_axial_wrapper');
+            const mipSagittalContent = document.getElementById('mip_sagittal_wrapper');
+            const mipCoronalContent = document.getElementById('mip_coronal_wrapper');
+            const t3dCoronalContent = document.getElementById('t3d_coronal_wrapper');
 
-        if (viewToolGroupValue === 'all') {
-            // set all viewport panels to be visible
+            if (viewToolGroupValue === 'all') {
+                // set all viewport panels to be visible
 
-            container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-            container.style.gridTemplateRows = 'repeat(3, 1fr)';
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                container.style.gridTemplateRows = 'repeat(3, 1fr)';
 
-            volAxialContent.style.visibility = 'visible';
-            volSagittalContent.style.visibility = 'visible';
-            volCoronalContent.style.visibility = 'visible';
-            volAxialContent.style.display = 'block';
-            volSagittalContent.style.display = 'block';
-            volCoronalContent.style.display = 'block';
+                volAxialContent.style.visibility = 'visible';
+                volSagittalContent.style.visibility = 'visible';
+                volCoronalContent.style.visibility = 'visible';
+                volAxialContent.style.display = 'block';
+                volSagittalContent.style.display = 'block';
+                volCoronalContent.style.display = 'block';
 
-            mipAxialContent.style.visibility = 'visible';
-            mipSagittalContent.style.visibility = 'visible';
-            mipCoronalContent.style.visibility = 'visible';
-            mipAxialContent.style.display = 'block';
-            mipSagittalContent.style.display = 'block';
-            mipCoronalContent.style.display = 'block';
+                mipAxialContent.style.visibility = 'visible';
+                mipSagittalContent.style.visibility = 'visible';
+                mipCoronalContent.style.visibility = 'visible';
+                mipAxialContent.style.display = 'block';
+                mipSagittalContent.style.display = 'block';
+                mipCoronalContent.style.display = 'block';
 
-            t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
-            //set t3dCoronalContent to expand to take up 3 columns
-            t3dCoronalContent.style.gridColumn = 'span 3';
-        } else if (viewToolGroupValue === 'volume') {
+                t3dCoronalContent.style.visibility = 'visible';
+                t3dCoronalContent.style.display = 'block';
+                //set t3dCoronalContent to expand to take up 3 columns
+                t3dCoronalContent.style.gridColumn = 'span 3';
+            } else if (viewToolGroupValue === 'volume') {
 
-            // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
 
-            // remove all viewports Minimized and Expanded classes
-            const allPanelWrappers = container.childNodes;
-            allPanelWrappers.forEach((panelWrapper) => {
-                panelWrapper.classList.remove('Minimized');
-                panelWrapper.classList.remove('Expanded');
-                panelWrapper.querySelector('button').textContent = 'open_in_full';
-                panelWrapper.querySelector('button').title = 'Maximize';
-            });
+                // remove all viewports Minimized and Expanded classes
+                const allPanelWrappers = container.childNodes;
+                allPanelWrappers.forEach((panelWrapper) => {
+                    panelWrapper.classList.remove('Minimized');
+                    panelWrapper.classList.remove('Expanded');
+                    panelWrapper.querySelector('button').textContent = 'open_in_full';
+                    panelWrapper.querySelector('button').title = 'Maximize';
+                });
 
-            container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-            container.style.gridTemplateRows = 'repeat(2, 1fr)';
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
-            // set volume viewport panels to be visible
+                // set volume viewport panels to be visible
 
-            volAxialContent.style.visibility = 'visible';
-            volSagittalContent.style.visibility = 'visible';
-            volCoronalContent.style.visibility = 'visible';
-            volAxialContent.style.display = 'block';
-            volSagittalContent.style.display = 'block';
-            volCoronalContent.style.display = 'block';
+                volAxialContent.style.visibility = 'visible';
+                volSagittalContent.style.visibility = 'visible';
+                volCoronalContent.style.visibility = 'visible';
+                volAxialContent.style.display = 'block';
+                volSagittalContent.style.display = 'block';
+                volCoronalContent.style.display = 'block';
 
-            mipAxialContent.style.visibility = 'hidden';
-            mipSagittalContent.style.visibility = 'hidden';
-            mipCoronalContent.style.visibility = 'hidden';
-            mipAxialContent.style.display = 'none';
-            mipSagittalContent.style.display = 'none';
-            mipCoronalContent.style.display = 'none';
+                mipAxialContent.style.visibility = 'hidden';
+                mipSagittalContent.style.visibility = 'hidden';
+                mipCoronalContent.style.visibility = 'hidden';
+                mipAxialContent.style.display = 'none';
+                mipSagittalContent.style.display = 'none';
+                mipCoronalContent.style.display = 'none';
 
-            t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
+                t3dCoronalContent.style.visibility = 'visible';
+                t3dCoronalContent.style.display = 'block';
 
-            // move t3dCoronalContent to the top right cell of the grid
-            t3dCoronalContent.style.gridColumn = 2;
-            t3dCoronalContent.style.gridRow = 1;
+                // move t3dCoronalContent to the top right cell of the grid
+                t3dCoronalContent.style.gridColumn = 2;
+                t3dCoronalContent.style.gridRow = 1;
 
-            // move volCoronalContent to the bottom left cell of the grid
-            volCoronalContent.style.gridColumn = 1;
-            volCoronalContent.style.gridRow = 2;
+                // move volCoronalContent to the bottom left cell of the grid
+                volCoronalContent.style.gridColumn = 1;
+                volCoronalContent.style.gridRow = 2;
 
-            volSagittalContent.style.gridColumn = 2;
-            volSagittalContent.style.gridRow = 2;
+                volSagittalContent.style.gridColumn = 2;
+                volSagittalContent.style.gridRow = 2;
 
-            volAxialContent.style.gridColumn = 1;
-            volAxialContent.style.gridRow = 1;
+                volAxialContent.style.gridColumn = 1;
+                volAxialContent.style.gridRow = 1;
 
-            // t3dCoronalContent.style.gridColumn = 'span 3';
-        } else if (viewToolGroupValue === 'projection') {
+                // t3dCoronalContent.style.gridColumn = 'span 3';
+            } else if (viewToolGroupValue === 'projection') {
 
-            // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
 
-            // remove all viewports Minimized and Expanded classes
-            const allPanelWrappers = container.childNodes;
-            allPanelWrappers.forEach((panelWrapper) => {
-                panelWrapper.classList.remove('Minimized');
-                panelWrapper.classList.remove('Expanded');
-            });
+                // remove all viewports Minimized and Expanded classes
+                const allPanelWrappers = container.childNodes;
+                allPanelWrappers.forEach((panelWrapper) => {
+                    panelWrapper.classList.remove('Minimized');
+                    panelWrapper.classList.remove('Expanded');
+                });
 
-            container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-            container.style.gridTemplateRows = 'repeat(2, 1fr)';
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
-            // set projection viewport panels to be visible
-            volAxialContent.style.visibility = 'hidden';
-            volSagittalContent.style.visibility = 'hidden';
-            volCoronalContent.style.visibility = 'hidden';
-            volAxialContent.style.display = 'none';
-            volSagittalContent.style.display = 'none';
-            volCoronalContent.style.display = 'none';
+                // set projection viewport panels to be visible
+                volAxialContent.style.visibility = 'hidden';
+                volSagittalContent.style.visibility = 'hidden';
+                volCoronalContent.style.visibility = 'hidden';
+                volAxialContent.style.display = 'none';
+                volSagittalContent.style.display = 'none';
+                volCoronalContent.style.display = 'none';
 
-            mipAxialContent.style.visibility = 'visible';
-            mipSagittalContent.style.visibility = 'visible';
-            mipCoronalContent.style.visibility = 'visible';
-            mipAxialContent.style.display = 'block';
-            mipSagittalContent.style.display = 'block';
-            mipCoronalContent.style.display = 'block';
+                mipAxialContent.style.visibility = 'visible';
+                mipSagittalContent.style.visibility = 'visible';
+                mipCoronalContent.style.visibility = 'visible';
+                mipAxialContent.style.display = 'block';
+                mipSagittalContent.style.display = 'block';
+                mipCoronalContent.style.display = 'block';
 
-            t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
+                t3dCoronalContent.style.visibility = 'visible';
+                t3dCoronalContent.style.display = 'block';
 
-            // move t3dCoronalContent to the top right cell of the grid
-            t3dCoronalContent.style.gridColumn = 2;
-            t3dCoronalContent.style.gridRow = 1;
+                // move t3dCoronalContent to the top right cell of the grid
+                t3dCoronalContent.style.gridColumn = 2;
+                t3dCoronalContent.style.gridRow = 1;
 
-            // move mipCoronalContent to the bottom left cell of the grid
-            mipCoronalContent.style.gridColumn = 1;
-            mipCoronalContent.style.gridRow = 2;
+                // move mipCoronalContent to the bottom left cell of the grid
+                mipCoronalContent.style.gridColumn = 1;
+                mipCoronalContent.style.gridRow = 2;
 
-            mipSagittalContent.style.gridColumn = 2;
-            mipSagittalContent.style.gridRow = 2;
+                mipSagittalContent.style.gridColumn = 2;
+                mipSagittalContent.style.gridRow = 2;
 
-            mipAxialContent.style.gridColumn = 1;
-            mipAxialContent.style.gridRow = 1;
+                mipAxialContent.style.gridColumn = 1;
+                mipAxialContent.style.gridRow = 1;
 
-            // t3dCoronalContent.style.gridColumn = 'span 3';
+                // t3dCoronalContent.style.gridColumn = 'span 3';
+            }
+        } else {
+            const container = containerRef.current;
+
+            const volAxialContent = document.getElementById('vol_axial_wrapper');
+            const mipAxialContent = document.getElementById('mip_axial_wrapper');
+
+            if (viewToolGroupValue === 'all') {
+                // set all viewport panels to be visible
+
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                container.style.gridTemplateRows = 'repeat(3, 1fr)';
+
+                volAxialContent.style.visibility = 'visible';
+                volSagittalContent.style.visibility = 'visible';
+                volCoronalContent.style.visibility = 'visible';
+                volAxialContent.style.display = 'block';
+                volSagittalContent.style.display = 'block';
+                volCoronalContent.style.display = 'block';
+
+                mipAxialContent.style.visibility = 'visible';
+                mipSagittalContent.style.visibility = 'visible';
+                mipCoronalContent.style.visibility = 'visible';
+                mipAxialContent.style.display = 'block';
+                mipSagittalContent.style.display = 'block';
+                mipCoronalContent.style.display = 'block';
+
+                t3dCoronalContent.style.visibility = 'visible';
+                t3dCoronalContent.style.display = 'block';
+                //set t3dCoronalContent to expand to take up 3 columns
+                t3dCoronalContent.style.gridColumn = 'span 3';
+            } else if (viewToolGroupValue === 'volume') {
+
+                // set volume viewport panels to be visible
+                volAxialContent.style.visibility = 'visible';
+                volAxialContent.style.display = 'block';
+
+                mipAxialContent.style.visibility = 'hidden';
+                mipAxialContent.style.display = 'none';
+
+            } else if (viewToolGroupValue === 'projection') {
+
+                // set projection viewport panels to be visible
+                volAxialContent.style.visibility = 'hidden';
+                volAxialContent.style.display = 'none';
+
+                mipAxialContent.style.visibility = 'visible';
+                mipAxialContent.style.display = 'block';
+            }
         }
 
     }, [viewToolGroupValue, filesLoaded]);
@@ -1197,84 +1594,154 @@ function CornerstoneViewer({ volumeName,
 
             // console.log("about to setVolumes for rendering engine:", renderingEngine);
 
-            await cornerstone.setVolumesForViewports(
-                renderingEngine,
-                [{ volumeId: volumeId }],
-                ['vol_axial', 'vol_sagittal', 'vol_coronal']
-            );
+            if (files.length > 1) {
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [{ volumeId: volumeId }],
+                    ['vol_axial', 'vol_sagittal', 'vol_coronal']
+                );
 
-            const volDimensions = volume.dimensions;
+                const volDimensions = volume.dimensions;
 
-            const volSlab = Math.sqrt(
-                volDimensions[0] * volDimensions[0] +
-                volDimensions[1] * volDimensions[1] +
-                volDimensions[2] * volDimensions[2]
-            );
+                const volSlab = Math.sqrt(
+                    volDimensions[0] * volDimensions[0] +
+                    volDimensions[1] * volDimensions[1] +
+                    volDimensions[2] * volDimensions[2]
+                );
 
-            // Add volumes to MIP viewports
-            await cornerstone.setVolumesForViewports(
-                renderingEngine,
-                [
-                    //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                // Add volumes to MIP viewports
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [
+                        //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                        {
+                            volumeId: volumeId,
+                            blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+                            slabThickness: volSlab,
+                        },
+                    ],
+                    ['mip_axial', 'mip_sagittal', 'mip_coronal']
+                );
+
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [{ volumeId: volumeId }],
+                    ['t3d_coronal']
+                ).then(() => {
+                    const viewport = renderingEngine.getViewport('t3d_coronal');
+                    viewport.setProperties({ preset: presetToolValue });
+
+                });
+
+                // create and bind a new segmentation
+                await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                    volumeId,
+                    { volumeId: segId }
+                );
+
+                // make sure it doesn't already exist
+                cornerstoneTools.segmentation.state.removeSegmentation(segId);
+                cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
+                cornerstoneTools.segmentation.addSegmentations([
                     {
-                        volumeId: volumeId,
-                        blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
-                        slabThickness: volSlab,
-                    },
-                ],
-                ['mip_axial', 'mip_sagittal', 'mip_coronal']
-            );
-
-            await cornerstone.setVolumesForViewports(
-                renderingEngine,
-                [{ volumeId: volumeId }],
-                ['t3d_coronal']
-            ).then(() => {
-                const viewport = renderingEngine.getViewport('t3d_coronal');
-                viewport.setProperties({ preset: presetToolValue });
-
-            });
-
-            // create and bind a new segmentation
-            await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
-                volumeId,
-                { volumeId: segId }
-            );
-
-            // make sure it doesn't already exist
-            cornerstoneTools.segmentation.state.removeSegmentation(segId);
-            cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
-            cornerstoneTools.segmentation.addSegmentations([
-                {
-                    segmentationId: segId,
-                    representation: {
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        data: {
-                            volumeId: segId,
+                        segmentationId: segId,
+                        representation: {
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                            data: {
+                                volumeId: segId,
+                            },
                         },
                     },
-                },
-            ]);
+                ]);
 
-            await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                'vol_tool_group',
-                [
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'vol_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'mip_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+            } else {
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [{ volumeId: volumeId }],
+                    ['vol_axial']
+                );
+
+                const volDimensions = volume.dimensions;
+
+                const volSlab = Math.sqrt(
+                    volDimensions[0] * volDimensions[0] +
+                    volDimensions[1] * volDimensions[1] +
+                    volDimensions[2] * volDimensions[2]
+                );
+
+                // Add volumes to MIP viewports
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [
+                        //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                        {
+                            volumeId: volumeId,
+                            blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+                            slabThickness: volSlab,
+                        },
+                    ],
+                    ['mip_axial']
+                );
+
+                // create and bind a new segmentation
+                await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                    volumeId,
+                    { volumeId: segId }
+                );
+
+                // make sure it doesn't already exist
+                cornerstoneTools.segmentation.state.removeSegmentation(segId);
+                cornerstoneTools.segmentation.addSegmentations([
                     {
                         segmentationId: segId,
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        representation: {
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                            data: {
+                                volumeId: segId,
+                            },
+                        },
                     },
-                ]
-            );
+                ]);
 
-            await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                'mip_tool_group',
-                [
-                    {
-                        segmentationId: segId,
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                    },
-                ]
-            );
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'vol_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'mip_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+            }
 
             setFilesLoaded(true);
 
@@ -1497,12 +1964,14 @@ function CornerstoneViewer({ volumeName,
                 volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
                     bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
                 });
-                // access the t3d_tool_group and do the same
-                const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-                t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
-                t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
+                if (files.length > 1) {
+                    // access the t3d_tool_group and do the same
+                    const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+                    t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+                    t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
             }
         } else {
             if (volToolGroup) {
@@ -1510,12 +1979,14 @@ function CornerstoneViewer({ volumeName,
                 volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
                     bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
                 });
-                // access the t3d_tool_group and do the same
-                const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-                t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
-                t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
+                if (files.length > 1) {
+                    // access the t3d_tool_group and do the same
+                    const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+                    t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+                    t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
             }
         }
 
