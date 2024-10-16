@@ -1031,48 +1031,6 @@ function CornerstoneViewer({ volumeName,
 
                         console.log('selection activated');
                     }
-
-                    // // create and bind a new segmentation
-                    // await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
-                    //     volumeId,
-                    //     { volumeId: segId }
-                    // );
-
-                    // // make sure it doesn't already exist
-                    // cornerstoneTools.segmentation.state.removeSegmentation(segId);
-                    // cornerstoneTools.segmentation.addSegmentations([
-                    //     {
-                    //         segmentationId: segId,
-                    //         representation: {
-                    //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                    //             data: {
-                    //                 volumeId: segId,
-                    //             },
-                    //         },
-                    //     },
-                    // ]);
-
-                    // await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    // 'vol_tool_group',
-                    //     [
-                    //         {
-                    //             segmentationId: segId,
-                    //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                    //         },
-                    //     ]
-                    // );
-
-                    // group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
-
-                    // if (leftClickToolGroupValue === 'selection') {
-                    //     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    //         bindings: [
-                    //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    //         ]
-                    //     });
-
-                    //     console.log('selection activated');
-                    // }
                     
                     // setLoading(false);
 
