@@ -16,7 +16,6 @@ export async function loader({ params }) {
 }
 
 export default function MaskIEC() {
-    
     const { details, files, iec } = useLoaderData();
 
     // default values for this route/mode

@@ -964,9 +964,9 @@ function CornerstoneViewer({ volumeName,
 
                     const viewport = renderingEngine.getViewport(viewportId);
 
-                    const stack = [files[0]];
+                    const stack = [`wadouri:/papi/v1/files/${files[0]}/data`];
 
-                    // await viewport.setStack(stack);
+                    await viewport.setStack(stack);
 
                     viewport.render();
 
