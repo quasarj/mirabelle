@@ -970,14 +970,111 @@ function CornerstoneViewer({ volumeName,
 
                     viewport.render();
 
+                    // Tools
+                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
 
+                    const group = getOrCreateToolgroup('vol_tool_group');
+                    group.addViewport(viewportId, renderingEngineId);
 
-                    // setupSingleImageViewerTools();
+                    group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                    group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+
+                    // Get the current imageId from the viewport
+                    const currentImageId = viewport.getCurrentImageId();
+
+                    // Create a derived segmentation image for the current image
+                    const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+
+                    // Create a unique segmentationId
+                    const segmentationId = `SEGMENTATION_${newSegImageId}`;
+
+                    // Add the segmentation to the segmentation state
+                    cornerstoneTools.segmentation.addSegmentations([
+                        {
+                            segmentationId: segmentationId,
+                            representation: {
+                                type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                                data: {
+                                    imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                                },
+                            },
+                        },
+                    ]);
+
+                    // Add the segmentation representation to the tool group
+                    const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'vol_tool_group',
+                        [
+                            {
+                            segmentationId: segmentationId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                            },
+                        ]
+                    );
+
+                    // Set the active segmentation representation
+                    cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
+                        'vol_tool_group',
+                        uid
+                    );
+
+                    // Activate the RectangleScissorsTool
+                    group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+
+                    if (leftClickToolGroupValue === 'selection') {
+                        group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                            bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                            ],
+                        });
+
+                        console.log('selection activated');
+                    }
+
+                    // // create and bind a new segmentation
+                    // await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                    //     volumeId,
+                    //     { volumeId: segId }
+                    // );
+
+                    // // make sure it doesn't already exist
+                    // cornerstoneTools.segmentation.state.removeSegmentation(segId);
+                    // cornerstoneTools.segmentation.addSegmentations([
+                    //     {
+                    //         segmentationId: segId,
+                    //         representation: {
+                    //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                    //             data: {
+                    //                 volumeId: segId,
+                    //             },
+                    //         },
+                    //     },
+                    // ]);
+
+                    // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    // 'vol_tool_group',
+                    //     [
+                    //         {
+                    //             segmentationId: segId,
+                    //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                    //         },
+                    //     ]
+                    // );
+
+                    // group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+
+                    // if (leftClickToolGroupValue === 'selection') {
+                    //     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                    //         bindings: [
+                    //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                    //         ]
+                    //     });
+
+                    //     console.log('selection activated');
+                    // }
                     
                     // setLoading(false);
-                    
-                    console.log('loading non-nifti single dicom image');
-                    console.log(stack);
 
                     // stop implementation here
                     return;
@@ -1508,13 +1605,13 @@ function CornerstoneViewer({ volumeName,
     }, [leftClickToolGroupValue]);
 
     useEffect(() => {
-
+        console.log('leftClickToolGroupValue:', leftClickToolGroupValue);
         // Volumes
         const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
 
         if (volToolGroup) {
             // Add the RectangleScissorsTool if it hasn't been added already
-
+            console.log('volToolGroup: ', volToolGroup);
             if (!volToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
 
                 cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
@@ -1530,8 +1627,11 @@ function CornerstoneViewer({ volumeName,
                     ],
                 });
 
+                console.log('RectangleScissorsTool activated');
             } else {
                 volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+
+                console.log('RectangleScissorsTool dectivated');
             }
         }
 
