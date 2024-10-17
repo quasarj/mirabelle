@@ -23,7 +23,7 @@ export default function ReviewNIFTI() {
     const defaults = {
         layout: 'NiftiReview',
         zoom: 250,
-        title: 'Review NIFTI',
+        title: '',
         fileData: details,
 
         // panels
@@ -134,6 +134,7 @@ export default function ReviewNIFTI() {
     const [presetToolValue, setPresetToolValue] = useState(defaults.presetToolValue);
     const [resetViewportsVisible, setResetViewportsVisible] = useState(defaults.resetViewportsVisible);
     const [resetViewportsValue, setResetViewportsValue] = useState(defaults.resetViewportsValue);
+    const [title, setTitle] = useState(defaults.title);
 
     // Here we just assemble the various panels that we need for this mode
     return (
@@ -196,7 +197,7 @@ export default function ReviewNIFTI() {
             resetViewportsVisible, setResetViewportsVisible,
             resetViewportsValue, setResetViewportsValue,
 
-            title: defaults.title,
+            title, setTitle,
             fileData: defaults.fileData,
 
         }}>

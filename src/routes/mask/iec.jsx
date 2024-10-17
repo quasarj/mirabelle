@@ -22,6 +22,7 @@ export default function MaskIEC() {
     const defaults = {
         layout: 'Masker',
         zoom: 250,
+        title: '',
 
         // panels
         // ----------------------------------
@@ -142,6 +143,7 @@ export default function MaskIEC() {
     const [presetToolValue, setPresetToolValue] = useState(defaults.presetToolValue);
     const [resetViewportsVisible, setResetViewportsVisible] = useState(defaults.resetViewportsVisible);
     const [resetViewportsValue, setResetViewportsValue] = useState(defaults.resetViewportsValue);
+    const [title, setTitle] = useState(defaults.title);
 
     // Here we just assemble the various panels that we need for this mode
     return (
@@ -203,6 +205,8 @@ export default function MaskIEC() {
 
             resetViewportsVisible, setResetViewportsVisible,
             resetViewportsValue, setResetViewportsValue,
+
+            title, setTitle,
 
         }}>
             <Masker files={files} iec={iec} />

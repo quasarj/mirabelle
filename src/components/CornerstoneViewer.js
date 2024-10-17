@@ -298,7 +298,7 @@ function CornerstoneViewer({ volumeName,
         presetToolValue, setPresetToolValue,
         resetViewportsVisible, setResetViewportsVisible,
         resetViewportsValue, setResetViewportsValue,
-        title,
+        title, setTitle,
     } = useContext(Context);
 
     const [loading, setLoading] = useState(true);
@@ -321,6 +321,9 @@ function CornerstoneViewer({ volumeName,
 
     // if the browser url contains the word nifti, then set a nifti variable to true
     let nifti = window.location.href.includes('nifti');
+
+    let mask = window.location.href.includes('mask');
+    let review = window.location.href.includes('review');
 
     if (nifti) {
         volumeId = `nifti:/papi/v1/files/${files[0]}/data`;
@@ -938,7 +941,7 @@ function CornerstoneViewer({ volumeName,
 
                 if ((files.length === 1) && !nifti) {
 
-                    // Single dicom image viewer
+                    // Single Image Viewer
 
                     // Container
                     container.style.display = 'block';
@@ -971,12 +974,14 @@ function CornerstoneViewer({ volumeName,
                     viewport.render();
 
                     // Tools
-                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
 
+                    // Group
                     const group = getOrCreateToolgroup('vol_tool_group');
                     group.addViewport(viewportId, renderingEngineId);
 
+                    // SegmentationDisplayTool
+                    cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    
                     group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
                     group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
@@ -1019,6 +1024,9 @@ function CornerstoneViewer({ volumeName,
                         uid
                     );
 
+                    // RectangleScissorsTool
+                    cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+
                     // Activate the RectangleScissorsTool
                     group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
@@ -1031,12 +1039,24 @@ function CornerstoneViewer({ volumeName,
 
                         console.log('selection activated');
                     }
-                    
+
+                    // Title
+                    if (mask) setTitle('Single Image / Mask');
+                    if (review) setTitle('Single Image / Review');
+
                     // setLoading(false);
 
                     // stop implementation here
                     return;
 
+                }
+
+                // Title
+                if (nifti) {
+                    setTitle('NIFTI / Review');
+                } else {
+                    if (mask) setTitle('Multi-Image / Mask');
+                    if (review) setTitle('Multi-Image / Review');
                 }
 
                 container.style.display = 'grid';
