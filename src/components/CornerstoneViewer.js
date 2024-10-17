@@ -299,6 +299,9 @@ function CornerstoneViewer({ volumeName,
         resetViewportsVisible, setResetViewportsVisible,
         resetViewportsValue, setResetViewportsValue,
         title, setTitle,
+        maskerPanelExpandSelectionVisible, setMaskerPanelExpandSelectionVisible,
+        maskerPanelClearSelectionVisible, setMaskerPanelClearSelectionVisible,
+        maskerPanelAcceptSelectionVisible, setMaskerPanelAcceptSelectionVisible,
     } = useContext(Context);
 
     const [loading, setLoading] = useState(true);
@@ -330,6 +333,7 @@ function CornerstoneViewer({ volumeName,
     } else {
         volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
     }
+    
     console.log(volumeId);
 
     // Load presets when component mounts
@@ -1040,9 +1044,41 @@ function CornerstoneViewer({ volumeName,
                         console.log('selection activated');
                     }
 
-                    // Title
                     if (mask) {
+
+                        // Set title
                         setTitle('Stack Masker');
+
+                        // Hide the view tool group
+                        setViewToolGroupVisible(false);
+
+                        // Select the function blackout tool
+                        setFunctionToolGroupValue('blackout');
+
+                        // Hide the function mask tool
+                        setFunctionToolMaskVisible(false);
+
+                        // Hide the function slice remove tool
+                        setFunctionToolSliceRemoveVisible(false);
+
+                        // Select the form cuboid tool
+                        setFormToolGroupValue('cuboid');
+
+                        // Hide the form cylinder tool
+                        setFormToolCylinderVisible(false);
+
+                        // Hide the leftClick crosshairs tool
+                        setLeftClickToolCrossHairsVisible(false);
+
+                        // Hide the Opacity tool
+                        setOpacityToolVisible(false);
+
+                        // Hide the Preset tool
+                        setPresetToolVisible(false);
+
+                        // Hide the Expand Selection tool
+                        setMaskerPanelExpandSelectionVisible(false);
+
                     } else if (review) {
                         setTitle('Stack Review');
                     }

@@ -7,6 +7,7 @@ function MaskerPanel({
 }) {
   const {
     layout,
+    maskerPanelExpandSelectionVisible,
   } = useContext(Context);
 
   if (layout === 'MaskerReview') {
@@ -33,7 +34,7 @@ function MaskerPanel({
     // the normal masking buttons
     return (
       <div id="maskerPanel" className="h-12 flex justify-center gap-2">
-        <button onClick={onExpand} id="expandSelection" className="bg-blue-100 dark:bg-slate-900">Expand Selection</button>
+        { maskerPanelExpandSelectionVisible && <button onClick={onExpand} id="expandSelection" className="bg-blue-100 dark:bg-slate-900">Expand Selection</button> }
         <button onClick={onClear} id="clearSelection" className="bg-blue-100 dark:bg-slate-900">Clear Selection</button>
         <button onClick={onAccept} id="acceptSelection" className="bg-blue-100 dark:bg-slate-900">Accept Selection</button>
       </div>

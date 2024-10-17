@@ -98,6 +98,11 @@ export default function MaskIEC() {
         resetViewportsVisible: true,
         resetViewportsValue: false,
 
+        // Masker Panel
+        maskerPanelExpandSelectionVisible: true,
+        maskerPanelClearSelectionVisible: true,
+        maskerPanelAcceptSelectionVisible: true,
+
     };
 
     const [layout, setLayout] = useState(defaults.layout);
@@ -144,6 +149,9 @@ export default function MaskIEC() {
     const [resetViewportsVisible, setResetViewportsVisible] = useState(defaults.resetViewportsVisible);
     const [resetViewportsValue, setResetViewportsValue] = useState(defaults.resetViewportsValue);
     const [title, setTitle] = useState(defaults.title);
+    const [maskerPanelExpandSelectionVisible, setMaskerPanelExpandSelectionVisible] = useState(defaults.maskerPanelExpandSelectionVisible);
+    const [maskerPanelClearSelectionVisible, setMaskerPanelClearSelectionVisible] = useState(defaults.maskerPanelClearSelectionVisible);
+    const [maskerPanelAcceptSelectionVisible, setMaskerPanelAcceptSelectionVisible] = useState(defaults.maskerPanelAcceptSelectionVisible);
 
     // Here we just assemble the various panels that we need for this mode
     return (
@@ -207,6 +215,10 @@ export default function MaskIEC() {
             resetViewportsValue, setResetViewportsValue,
 
             title, setTitle,
+
+            maskerPanelExpandSelectionVisible, setMaskerPanelExpandSelectionVisible,
+            maskerPanelClearSelectionVisible, setMaskerPanelClearSelectionVisible,
+            maskerPanelAcceptSelectionVisible, setMaskerPanelAcceptSelectionVisible,
 
         }}>
             <Masker files={files} iec={iec} />
