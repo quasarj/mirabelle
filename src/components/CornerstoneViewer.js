@@ -1041,8 +1041,11 @@ function CornerstoneViewer({ volumeName,
                     }
 
                     // Title
-                    if (mask) setTitle('Single Image / Mask');
-                    if (review) setTitle('Single Image / Review');
+                    if (mask) {
+                        setTitle('Stack Masker');
+                    } else if (review) {
+                        setTitle('Stack Review');
+                    }
 
                     // setLoading(false);
 
@@ -1053,10 +1056,11 @@ function CornerstoneViewer({ volumeName,
 
                 // Title
                 if (nifti) {
-                    setTitle('NIFTI / Review');
-                } else {
-                    if (mask) setTitle('Multi-Image / Mask');
-                    if (review) setTitle('Multi-Image / Review');
+                    setTitle('NIFTI Review');
+                } else if (mask) {
+                    setTitle('Volume Masker');
+                } else if (review) {
+                    setTitle('Volume Review');
                 }
 
                 container.style.display = 'grid';
