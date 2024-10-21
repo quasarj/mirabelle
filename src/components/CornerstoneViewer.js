@@ -983,6 +983,45 @@ function CornerstoneViewer({ volumeName,
                     const group = getOrCreateToolgroup('vol_tool_group');
                     group.addViewport(viewportId, renderingEngineId);
 
+                    // WindowLevelTool
+                    cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+                    group.addTool(cornerstoneTools.WindowLevelTool.toolName);
+
+                    // Activate or deactivate the WindowLevelTool based on the windowLevel state
+                    if (leftClickToolGroupValue === 'windowlevel') {
+
+                        group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                            bindings: [
+                                { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                            ],
+                        });
+                    }
+
+                    // Pan and Zoom tools
+                    cornerstoneTools.addTool(cornerstoneTools.PanTool);
+                    cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+
+                    group.addTool(cornerstoneTools.PanTool.toolName);
+                    group.addTool(cornerstoneTools.ZoomTool.toolName);
+
+                    if (rightClickToolGroupValue === 'pan') {
+                        group.setToolActive(cornerstoneTools.PanTool.toolName, {
+                            bindings: [
+                                { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                            ],
+                        });
+
+                        console.log('pan activated');
+                    } else {
+                        group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                            bindings: [
+                                { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                            ],
+                        });
+
+                        console.log('pan activated');
+                    }
+
                     // SegmentationDisplayTool
                     cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
                     
@@ -1081,6 +1120,19 @@ function CornerstoneViewer({ volumeName,
 
                     } else if (review) {
                         setTitle('Stack Review');
+
+                        // Hide the view tool group
+                        setViewToolGroupVisible(false);
+
+                        // Hide the leftClick crosshairs tool
+                        setLeftClickToolCrossHairsVisible(false);
+
+                        // Hide the Opacity tool
+                        setOpacityToolVisible(false);
+
+                        // Hide the Preset tool
+                        setPresetToolVisible(false);
+
                     }
 
                     // setLoading(false);
@@ -1691,12 +1743,14 @@ function CornerstoneViewer({ volumeName,
                 volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
                     bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
                 });
-                // access the t3d_tool_group and do the same
-                const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-                t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
-                t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
+                // access the t3d_tool_group if it exists and do the same
+                if (files.length > 1) {
+                    const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+                    t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+                    t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
             }
         } else {
             if (volToolGroup) {
@@ -1704,12 +1758,14 @@ function CornerstoneViewer({ volumeName,
                 volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
                     bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
                 });
-                // access the t3d_tool_group and do the same
-                const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-                t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
-                t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
+                // access the t3d_tool_group if it exists and do the same
+                if (files.length > 1) {
+                    const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+                    t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+                    t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
             }
         }
 
@@ -1737,47 +1793,51 @@ function CornerstoneViewer({ volumeName,
 
         if (resetViewportsValue) {
 
-            setZoom(defaults.zoom);
-            setOpacityToolValue(defaults.opacityToolValue);
-            setPresetToolValue(defaults.presetToolValue);
-            setLeftClickToolGroupValue(defaults.leftClickToolGroupValue);
+            // if Stack detected, then use this reset
+            if ((files.length === 1) && !nifti) {
+                setLeftClickToolGroupValue(defaults.leftClickToolGroupValue);
 
-            // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
-            setViewToolGroupValue(defaults.viewToolGroupValue + " "); // force a re-render
-            setTimeout(() => {
-                setViewToolGroupValue(defaults.viewToolGroupValue);
-            }, 50);
+                setRightClickToolGroupValue(defaults.rightClickToolGroupValue);
 
-            setRightClickToolGroupValue(defaults.rightClickToolGroupValue);
-            setResetViewportsValue(defaults.resetViewportsValue);
+                setResetViewportsValue(defaults.resetViewportsValue);
 
-            // Remove all segmentations
-            const segVolume = cornerstone.cache.getVolume(segId);
-            // console.log("segVolume is", segVolume);
-            const scalarData = segVolume.scalarData;
-            // console.log("scalarData is", scalarData);
-            scalarData.fill(0);
-            // redraw segmentation
-            cornerstoneTools.segmentation
-                .triggerSegmentationEvents
-                .triggerSegmentationDataModified(segId);
-
-            // reset cameras for all the viewports that its wrapper is visible
-            const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
-            renderingEngine.getViewports().forEach((viewport) => {
-                // if the viewport parent node is visible, reset camera
-                const viewportElement = document.getElementById(viewport.id);
-                if (viewportElement.parentNode.style.display !== 'none') {
+                const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+                renderingEngine.getViewports().forEach((viewport) => {
                     viewport.resetCamera(true, true, true, true);
                     viewport.render();
-                }
-            });
+                });
 
-            // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
-            setTimeout(() => {
+            } else {
+                
+                setZoom(defaults.zoom);
+                setOpacityToolValue(defaults.opacityToolValue);
+                setPresetToolValue(defaults.presetToolValue);
+                setLeftClickToolGroupValue(defaults.leftClickToolGroupValue);
 
-                // if the viewport parent node is visible, reset camera
+                // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                setViewToolGroupValue(defaults.viewToolGroupValue + " "); // force a re-render
+                setTimeout(() => {
+                    setViewToolGroupValue(defaults.viewToolGroupValue);
+                }, 50);
+
+                setRightClickToolGroupValue(defaults.rightClickToolGroupValue);
+                setResetViewportsValue(defaults.resetViewportsValue);
+
+                // Remove all segmentations
+                const segVolume = cornerstone.cache.getVolume(segId);
+                // console.log("segVolume is", segVolume);
+                const scalarData = segVolume.scalarData;
+                // console.log("scalarData is", scalarData);
+                scalarData.fill(0);
+                // redraw segmentation
+                cornerstoneTools.segmentation
+                    .triggerSegmentationEvents
+                    .triggerSegmentationDataModified(segId);
+
+                // reset cameras for all the viewports that its wrapper is visible
+                const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
                 renderingEngine.getViewports().forEach((viewport) => {
+                    // if the viewport parent node is visible, reset camera
                     const viewportElement = document.getElementById(viewport.id);
                     if (viewportElement.parentNode.style.display !== 'none') {
                         viewport.resetCamera(true, true, true, true);
@@ -1785,13 +1845,26 @@ function CornerstoneViewer({ volumeName,
                     }
                 });
 
-                // reset crosshairs tool slab thickness if the volume viewport is visible
-                if (document.getElementById('vol_axial_wrapper').style.display !== 'none') {
-                    const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-                    const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
-                    crosshairsToolInstance.resetCrosshairs();
-                }
-            }, 150);
+                // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
+                setTimeout(() => {
+
+                    // if the viewport parent node is visible, reset camera
+                    renderingEngine.getViewports().forEach((viewport) => {
+                        const viewportElement = document.getElementById(viewport.id);
+                        if (viewportElement.parentNode.style.display !== 'none') {
+                            viewport.resetCamera(true, true, true, true);
+                            viewport.render();
+                        }
+                    });
+
+                    // reset crosshairs tool slab thickness if the volume viewport is visible
+                    if (document.getElementById('vol_axial_wrapper').style.display !== 'none') {
+                        const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+                        const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+                        crosshairsToolInstance.resetCrosshairs();
+                    }
+                }, 150);
+            }
         }
     }, [resetViewportsValue]);
 
