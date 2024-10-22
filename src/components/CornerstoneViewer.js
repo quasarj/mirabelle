@@ -1808,6 +1808,19 @@ function CornerstoneViewer({ volumeName,
                     viewport.render();
                 });
 
+                // reset window level tool (https://github.com/cornerstonejs/cornerstone3D/blob/089ac3e50d40067ff93e73a4c0e6bbf6594a6c98/packages/tools/src/tools/WindowLevelTool.ts)
+                const viewportId = 'CT_STACK';
+                const viewport = renderingEngine.getViewport(viewportId);
+
+                // Access the currently displayed image
+                const imageId = viewport.getCurrentImageId();
+                const image = cornerstone.cache.getImage(imageId);
+
+                // Reset window level to default (from image metadata)
+                viewport.setProperties({
+                    voiRange: cornerstone.utilities.windowLevel.toLowHighRange(image.windowWidth, image.windowCenter),
+                });
+
                 // Remove active segmentation
                 if (!review) {
                     const toolGroupId = 'vol_tool_group';
