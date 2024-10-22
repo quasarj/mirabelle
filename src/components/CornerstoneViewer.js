@@ -980,7 +980,8 @@ function CornerstoneViewer({ volumeName,
                     // Tools
 
                     // Group
-                    const group = getOrCreateToolgroup('vol_tool_group');
+                    const toolGroupId = 'vol_tool_group';
+                    const group = getOrCreateToolgroup(toolGroupId);
                     group.addViewport(viewportId, renderingEngineId);
 
                     // WindowLevelTool
@@ -1022,7 +1023,7 @@ function CornerstoneViewer({ volumeName,
                         console.log('pan activated');
                     }
 
-                    // SegmentationDisplayTool
+                    // Segmentations
                     cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
                     
                     group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
@@ -1052,7 +1053,7 @@ function CornerstoneViewer({ volumeName,
 
                     // Add the segmentation representation to the tool group
                     const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'vol_tool_group',
+                    toolGroupId,
                         [
                             {
                             segmentationId: segmentationId,
@@ -1063,7 +1064,7 @@ function CornerstoneViewer({ volumeName,
 
                     // Set the active segmentation representation
                     cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
-                        'vol_tool_group',
+                        toolGroupId,
                         uid
                     );
 
@@ -1653,7 +1654,7 @@ function CornerstoneViewer({ volumeName,
                     ],
                 });
             } else {
-                volToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+                if ((files.length > 1) || nifti) volToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
             }
         }
 
@@ -1675,13 +1676,12 @@ function CornerstoneViewer({ volumeName,
     }, [leftClickToolGroupValue]);
 
     useEffect(() => {
-        console.log('leftClickToolGroupValue:', leftClickToolGroupValue);
+        
         // Volumes
         const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
 
         if (volToolGroup) {
             // Add the RectangleScissorsTool if it hasn't been added already
-            console.log('volToolGroup: ', volToolGroup);
             if (!volToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
 
                 cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
@@ -1795,17 +1795,115 @@ function CornerstoneViewer({ volumeName,
 
             // if Stack detected, then use this reset
             if ((files.length === 1) && !nifti) {
+
+                // Reset tools
                 setLeftClickToolGroupValue(defaults.leftClickToolGroupValue);
-
                 setRightClickToolGroupValue(defaults.rightClickToolGroupValue);
-
                 setResetViewportsValue(defaults.resetViewportsValue);
 
+                // reset cameras
                 const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
                 renderingEngine.getViewports().forEach((viewport) => {
                     viewport.resetCamera(true, true, true, true);
                     viewport.render();
                 });
+
+                // Remove active segmentation
+                if (!review) {
+                    const toolGroupId = 'vol_tool_group';
+                    const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
+
+                    if (segmentationIds.length) {
+                        // Get active segmentation
+                        const activeSegmentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentation(toolGroupId);
+                        const activeSegmentationRepresentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentationRepresentation(toolGroupId);
+
+                        if (activeSegmentation && activeSegmentationRepresentation) {
+                            // Remove the segmentation from the tool group
+                            cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(toolGroupId, [
+                                activeSegmentationRepresentation.segmentationRepresentationUID
+                            ]);
+
+                            // Remove the segmentation from the state
+                            cornerstoneTools.segmentation.state.removeSegmentation(activeSegmentation.segmentationId);
+
+                            // Remove cached images associated with the segmentation
+                            const labelmap = activeSegmentation.representationData[cornerstoneTools.Enums.SegmentationRepresentations.Labelmap];
+
+                            if (labelmap.imageIdReferenceMap) {
+                                labelmap.imageIdReferenceMap.forEach((derivedImagesId) => {
+                                    cornerstone.cache.removeImageLoadObject(derivedImagesId);
+                                });
+                            }
+
+                            // Create a new segmentation
+                            async function createSegmentation() {
+                                const group = getOrCreateToolgroup(toolGroupId);
+                                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                    
+                                // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                                group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+
+                                // Get the current imageId from the viewport
+                                const viewportId = 'CT_STACK';
+                                const viewport = renderingEngine.getViewport(viewportId);
+                                const currentImageId = viewport.getCurrentImageId();
+
+                                // Create a derived segmentation image for the current image
+                                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+
+                                // Create a unique segmentationId
+                                const segmentationId = `SEGMENTATION_${newSegImageId}`;
+
+                                // Add the segmentation to the segmentation state
+                                cornerstoneTools.segmentation.addSegmentations([
+                                    {
+                                        segmentationId: segmentationId,
+                                        representation: {
+                                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                                            data: {
+                                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                                            },
+                                        },
+                                    },
+                                ]);
+
+                                // Add the segmentation representation to the tool group
+                                const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                                toolGroupId,
+                                    [
+                                        {
+                                        segmentationId: segmentationId,
+                                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                                        },
+                                    ]
+                                );
+
+                                // Set the active segmentation representation
+                                cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
+                                    toolGroupId,
+                                    uid
+                                );
+
+                                // RectangleScissorsTool
+                                if (leftClickToolGroupValue === 'selection') {
+                                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                                        bindings: [
+                                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                                        ],
+                                    });
+
+                                    console.log('selection activated');
+                                }
+                            }
+
+                            createSegmentation();
+                        }
+                    }
+                }
+
+                
+
 
             } else {
                 
