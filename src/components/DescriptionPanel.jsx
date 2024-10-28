@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { Context } from './Context.js';
 
-function DescriptionPanel() {
+function DescriptionPanel({ details }) {
 
     //function downloadFile() {
     //    const element = document.createElement("a");
-    //    const file = new Blob([fileData["test"]], { type: 'text/plain' });
+    //    const file = new Blob([details["test"]], { type: 'text/plain' });
     //    element.href = URL.createObjectURL(file);
     //    element.target = "_blank"
     //    element.download = "file.txt";
@@ -14,15 +14,15 @@ function DescriptionPanel() {
     //}
 
     function downloadFile() {
-        // Fetch the file from the path specified in fileData["path"]
-        fetch(fileData["download_path"])
+        // Fetch the file from the path specified in details["path"]
+        fetch(details["download_path"])
             .then(response => response.blob()) // Convert the response to a blob
             .then(blob => {
                 const element = document.createElement("a");
                 const url = URL.createObjectURL(blob);
                 element.href = url;
                 element.target = "_blank";
-                element.download = fileData["import_name"]
+                element.download = details["import_name"]
                 document.body.appendChild(element); // Required for this to work in FireFox
                 element.click();
                 document.body.removeChild(element); // Clean up after download
@@ -32,7 +32,7 @@ function DescriptionPanel() {
     }
 
     const {
-        layout, fileData
+        layout
     } = useContext(Context);
 
     if (layout === "NiftiReview") {
@@ -49,15 +49,15 @@ function DescriptionPanel() {
                 <hr className="border-t border-gray-300 mb-4" />
 
                 <div className="w-full mb-2 font-bold">Import File Name:</div>
-                <div className="w-full mb-2 font-normal break-words mb-4">{fileData["import_name"]}</div>
+                <div className="w-full mb-2 font-normal break-words mb-4">{details["import_name"]}</div>
                 <hr className="border-t border-gray-300 mb-4" />
 
                 <div className="w-full mb-2 font-bold">Import File Path:</div>
-                <div className="w-full mb-2 font-normal break-words mb-4">{fileData["import_path"]}</div>
+                <div className="w-full mb-2 font-normal break-words mb-4">{details["import_path"]}</div>
                 <hr className="border-t border-gray-300 mb-4" />
 
                 <div className="w-full mb-2 font-bold">Posda File Path:</div>
-                <div className="w-full mb-2 font-normal break-words mb-4">{fileData["posda_path"]}</div>
+                <div className="w-full mb-2 font-normal break-words mb-4">{details["posda_path"]}</div>
                 <hr className="border-t border-gray-300 mb-4" />
 
             </div>

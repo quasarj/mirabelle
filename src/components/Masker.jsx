@@ -10,7 +10,7 @@ import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
 
-function Masker({ files, iecs, iec }) {
+function Masker({ details, files, iecs, iec }) {
 
     const {
         leftPanelVisible,

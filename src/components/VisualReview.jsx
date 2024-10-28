@@ -10,7 +10,7 @@ import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
 
-function VisualReview({ files, iecs, iec }) {
+function VisualReview({ details, files, iecs, iec }) {
 
     const {
         leftPanelVisible,
@@ -48,7 +48,9 @@ function VisualReview({ files, iecs, iec }) {
                     iec={iec}
                 />
                 <div id="rightPanel" className="w-full h-full rounded-lg overflow-hidden">
-                    <RightPanel />
+                    <RightPanel
+                        details={details}
+                    />
                 </div>
                 {/*{rightPanelVisible && (
                   <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
@@ -59,17 +61,13 @@ function VisualReview({ files, iecs, iec }) {
             <button
                 id="leftPanelButton"
                 onClick={() => setLeftPanelVisible(!leftPanelVisible)}
-                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisible ? 'translate-x-0' : 'rotate-180 -translate-x-72'}`}
-
-            >
+                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 left-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${leftPanelVisible ? 'translate-x-0' : 'rotate-180 -translate-x-72'}`}>
                 <span className="material-symbols-rounded rounded-full leading-5 text-white">chevron_left</span>
             </button>
             <button
                 id="rightPanelButton"
                 onClick={() => setRightPanelVisible(!rightPanelVisible)}
-                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisible ? 'translate-x-0' : 'rotate-180 translate-x-72'}`}
-
-            >
+                className={`z-[100] box-content flex items-center justify-center absolute w-5 h-5 leading-5 top-1/2 right-[18.2rem] transform translate-y-[36%] bg-blue-500 rounded-full p-1 transition-transform ${rightPanelVisible ? 'translate-x-0' : 'rotate-180 translate-x-72'}`}>
                 <span className="material-symbols-rounded rounded-full leading-5 text-white">chevron_right</span>
             </button>
         </div>

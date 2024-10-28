@@ -2,12 +2,12 @@ import React, { useContext } from 'react';
 import DescriptionPanel from "./DescriptionPanel.jsx";
 import { Context } from './Context.js';
 
-function RightPanel() {
+function RightPanel({ details }) {
     const { descriptionPanelVisible } = useContext(Context);
 
     return (
         <div id="rightPanelWrapper" className="h-full w-72">
-            {descriptionPanelVisible ? <DescriptionPanel /> : null}
+            {descriptionPanelVisible ? <DescriptionPanel details={details} /> : null}
         </div>
     );
 }
