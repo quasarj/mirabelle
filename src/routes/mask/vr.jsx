@@ -89,7 +89,6 @@ export default function MaskVR() {
     };
 
     const [layout, setLayout] = useState(defaults.layout);
-    const [zoom, setZoom] = useState(defaults.zoom);
     const [leftPanelVisible, setLeftPanelVisible] = useState(defaults.leftPanelVisible);
     const [toolsPanelVisible, setToolsPanelVisible] = useState(defaults.toolsPanelVisible);
     const [filesPanelVisible, setFilesPanelVisible] = useState(defaults.filesPanelVisible);
@@ -139,7 +138,6 @@ export default function MaskVR() {
             defaults,
 
             layout, setLayout,
-            zoom, setZoom,
 
             leftPanelVisible, setLeftPanelVisible,
             toolsPanelVisible, setToolsPanelVisible,

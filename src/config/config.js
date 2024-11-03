@@ -3,6 +3,7 @@
 // Base default configuration that applies to all routes
 const BASE_DEFAULTS = {
     layout: '',
+    viewport_layout: 'volume',
     title: '',
     details: null,
     files: [],
@@ -103,14 +104,14 @@ const BASE_DEFAULTS = {
 };
 
 // Extend base configuration with route-specific overrides
-export const ROUTE_CONFIGS = {
+export const TASK_CONFIGS = {
     default: { ...BASE_DEFAULTS },
 
     masker_image: {
         ...BASE_DEFAULTS,
 
         layout: 'Masker',
-        zoom: 250,
+        viewport_layout: 'stack',
         title: 'Image Masker',
 
         // left Panel
@@ -160,7 +161,6 @@ export const ROUTE_CONFIGS = {
     masker_volume: {
         ...BASE_DEFAULTS,
         layout: 'Masker',
-        zoom: 250,
         title: 'Volume Masker',
 
         // left Panel
@@ -231,7 +231,7 @@ export const ROUTE_CONFIGS = {
     masker_review_image: {
         ...BASE_DEFAULTS,
         layout: 'MaskerReview',
-        zoom: 250,
+        viewport_layout: 'stack',
         title: 'Image Masker Review',
 
         // left Panel
@@ -274,7 +274,6 @@ export const ROUTE_CONFIGS = {
     masker_review_volume: {
         ...BASE_DEFAULTS,
         layout: 'MaskerReview',
-        zoom: 250,
         title: 'Volume Masker Review',
 
         // left Panel
@@ -332,7 +331,6 @@ export const ROUTE_CONFIGS = {
     nifti_review: {
         ...BASE_DEFAULTS,
         layout: 'NiftiReview',
-        zoom: 250,
         title: 'NIfTI Review',
 
         // left Panel
@@ -395,7 +393,7 @@ export const ROUTE_CONFIGS = {
     dicom_review_image: {
         ...BASE_DEFAULTS,
         layout: 'DicomReview',
-        zoom: 250,
+        viewport_layout: 'stack',
         title: 'DICOM Image Review',
 
         // left Panel
@@ -442,7 +440,6 @@ export const ROUTE_CONFIGS = {
     dicom_review_volume: {
         ...BASE_DEFAULTS,
         layout: 'DicomReview',
-        zoom: 250,
         title: 'DICOM Volume Review',
 
         // left Panel

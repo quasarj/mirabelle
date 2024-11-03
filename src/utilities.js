@@ -131,3 +131,4 @@ export function calculateDistance(point1, point2) {
 
 	return distance;
 }
+

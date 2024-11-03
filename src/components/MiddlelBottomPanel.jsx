@@ -21,10 +21,10 @@ function MiddlelBottomPanel({ onExpand,
     onMarkOther}) {
 
     const {
-        layout, maskerPanelVisible, reviewPanelVisible, navigationPanelVisible
+        layout, maskerPanelVisible, maskerReviewPanelVisible, visualReviewPanelVisible, navigationPanelVisible
     } = useContext(Context);
 
-    if (maskerPanelVisible) {
+    if (maskerPanelVisible || maskerReviewPanelVisible) {
         return (
             <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
                 <MaskerPanel
@@ -46,7 +46,7 @@ function MiddlelBottomPanel({ onExpand,
         );
     }
 
-    else if (reviewPanelVisible) {
+    else if (visualReviewPanelVisible) {
         return (
             <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
                 <ReviewPanel

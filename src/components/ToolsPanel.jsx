@@ -6,7 +6,6 @@ function ToolsPanel() {
     const {
         defaults,
         layout, setLayout,
-        zoom, setZoom,
         leftPanelVisible, setLeftPanelVisible,
         toolsPanelVisible, setToolsPanelVisible,
         filesPanelVisible, setFilesPanelVisible,
