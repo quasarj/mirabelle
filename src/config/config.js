@@ -3,12 +3,13 @@
 // Base default configuration that applies to all routes
 const BASE_DEFAULTS = {
     layout: '',
-    viewport_layout: 'volume',
+    viewport_layout: 'volume',   // 'volume' or 'stack'
     title: '',
     details: null,
     files: [],
     iec: null,
     iecs: [],
+    nifti: false,
 
     // left Panel
     // ----------------------------------
@@ -21,29 +22,29 @@ const BASE_DEFAULTS = {
     toolsPanelVisible: false,
 
     viewToolGroupVisible: false,
-    viewToolGroupValue: 'volume',
+    viewToolGroupValue: 'volume', // 'volume' or 'projection'
     viewToolVolumeVisible: false,
     viewToolProjectionVisible: false,
 
     functionToolGroupVisible: false,
-    functionToolGroupValue: 'mask',
+    functionToolGroupValue: 'mask', // 'mask' or 'blackout' or 'slice-remove'
     functionToolMaskVisible: false,
     functionToolBlackoutVisible: false,
     functionToolSliceRemoveVisible: false,
 
     formToolGroupVisible: false,
-    formToolGroupValue: 'cylinder',
+    formToolGroupValue: 'cylinder', // 'cuboid' or 'cylinder'
     formToolCuboidVisible: false,
     formToolCylinderVisible: false,
 
     leftClickToolGroupVisible: false,
-    leftClickToolGroupValue: 'selection',
+    leftClickToolGroupValue: 'selection', // 'selection' or 'windowlevel' or 'crosshairs'
     leftClickToolWindowLevelVisible: false,
     leftClickToolCrossHairsVisible: false,
     leftClickToolRectangleScissorsVisible: false,
 
     rightClickToolGroupVisible: false,
-    rightClickToolGroupValue: 'zoom',
+    rightClickToolGroupValue: 'zoom', // 'zoom' or 'pan'
     rightClickToolZoomVisible: false,
     rightClickToolPanVisible: false,
 
@@ -332,6 +333,7 @@ export const TASK_CONFIGS = {
         ...BASE_DEFAULTS,
         layout: 'NiftiReview',
         title: 'NIfTI Review',
+        nifti: true,
 
         // left Panel
         // ----------------------------------

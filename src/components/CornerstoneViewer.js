@@ -46,26 +46,28 @@ function CornerstoneViewer({ volumeName, files, iec }) {
         { id: 't3d_coronal', state: 'normal' },
     ]);
 
-    const containerRef = useRef(null);
+    const renderingEngineId = 'viewer_render_engine'; 
     const renderingEngineRef = useRef(null);
+    const containerRef = useRef(null);
+
 
     let coords;
-    let segId = 'seg' + volumeName;
+    //let segId = 'seg' + volumeName;
+    let segId = 'seg_id';
     let volumeId;
 
-    // if the browser url contains the word nifti, then set a nifti variable to true
-    let nifti = window.location.href.includes('nifti');
+    //// if the browser url contains the word nifti, then set a nifti variable to true
+    //let nifti = window.location.href.includes('nifti');
+    //let mask = window.location.href.includes('mask');
+    //let review = window.location.href.includes('review');
 
-    let mask = window.location.href.includes('mask');
-    let review = window.location.href.includes('review');
-
-    if (nifti) {
+    if (context.nifti) {
         volumeId = `nifti:/papi/v1/files/${files[0]}/data`;
     } else {
         volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
     }
     
-    console.log(volumeId);
+    //console.log(volumeId);
 
     useLayoutEffect(() => {
         let volume = null;
@@ -120,12 +122,12 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             }
         });
 
-        function setupSingleImageViewer(singleImageViewerId) {
+        function setupStackPanel(stackViewerId) {
             const panelWrapper = document.createElement('div');
             const panel = document.createElement('div');
 
             // set panelWrapper styles
-            panelWrapper.id = singleImageViewerId + '_wrapper';
+            panelWrapper.id = stackViewerId + '_wrapper';
             panelWrapper.style.display = 'block';
             panelWrapper.style.width = '100%';
             panelWrapper.style.height = '100%';
@@ -135,7 +137,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             panelWrapper.style.backgroundColor = 'black';
             // panelWrapper.style.visibility = 'hidden';
 
-            panel.id = singleImageViewerId;
+            panel.id = stackViewerId;
             panel.style.display = 'block';
             panel.style.width = '100%';
             panel.style.height = '100%';
@@ -150,7 +152,77 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             return panelWrapper;
         }
 
-        function setupPanel(panelId) {
+        function setupStackViewportTools() {
+            // Tools
+
+            // Group
+            const group = getOrCreateToolgroup('stack_tool_group');
+            group.addViewport('dicom_stack', renderingEngineId);
+
+            // WindowLevelTool
+            cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
+            group.addTool(cornerstoneTools.WindowLevelTool.toolName);
+
+            // Activate or deactivate the WindowLevelTool based on the windowLevel state
+            if (context.leftClickToolGroupValue === 'windowlevel') {
+
+                group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                    bindings: [
+                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                    ],
+                });
+            }
+
+            // Pan and Zoom tools
+            cornerstoneTools.addTool(cornerstoneTools.PanTool);
+            cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
+
+            group.addTool(cornerstoneTools.PanTool.toolName);
+            group.addTool(cornerstoneTools.ZoomTool.toolName);
+
+            if (context.rightClickToolGroupValue === 'pan') {
+                group.setToolActive(cornerstoneTools.PanTool.toolName, {
+                    bindings: [
+                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                    ],
+                });
+
+                //console.log('pan activated');
+            } else {
+                group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                    bindings: [
+                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
+                    ],
+                });
+
+                //console.log('pan activated');
+            }
+
+            // Segmentations
+            cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+
+            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+
+
+            // RectangleScissorsTool
+            cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+
+            // Activate the RectangleScissorsTool
+            group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+
+            if (context.leftClickToolGroupValue === 'selection') {
+                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                    bindings: [
+                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                    ],
+                });
+
+                //console.log('selection activated');
+            }
+        }
+
+        function setupVolumePanel(panelId) {
             const panelWrapper = document.createElement('div');
             const resizeButton = document.createElement('button');
             const panel = document.createElement('div');
@@ -662,7 +734,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
             const viewportInput = [];
 
-            if ((files.length === 1) && !nifti) {
+            if (context.viewport_layout == 'stack') {
 
                 // Single Image Viewer
 
@@ -672,240 +744,128 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 container.style.height = '100%';
 
                 // Viewer
-                const singleImageViewer = setupSingleImageViewer('singleImageViewer');
-                container.appendChild(singleImageViewer);
+                const stackContent = setupStackPanel('stackViewer');
+                container.appendChild(stackContent);
 
-                // Viewport
-                const renderingEngineId = 'viewer_render_engine';
-                const renderingEngine = new cornerstone.RenderingEngine(renderingEngineId);
+                //const viewportId = 'dicom_stack';
+                //const viewportInput = {
+                //    viewportId,
+                //    type: cornerstone.Enums.ViewportType.STACK,
+                //    element: stackContent.childNodes[0],
+                //}
+                //renderingEngine.enableElement(viewportInput);
 
-                const viewportId = 'CT_STACK';
-                const viewportInput = {
-                    viewportId,
-                    type: cornerstone.Enums.ViewportType.STACK,
-                    element: singleImageViewer.childNodes[0],
-                }
-
-                renderingEngine.enableElement(viewportInput);
-
-                const viewport = renderingEngine.getViewport(viewportId);
-
-                const stack = [`wadouri:/papi/v1/files/${files[0]}/data`];
-
-                await viewport.setStack(stack);
-
-                viewport.render();
-
-                // Tools
-
-                // Group
-                const toolGroupId = 'vol_tool_group';
-                const group = getOrCreateToolgroup(toolGroupId);
-                group.addViewport(viewportId, renderingEngineId);
-
-                // WindowLevelTool
-                cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-                group.addTool(cornerstoneTools.WindowLevelTool.toolName);
-
-                // Activate or deactivate the WindowLevelTool based on the windowLevel state
-                if (context.leftClickToolGroupValue === 'windowlevel') {
-
-                    group.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-                        bindings: [
-                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                        ],
-                    });
-                }
-
-                // Pan and Zoom tools
-                cornerstoneTools.addTool(cornerstoneTools.PanTool);
-                cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
-
-                group.addTool(cornerstoneTools.PanTool.toolName);
-                group.addTool(cornerstoneTools.ZoomTool.toolName);
-
-                if (context.rightClickToolGroupValue === 'pan') {
-                    group.setToolActive(cornerstoneTools.PanTool.toolName, {
-                        bindings: [
-                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-                        ],
-                    });
-
-                    console.log('pan activated');
-                } else {
-                    group.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                        bindings: [
-                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary },
-                        ],
-                    });
-
-                    console.log('pan activated');
-                }
-
-                // Segmentations
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                    
-                group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-                group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
-
-                // Get the current imageId from the viewport
-                const currentImageId = viewport.getCurrentImageId();
-
-                // Create a derived segmentation image for the current image
-                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
-
-                // Create a unique segmentationId
-                const segmentationId = `SEGMENTATION_${newSegImageId}`;
-
-                // Add the segmentation to the segmentation state
-                cornerstoneTools.segmentation.addSegmentations([
+                viewportInput.push(
                     {
-                        segmentationId: segmentationId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                            },
-                        },
-                    },
-                ]);
-
-                // Add the segmentation representation to the tool group
-                const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                toolGroupId,
-                    [
-                        {
-                        segmentationId: segmentationId,
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
+                        viewportId: 'dicom_stack',
+                        type: cornerstone.Enums.ViewportType.STACK,
+                        element: stackContent.childNodes[0],
+                    }
                 );
+                renderingEngine.setViewports(viewportInput);
 
-                // Set the active segmentation representation
-                cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
-                    toolGroupId,
-                    uid
-                );
+                setupStackViewportTools();
 
-                // RectangleScissorsTool
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                setLoading(false);
+            }
+            else if (context.viewport_layout == 'volume') {
 
-                // Activate the RectangleScissorsTool
-                group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
-
-                if (context.leftClickToolGroupValue === 'selection') {
-                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                        bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                        ],
-                    });
-
-                    console.log('selection activated');
+                container.style.display = 'grid';
+                if (context.viewToolGroupValue === 'all') {
+                    container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                    container.style.gridTemplateRows = 'repeat(3, 1fr)';
+                } else {
+                    container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                    container.style.gridTemplateRows = 'repeat(2, 1fr)';
                 }
 
-                // setLoading(false);
+                container.style.gridGap = '6px';
+                container.style.width = '100%';
+                container.style.height = '100%';
 
-                // stop implementation here
-                return;
+                const volAxialContent = setupVolumePanel('vol_axial');
+                const volSagittalContent = setupVolumePanel('vol_sagittal');
+                const volCoronalContent = setupVolumePanel('vol_coronal');
+                const mipAxialContent = setupVolumePanel('mip_axial');
+                const mipSagittalContent = setupVolumePanel('mip_sagittal');
+                const mipCoronalContent = setupVolumePanel('mip_coronal');
+                const t3dCoronalContent = setupVolumePanel('t3d_coronal');
 
+                container.appendChild(volAxialContent);
+                container.appendChild(volSagittalContent);
+                container.appendChild(volCoronalContent);
+                container.appendChild(mipAxialContent);
+                container.appendChild(mipSagittalContent);
+                container.appendChild(mipCoronalContent);
+                container.appendChild(t3dCoronalContent);
+
+                viewportInput.push(
+                    {
+                        viewportId: 'vol_axial',
+                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                        element: volAxialContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                        },
+                    },
+                    {
+                        viewportId: 'vol_sagittal',
+                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                        element: volSagittalContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                        },
+                    },
+                    {
+                        viewportId: 'vol_coronal',
+                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                        element: volCoronalContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                        },
+                    },
+                    {
+                        viewportId: 'mip_axial',
+                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                        element: mipAxialContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                        },
+                    },
+                    {
+                        viewportId: 'mip_sagittal',
+                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                        element: mipSagittalContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
+                        },
+                    },
+                    {
+                        viewportId: 'mip_coronal',
+                        type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
+                        element: mipCoronalContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                        },
+                    },
+                    {
+                        viewportId: 't3d_coronal',
+                        type: cornerstone.Enums.ViewportType.VOLUME_3D,
+                        element: t3dCoronalContent.childNodes[0],
+                        defaultOptions: {
+                            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+                        },
+                    }
+                );
+
+                renderingEngine.setViewports(viewportInput);
+
+                setupVolViewportTools();
+                setupMipViewportTools();
+                setup3dViewportTools();
+
+                setLoading(false);
             }
-
-            container.style.display = 'grid';
-            if (context.viewToolGroupValue === 'all') {
-                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-                container.style.gridTemplateRows = 'repeat(3, 1fr)';
-            } else {
-                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                container.style.gridTemplateRows = 'repeat(2, 1fr)';
-            }
-
-            container.style.gridGap = '6px';
-            container.style.width = '100%';
-            container.style.height = '100%';
-
-            const volAxialContent = setupPanel('vol_axial');
-            const volSagittalContent = setupPanel('vol_sagittal');
-            const volCoronalContent = setupPanel('vol_coronal');
-            const mipAxialContent = setupPanel('mip_axial');
-            const mipSagittalContent = setupPanel('mip_sagittal');
-            const mipCoronalContent = setupPanel('mip_coronal');
-            const t3dCoronalContent = setupPanel('t3d_coronal');
-
-            container.appendChild(volAxialContent);
-            container.appendChild(volSagittalContent);
-            container.appendChild(volCoronalContent);
-            container.appendChild(mipAxialContent);
-            container.appendChild(mipSagittalContent);
-            container.appendChild(mipCoronalContent);
-            container.appendChild(t3dCoronalContent);
-
-            viewportInput.push(
-                {
-                    viewportId: 'vol_axial',
-                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                    element: volAxialContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-                    },
-                },
-                {
-                    viewportId: 'vol_sagittal',
-                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                    element: volSagittalContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-                    },
-                },
-                {
-                    viewportId: 'vol_coronal',
-                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                    element: volCoronalContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-                    },
-                },
-                {
-                    viewportId: 'mip_axial',
-                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                    element: mipAxialContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.AXIAL,
-                    },
-                },
-                {
-                    viewportId: 'mip_sagittal',
-                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                    element: mipSagittalContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.SAGITTAL,
-                    },
-                },
-                {
-                    viewportId: 'mip_coronal',
-                    type: cornerstone.Enums.ViewportType.ORTHOGRAPHIC,
-                    element: mipCoronalContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-                    },
-                },
-                {
-                    viewportId: 't3d_coronal',
-                    type: cornerstone.Enums.ViewportType.VOLUME_3D,
-                    element: t3dCoronalContent.childNodes[0],
-                    defaultOptions: {
-                        orientation: cornerstone.Enums.OrientationAxis.CORONAL,
-                    },
-                }
-            );
-
-            renderingEngine.setViewports(viewportInput);
-
-            setupVolViewportTools();
-            setupMipViewportTools();
-            setup3dViewportTools();
-
-            setLoading(false);
-
         }
 
         run();
@@ -927,115 +887,116 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
         // console.log("viewports loaded");
 
-        const container = containerRef.current;
+        if (context.viewport_layout == 'volume') {
+            const container = containerRef.current;
 
-        const volAxialContent = document.getElementById('vol_axial_wrapper');
-        const volSagittalContent = document.getElementById('vol_sagittal_wrapper');
-        const volCoronalContent = document.getElementById('vol_coronal_wrapper');
-        const mipAxialContent = document.getElementById('mip_axial_wrapper');
-        const mipSagittalContent = document.getElementById('mip_sagittal_wrapper');
-        const mipCoronalContent = document.getElementById('mip_coronal_wrapper');
-        const t3dCoronalContent = document.getElementById('t3d_coronal_wrapper');
+            const volAxialContent = document.getElementById('vol_axial_wrapper');
+            const volSagittalContent = document.getElementById('vol_sagittal_wrapper');
+            const volCoronalContent = document.getElementById('vol_coronal_wrapper');
+            const mipAxialContent = document.getElementById('mip_axial_wrapper');
+            const mipSagittalContent = document.getElementById('mip_sagittal_wrapper');
+            const mipCoronalContent = document.getElementById('mip_coronal_wrapper');
+            const t3dCoronalContent = document.getElementById('t3d_coronal_wrapper');
 
-        if (context.viewToolGroupValue === 'volume') {
+            if (context.viewToolGroupValue === 'volume') {
 
-            // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
 
-            // remove all viewports Minimized and Expanded classes
-            const allPanelWrappers = container.childNodes;
-            allPanelWrappers.forEach((panelWrapper) => {
-                panelWrapper.classList.remove('Minimized');
-                panelWrapper.classList.remove('Expanded');
-                panelWrapper.querySelector('button').textContent = 'open_in_full';
-                panelWrapper.querySelector('button').title = 'Maximize';
-            });
+                // remove all viewports Minimized and Expanded classes
+                const allPanelWrappers = container.childNodes;
+                allPanelWrappers.forEach((panelWrapper) => {
+                    panelWrapper.classList.remove('Minimized');
+                    panelWrapper.classList.remove('Expanded');
+                    panelWrapper.querySelector('button').textContent = 'open_in_full';
+                    panelWrapper.querySelector('button').title = 'Maximize';
+                });
 
-            container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-            container.style.gridTemplateRows = 'repeat(2, 1fr)';
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
-            // set volume viewport panels to be visible
+                // set volume viewport panels to be visible
 
-            volAxialContent.style.visibility = 'visible';
-            volSagittalContent.style.visibility = 'visible';
-            volCoronalContent.style.visibility = 'visible';
-            volAxialContent.style.display = 'block';
-            volSagittalContent.style.display = 'block';
-            volCoronalContent.style.display = 'block';
+                volAxialContent.style.visibility = 'visible';
+                volSagittalContent.style.visibility = 'visible';
+                volCoronalContent.style.visibility = 'visible';
+                volAxialContent.style.display = 'block';
+                volSagittalContent.style.display = 'block';
+                volCoronalContent.style.display = 'block';
 
-            mipAxialContent.style.visibility = 'hidden';
-            mipSagittalContent.style.visibility = 'hidden';
-            mipCoronalContent.style.visibility = 'hidden';
-            mipAxialContent.style.display = 'none';
-            mipSagittalContent.style.display = 'none';
-            mipCoronalContent.style.display = 'none';
+                mipAxialContent.style.visibility = 'hidden';
+                mipSagittalContent.style.visibility = 'hidden';
+                mipCoronalContent.style.visibility = 'hidden';
+                mipAxialContent.style.display = 'none';
+                mipSagittalContent.style.display = 'none';
+                mipCoronalContent.style.display = 'none';
 
-            t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
+                t3dCoronalContent.style.visibility = 'visible';
+                t3dCoronalContent.style.display = 'block';
 
-            // move t3dCoronalContent to the top right cell of the grid
-            t3dCoronalContent.style.gridColumn = 2;
-            t3dCoronalContent.style.gridRow = 1;
+                // move t3dCoronalContent to the top right cell of the grid
+                t3dCoronalContent.style.gridColumn = 2;
+                t3dCoronalContent.style.gridRow = 1;
 
-            // move volCoronalContent to the bottom left cell of the grid
-            volCoronalContent.style.gridColumn = 1;
-            volCoronalContent.style.gridRow = 2;
+                // move volCoronalContent to the bottom left cell of the grid
+                volCoronalContent.style.gridColumn = 1;
+                volCoronalContent.style.gridRow = 2;
 
-            volSagittalContent.style.gridColumn = 2;
-            volSagittalContent.style.gridRow = 2;
+                volSagittalContent.style.gridColumn = 2;
+                volSagittalContent.style.gridRow = 2;
 
-            volAxialContent.style.gridColumn = 1;
-            volAxialContent.style.gridRow = 1;
+                volAxialContent.style.gridColumn = 1;
+                volAxialContent.style.gridRow = 1;
 
-            // t3dCoronalContent.style.gridColumn = 'span 3';
-        } else if (context.viewToolGroupValue === 'projection') {
+                // t3dCoronalContent.style.gridColumn = 'span 3';
+            } else if (context.viewToolGroupValue === 'projection') {
 
-            // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                // We can improve this code by using a state variable to keep track of the expanded viewport
 
-            // remove all viewports Minimized and Expanded classes
-            const allPanelWrappers = container.childNodes;
-            allPanelWrappers.forEach((panelWrapper) => {
-                panelWrapper.classList.remove('Minimized');
-                panelWrapper.classList.remove('Expanded');
-            });
+                // remove all viewports Minimized and Expanded classes
+                const allPanelWrappers = container.childNodes;
+                allPanelWrappers.forEach((panelWrapper) => {
+                    panelWrapper.classList.remove('Minimized');
+                    panelWrapper.classList.remove('Expanded');
+                });
 
-            container.style.gridTemplateColumns = 'repeat(2, 1fr)';
-            container.style.gridTemplateRows = 'repeat(2, 1fr)';
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
-            // set projection viewport panels to be visible
-            volAxialContent.style.visibility = 'hidden';
-            volSagittalContent.style.visibility = 'hidden';
-            volCoronalContent.style.visibility = 'hidden';
-            volAxialContent.style.display = 'none';
-            volSagittalContent.style.display = 'none';
-            volCoronalContent.style.display = 'none';
+                // set projection viewport panels to be visible
+                volAxialContent.style.visibility = 'hidden';
+                volSagittalContent.style.visibility = 'hidden';
+                volCoronalContent.style.visibility = 'hidden';
+                volAxialContent.style.display = 'none';
+                volSagittalContent.style.display = 'none';
+                volCoronalContent.style.display = 'none';
 
-            mipAxialContent.style.visibility = 'visible';
-            mipSagittalContent.style.visibility = 'visible';
-            mipCoronalContent.style.visibility = 'visible';
-            mipAxialContent.style.display = 'block';
-            mipSagittalContent.style.display = 'block';
-            mipCoronalContent.style.display = 'block';
+                mipAxialContent.style.visibility = 'visible';
+                mipSagittalContent.style.visibility = 'visible';
+                mipCoronalContent.style.visibility = 'visible';
+                mipAxialContent.style.display = 'block';
+                mipSagittalContent.style.display = 'block';
+                mipCoronalContent.style.display = 'block';
 
-            t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
+                t3dCoronalContent.style.visibility = 'visible';
+                t3dCoronalContent.style.display = 'block';
 
-            // move t3dCoronalContent to the top right cell of the grid
-            t3dCoronalContent.style.gridColumn = 2;
-            t3dCoronalContent.style.gridRow = 1;
+                // move t3dCoronalContent to the top right cell of the grid
+                t3dCoronalContent.style.gridColumn = 2;
+                t3dCoronalContent.style.gridRow = 1;
 
-            // move mipCoronalContent to the bottom left cell of the grid
-            mipCoronalContent.style.gridColumn = 1;
-            mipCoronalContent.style.gridRow = 2;
+                // move mipCoronalContent to the bottom left cell of the grid
+                mipCoronalContent.style.gridColumn = 1;
+                mipCoronalContent.style.gridRow = 2;
 
-            mipSagittalContent.style.gridColumn = 2;
-            mipSagittalContent.style.gridRow = 2;
+                mipSagittalContent.style.gridColumn = 2;
+                mipSagittalContent.style.gridRow = 2;
 
-            mipAxialContent.style.gridColumn = 1;
-            mipAxialContent.style.gridRow = 1;
+                mipAxialContent.style.gridColumn = 1;
+                mipAxialContent.style.gridRow = 1;
 
-            // t3dCoronalContent.style.gridColumn = 'span 3';
+                // t3dCoronalContent.style.gridColumn = 'span 3';
+            }
         }
-
     }, [context.viewToolGroupValue, filesLoaded]);
 
     // ----------------------------------------------------
@@ -1054,111 +1015,157 @@ function CornerstoneViewer({ volumeName, files, iec }) {
         cornerstone.cache.purgeVolumeCache();
 
         let volume = null;
+        let stack = null;
         const renderingEngine = renderingEngineRef.current;
 
         async function getFileData() {
-            // TODO: could probably use a better way to generate unique volumeIds
-            if (nifti) {
-                // console.log("volumeId:", volumeId);
-                volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
-            } else {
-                let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
-                volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
-            }
 
+            if (context.viewport_layout == 'stack') {
+                stack = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);                
+            }
+            else if (context.viewport_layout == 'volume') {
+                // TODO: could probably use a better way to generate unique volumeIds
+                if (context.nifti) {
+                    // console.log("volumeId:", volumeId);
+                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
+                } else {
+                    let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
+                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
+                }
+            }
         }
 
         async function doit() {
-            //console.log('doit');
+
             window.cornerstone = cornerstone;
             window.cornerstoneTools = cornerstoneTools;
             await getFileData();
 
-            volume.load();
+            if (context.viewport_layout == 'stack') {
+                
+                const viewport = renderingEngine.getViewport('dicom_stack');
+                //console.log(stack)
+                //console.log(renderingEngine)
+                await viewport.setStack(stack);
 
-            // console.log("about to setVolumes for rendering engine:", renderingEngine);
+                //viewport.render();
 
-            await cornerstone.setVolumesForViewports(
-                renderingEngine,
-                [{ volumeId: volumeId }],
-                ['vol_axial', 'vol_sagittal', 'vol_coronal']
-            );
+                const currentImageId = viewport.getCurrentImageId();
 
-            const volDimensions = volume.dimensions;
+                // Create a derived segmentation image for the current image
+                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
-            const volSlab = Math.sqrt(
-                volDimensions[0] * volDimensions[0] +
-                volDimensions[1] * volDimensions[1] +
-                volDimensions[2] * volDimensions[2]
-            );
-
-            // Add volumes to MIP viewports
-            await cornerstone.setVolumesForViewports(
-                renderingEngine,
-                [
-                    //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                // Add the segmentation to the segmentation state
+                cornerstoneTools.segmentation.addSegmentations([
                     {
-                        volumeId: volumeId,
-                        blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
-                        slabThickness: volSlab,
-                    },
-                ],
-                ['mip_axial', 'mip_sagittal', 'mip_coronal']
-            );
-
-            await cornerstone.setVolumesForViewports(
-                renderingEngine,
-                [{ volumeId: volumeId }],
-                ['t3d_coronal']
-            ).then(() => {
-                const viewport = renderingEngine.getViewport('t3d_coronal');
-                viewport.setProperties({ preset: context.presetToolValue });
-
-            });
-
-            // create and bind a new segmentation
-            await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
-                volumeId,
-                { volumeId: segId }
-            );
-
-            // make sure it doesn't already exist
-            cornerstoneTools.segmentation.state.removeSegmentation(segId);
-            cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
-            cornerstoneTools.segmentation.addSegmentations([
-                {
-                    segmentationId: segId,
-                    representation: {
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        data: {
-                            volumeId: segId,
+                        segmentationId: segId,
+                        representation: {
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                            data: {
+                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                            },
                         },
                     },
-                },
-            ]);
+                ]);
 
-            await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                'vol_tool_group',
-                [
+                // Add the segmentation representation to the tool group
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'stack_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+
+            }
+            else if (context.viewport_layout == 'volume') {
+
+                volume.load();
+
+                // Add volumes to volume viewports
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [{ volumeId: volumeId }],
+                    ['vol_axial', 'vol_sagittal', 'vol_coronal']
+                );
+
+                const volDimensions = volume.dimensions;
+
+                const volSlab = Math.sqrt(
+                    volDimensions[0] * volDimensions[0] +
+                    volDimensions[1] * volDimensions[1] +
+                    volDimensions[2] * volDimensions[2]
+                );
+
+                // Add volumes to MIP viewports
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [
+                        //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                        {
+                            volumeId: volumeId,
+                            blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+                            slabThickness: volSlab,
+                        },
+                    ],
+                    ['mip_axial', 'mip_sagittal', 'mip_coronal']
+                );
+
+                await cornerstone.setVolumesForViewports(
+                    renderingEngine,
+                    [{ volumeId: volumeId }],
+                    ['t3d_coronal']
+                ).then(() => {
+                    const viewport = renderingEngine.getViewport('t3d_coronal');
+                    viewport.setProperties({ preset: context.presetToolValue });
+                }); 
+
+                //// make sure it doesn't already exist
+                //cornerstoneTools.segmentation.state.removeSegmentation(segId);
+                //cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
+
+                // create and bind a new segmentation
+                await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                    volumeId,
+                    { volumeId: segId }
+                );
+
+                cornerstoneTools.segmentation.addSegmentations([
                     {
                         segmentationId: segId,
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        representation: {
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                            data: {
+                                volumeId: segId,
+                            },
+                        },
                     },
-                ]
-            );
+                ]);
 
-            await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                'mip_tool_group',
-                [
-                    {
-                        segmentationId: segId,
-                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                    },
-                ]
-            );
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'vol_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+
+                await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                    'mip_tool_group',
+                    [
+                        {
+                            segmentationId: segId,
+                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                        },
+                    ]
+                );
+            }
 
             setFilesLoaded(true);
-
         }
 
         doit();
@@ -1220,180 +1227,209 @@ function CornerstoneViewer({ volumeName, files, iec }) {
     // Handle changes to the `left click` prop
     useEffect(() => {
 
-        // Volumes
-        const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+        if (context.viewport_layout == 'stack') {
 
-        if (volToolGroup) {
-            // Add the WindowLevelTool if it hasn't been added already
+            const stackToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('stack_tool_group');
 
-            if (!volToolGroup.getToolInstance(cornerstoneTools.WindowLevelTool.toolName)) {
+            if (stackToolGroup) {
 
-                cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-                volToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
-            }
+                // Activate or deactivate the WindowLevelTool based on the windowLevel state
+                if (context.leftClickToolGroupValue === 'windowlevel') {
+                    stackToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    stackToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
+                }
 
-            // Activate or deactivate the WindowLevelTool based on the windowLevel state
-            if (context.leftClickToolGroupValue === 'windowlevel') {
+                if (context.leftClickToolCrossHairsVisible) {
+                    // Activate or deactivate the CrosshairsTool based on the crosshairs state
+                    if (context.leftClickToolGroupValue === 'crosshairs') {
+                        stackToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                            bindings: [
+                                { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                            ],
+                        });
+                    } else {
+                        stackToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+                    }
+                }
 
-                volToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
-            } else {
-                volToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
-            }
-
-
-            // Activate or deactivate the CrosshairsTool based on the crosshairs state
-            if (context.leftClickToolGroupValue === 'crosshairs') {
-                volToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
-            } else {
-                volToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
-            }
-
-            // Add the RectangleScissorsTool if it hasn't been added already
-            if (!volToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
-
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                volToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
-            }
-
-            // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
-            if (context.leftClickToolGroupValue === 'selection') {
-
-                volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
-
-                console.log('RectangleScissorsTool activated');
-            } else {
-                volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
-
-                console.log('RectangleScissorsTool dectivated');
+                // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
+                if (context.leftClickToolGroupValue === 'selection') {
+                    stackToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    stackToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                }
             }
         }
+        else if (context.viewport_layout == 'volume') {
 
-        // MIPs
-        const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+            // Volumes
+            const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
 
-        if (mipToolGroup) {
-            // Add the WindowLevelTool if it hasn't been added already
+            if (volToolGroup) {
 
-            if (!mipToolGroup.getToolInstance(cornerstoneTools.WindowLevelTool.toolName)) {
+                // Activate or deactivate the WindowLevelTool based on the windowLevel state
+                if (context.leftClickToolGroupValue === 'windowlevel') {
+                    volToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    volToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
+                }
 
-                cornerstoneTools.addTool(cornerstoneTools.WindowLevelTool);
-                mipToolGroup.addTool(cornerstoneTools.WindowLevelTool.toolName);
+                // Activate or deactivate the CrosshairsTool based on the crosshairs state
+                if (context.leftClickToolGroupValue === 'crosshairs') {
+                    volToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    volToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+                }
+
+                // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
+                if (context.leftClickToolGroupValue === 'selection') {
+                    volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                }
             }
 
-            // Activate or deactivate the WindowLevelTool based on the windowLevel state
-            if (context.leftClickToolGroupValue === 'windowlevel') {
+            // MIPs
+            const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
 
-                mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
-            } else {
-                mipToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
-            }
+            if (mipToolGroup) {
 
-            // Activate or deactivate the CrosshairsTool based on the crosshairs state
-            if (context.leftClickToolGroupValue === 'crosshairs') {
-                mipToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
-            } else {
-                mipToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
-            }
+                // Activate or deactivate the WindowLevelTool based on the windowLevel state
+                if (context.leftClickToolGroupValue === 'windowlevel') {
+                    mipToolGroup.setToolActive(cornerstoneTools.WindowLevelTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    mipToolGroup.setToolDisabled(cornerstoneTools.WindowLevelTool.toolName);
+                }
 
-            // Add the RectangleScissorsTool if it hasn't been added already
+                // Activate or deactivate the CrosshairsTool based on the crosshairs state
+                if (context.leftClickToolGroupValue === 'crosshairs') {
+                    mipToolGroup.setToolActive(cornerstoneTools.CrosshairsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    mipToolGroup.setToolDisabled(cornerstoneTools.CrosshairsTool.toolName);
+                }
 
-            if (!mipToolGroup.getToolInstance(cornerstoneTools.RectangleScissorsTool.toolName)) {
 
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                mipToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
-            }
-
-            // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
-            if (context.leftClickToolGroupValue === 'selection') {
-
-                mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
-
-            } else {
-                mipToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
+                if (context.leftClickToolGroupValue === 'selection') {
+                    mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                        bindings: [
+                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                        ],
+                    });
+                } else {
+                    mipToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                }
             }
         }
-
     }, [context.leftClickToolGroupValue]);
 
     // ----------------------------------------------------
     // Handle changes to the `right click` prop
     useEffect(() => {
 
-        // Volumes
-        const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-        if (context.rightClickToolGroupValue === 'pan') {
-            if (volToolGroup) {
+        if (context.viewport_layout == 'stack') {
 
-                volToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
-                volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
-                // access the t3d_tool_group if it exists and do the same
-                if (files.length > 1) {
-                    const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-                    t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
-                    t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+            // Stacks
+            const stackToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('stack_tool_group');
+            if (context.rightClickToolGroupValue === 'pan') {
+                if (stackToolGroup) {
+                    stackToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+                    stackToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
                         bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
                     });
                 }
-            }
-        } else {
-            if (volToolGroup) {
-                volToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
-                volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
-                // access the t3d_tool_group if it exists and do the same
-                if (files.length > 1) {
-                    const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-                    t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
-                    t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+            } else {
+                if (stackToolGroup) {
+                    stackToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+                    stackToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
                         bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
                     });
                 }
             }
         }
+        else if (context.viewport_layout == 'volume') {
 
-        // MIPs
-        const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
-        if (context.rightClickToolGroupValue === 'pan') {
-            if (mipToolGroup) {
-
-                mipToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
-                mipToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
+            // Volumes
+            const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+            if (context.rightClickToolGroupValue === 'pan') {
+                if (volToolGroup) {
+                    volToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+                    volToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
+            } else {
+                if (volToolGroup) {
+                    volToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+                    volToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
             }
-        } else {
-            if (mipToolGroup) {
-                mipToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
-                mipToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
-                    bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
-                });
+
+            // MIPs
+            const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+            if (context.rightClickToolGroupValue === 'pan') {
+                if (mipToolGroup) {
+                    mipToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+                    mipToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
+            } else {
+                if (mipToolGroup) {
+                    mipToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+                    mipToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
+            }
+
+            // 3D
+            const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+            if (context.rightClickToolGroupValue === 'pan') {
+                if (t3dToolGroup) {
+                    t3dToolGroup.setToolDisabled(cornerstoneTools.ZoomTool.toolName);
+                    t3dToolGroup.setToolActive(cornerstoneTools.PanTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
+            } else {
+                if (t3dToolGroup) {
+                    t3dToolGroup.setToolDisabled(cornerstoneTools.PanTool.toolName);
+                    t3dToolGroup.setToolActive(cornerstoneTools.ZoomTool.toolName, {
+                        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Secondary }],
+                    });
+                }
             }
         }
     }, [context.rightClickToolGroupValue]);
@@ -1404,37 +1440,76 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
         if (context.resetViewportsValue) {
 
-            // if Stack detected, then use this reset
-            if ((files.length === 1) && !nifti) {
 
-                // Reset tools
+            // Reset View
+            if (context.viewToolGroupVisible) {
+                //// Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
+                context.setViewToolGroupValue(context.viewToolGroupValue + " "); // force a re-render
+                setTimeout(() => {
+                    context.setViewToolGroupValue(context.viewToolGroupValue);
+                }, 50);
+                //context.setViewToolGroupValue(context.viewToolGroupValue);
+            }
+
+            // Reset Function
+            if (context.functionToolGroupVisible) {
+                context.setFunctionToolGroupValue(context.functionToolGroupValue);
+            }
+
+            // Reset Form
+            if (context.formToolGroupVisible) {
+                context.setFormToolGroupValue(context.formToolGroupValue);
+            }
+
+            // Reset left click
+            if (context.leftClickToolGroupVisible) {
                 context.setLeftClickToolGroupValue(context.leftClickToolGroupValue);
-                context.setRightClickToolGroupValue(context.rightClickToolGroupValue);
-                context.setResetViewportsValue(context.resetViewportsValue);
+            }
 
-                // reset cameras
-                const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+            // Reset right click
+            if (context.rightClickToolGroupVisible) {
+                context.setRightClickToolGroupValue(context.rightClickToolGroupValue);
+            }
+
+            // Reset Opacity
+            if (context.opacityToolVisible) {
+                context.setOpacityToolValue(context.opacityToolValue);
+            }
+
+            // Reset Preset
+            if (context.presetToolVisible) {
+                context.setPresetToolValue(context.presetToolValue);
+            }
+
+            // Reset stack layouts
+            if (context.viewport_layout == 'stack') {
+
+                // Reset cameras
+                const renderingEngine = renderingEngineRef.current;
                 renderingEngine.getViewports().forEach((viewport) => {
                     viewport.resetCamera(true, true, true, true);
                     viewport.render();
                 });
 
-                // reset window level tool (https://github.com/cornerstonejs/cornerstone3D/blob/089ac3e50d40067ff93e73a4c0e6bbf6594a6c98/packages/tools/src/tools/WindowLevelTool.ts)
-                const viewportId = 'CT_STACK';
-                const viewport = renderingEngine.getViewport(viewportId);
+                // Reset Window Level
+                if (context.leftClickToolWindowLevelVisible) {
+                    // reset window level tool (https://github.com/cornerstonejs/cornerstone3D/blob/089ac3e50d40067ff93e73a4c0e6bbf6594a6c98/packages/tools/src/tools/WindowLevelTool.ts)
+                    const viewportId = 'dicom_stack';
+                    const viewport = renderingEngine.getViewport(viewportId);
 
-                // Access the currently displayed image
-                const imageId = viewport.getCurrentImageId();
-                const image = cornerstone.cache.getImage(imageId);
+                    // Access the currently displayed image
+                    const imageId = viewport.getCurrentImageId();
+                    const image = cornerstone.cache.getImage(imageId);
 
-                // Reset window level to default (from image metadata)
-                viewport.setProperties({
-                    voiRange: cornerstone.utilities.windowLevel.toLowHighRange(image.windowWidth, image.windowCenter),
-                });
+                    // Reset window level to default (from image metadata)
+                    viewport.setProperties({
+                        voiRange: cornerstone.utilities.windowLevel.toLowHighRange(image.windowWidth, image.windowCenter),
+                    });
+                }
 
                 // Remove active segmentation
-                if (!review) {
-                    const toolGroupId = 'vol_tool_group';
+                if (context.leftClickToolRectangleScissorsVisible) {
+                    const toolGroupId = 'stack_tool_group';
                     const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
 
                     if (segmentationIds.length) {
@@ -1469,7 +1544,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                                 group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
                                 // Get the current imageId from the viewport
-                                const viewportId = 'CT_STACK';
+                                const viewportId = 'dicom_stack';
                                 const viewport = renderingEngine.getViewport(viewportId);
                                 const currentImageId = viewport.getCurrentImageId();
 
@@ -1477,12 +1552,12 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                                 const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
                                 // Create a unique segmentationId
-                                const segmentationId = `SEGMENTATION_${newSegImageId}`;
+                                //const segmentationId = `SEGMENTATION_${newSegImageId}`;
 
                                 // Add the segmentation to the segmentation state
                                 cornerstoneTools.segmentation.addSegmentations([
                                     {
-                                        segmentationId: segmentationId,
+                                        segmentationId: segId,
                                         representation: {
                                             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
                                             data: {
@@ -1497,8 +1572,8 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                                 toolGroupId,
                                     [
                                         {
-                                        segmentationId: segmentationId,
-                                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                                            segmentationId: segId,
+                                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
                                         },
                                     ]
                                 );
@@ -1520,40 +1595,38 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                                     console.log('selection activated');
                                 }
                             }
-
                             createSegmentation();
                         }
                     }
                 }
 
-            } else {
-                
-                context.setOpacityToolValue(context.opacityToolValue);
-                context.setPresetToolValue(context.presetToolValue);
-                context.setLeftClickToolGroupValue(context.leftClickToolGroupValue);
 
-                // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
-                context.setViewToolGroupValue(context.viewToolGroupValue + " "); // force a re-render
-                setTimeout(() => {
-                    context.setViewToolGroupValue(context.viewToolGroupValue);
-                }, 50);
+                ////Remove active segmentation
+                //if (context.leftClickToolRectangleScissorsVisible) {
+                //    // Remove all segmentations
 
-                context.setRightClickToolGroupValue(context.rightClickToolGroupValue);
-                context.setResetViewportsValue(context.resetViewportsValue);
+                //    const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
+                //    console.log("segmentationIds is", segmentationIds);
 
-                // Remove all segmentations
-                const segVolume = cornerstone.cache.getVolume(segId);
-                // console.log("segVolume is", segVolume);
-                const scalarData = segVolume.scalarData;
-                // console.log("scalarData is", scalarData);
-                scalarData.fill(0);
-                // redraw segmentation
-                cornerstoneTools.segmentation
-                    .triggerSegmentationEvents
-                    .triggerSegmentationDataModified(segId);
+                //    const segVolume = cornerstone.cache.getVolume(segId);
+                //    console.log("segVolume is", segVolume);
+
+                //    const scalarData = segVolume.scalarData;
+                //    console.log("scalarData is", scalarData);
+
+                //    scalarData.fill(0);
+                //    // redraw segmentation
+                //    cornerstoneTools.segmentation
+                //        .triggerSegmentationEvents
+                //        .triggerSegmentationDataModified(segId);
+                //}
+
+
+            }
+            else if (context.viewport_layout == 'volume') {                
 
                 // reset cameras for all the viewports that its wrapper is visible
-                const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+                const renderingEngine = renderingEngineRef.current;
                 renderingEngine.getViewports().forEach((viewport) => {
                     // if the viewport parent node is visible, reset camera
                     const viewportElement = document.getElementById(viewport.id);
@@ -1562,6 +1635,20 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                         viewport.render();
                     }
                 });
+
+                // Remove all segmentations
+                const segVolume = cornerstone.cache.getVolume(segId);
+                //console.log("segVolume is", segVolume);
+                const scalarData = segVolume.scalarData;
+                // console.log("scalarData is", scalarData);
+                scalarData.fill(0);
+                // redraw segmentation
+                cornerstoneTools.segmentation
+                    .triggerSegmentationEvents
+                    .triggerSegmentationDataModified(segId);
+
+
+
 
                 // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
                 setTimeout(() => {
@@ -1582,8 +1669,12 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                         crosshairsToolInstance.resetCrosshairs();
                     }
                 }, 150);
+
+
             }
         }
+        context.setResetViewportsValue(false);
+
     }, [context.resetViewportsValue]);
 
 
