@@ -22,9 +22,10 @@ const BASE_DEFAULTS = {
     toolsPanelVisible: false,
 
     viewToolGroupVisible: false,
-    viewToolGroupValue: 'volume', // 'volume' or 'projection'
+    viewToolGroupValue: 'volume', // 'volume' or 'projection' or 'stack'
     viewToolVolumeVisible: false,
     viewToolProjectionVisible: false,
+    viewToolStackVisible: false,
 
     functionToolGroupVisible: false,
     functionToolGroupValue: 'mask', // 'mask' or 'blackout' or 'slice-remove'
@@ -101,6 +102,7 @@ const BASE_DEFAULTS = {
     visualReviewPanelBlankVisible: false,
     visualReviewPanelScoutVisible: false,
     visualReviewPanelOtherVisible: false,
+    visualReviewPanelFlagVisible: false,
 
 };
 
@@ -390,6 +392,7 @@ export const TASK_CONFIGS = {
         visualReviewPanelBlankVisible: true,
         visualReviewPanelScoutVisible: true,
         visualReviewPanelOtherVisible: true,
+        //visualReviewPanelFlagVisible: true,
     },
 
     dicom_review_image: {
@@ -437,6 +440,7 @@ export const TASK_CONFIGS = {
         visualReviewPanelBlankVisible: true,
         visualReviewPanelScoutVisible: true,
         visualReviewPanelOtherVisible: true,
+        visualReviewPanelFlagVisible: true,
     },
 
     dicom_review_volume: {
@@ -477,7 +481,6 @@ export const TASK_CONFIGS = {
 
         presetToolVisible: true,
         presetToolList: [],
-        presetToolValue: 'MR-Default',
 
         resetViewportsVisible: true,
 
@@ -499,6 +502,7 @@ export const TASK_CONFIGS = {
         visualReviewPanelBlankVisible: true,
         visualReviewPanelScoutVisible: true,
         visualReviewPanelOtherVisible: true,
+        visualReviewPanelFlagVisible: true,
     },
 
 };

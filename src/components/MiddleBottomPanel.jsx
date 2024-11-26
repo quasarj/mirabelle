@@ -5,7 +5,7 @@ import MaskerPanel from './MaskerPanel.jsx';
 import ReviewPanel from './ReviewPanel.jsx';
 import NavigationPanel from './NavigationPanel.jsx';
 
-function MiddlelBottomPanel({ onExpand,
+function MiddleBottomPanel({ onExpand,
     onClear,
     onAccept,
     onNext,
@@ -18,7 +18,8 @@ function MiddlelBottomPanel({ onExpand,
     onMarkBad,
     onMarkBlank,
     onMarkScout,
-    onMarkOther}) {
+    onMarkOther,
+    onMarkFlag}) {
 
     const {
         layout, maskerPanelVisible, maskerReviewPanelVisible, visualReviewPanelVisible, navigationPanelVisible
@@ -55,6 +56,7 @@ function MiddlelBottomPanel({ onExpand,
                     onMarkBlank={onMarkBlank}
                     onMarkScout={onMarkScout}
                     onMarkOther={onMarkOther}
+                    onMarkFlag={onMarkFlag}
                 />
                 {navigationPanelVisible && (
                     <NavigationPanel
@@ -66,4 +68,4 @@ function MiddlelBottomPanel({ onExpand,
         );
     }
 }
-export default MiddlelBottomPanel;
+export default MiddleBottomPanel;

@@ -12,7 +12,7 @@ export async function getUsername() {
 	return details.username;
 }
 
-export async function getNiftiDetails(file_id) {
+export async function getDicomDetails(file_id) {
 
 	const response = await fetch(`/papi/v1/nifti/${file_id}`);
 	const details = await response.json();
@@ -20,7 +20,7 @@ export async function getNiftiDetails(file_id) {
 	return details;
 }
 
-export async function setNiftiStatus(file_id, status) {
+export async function setDicomStatus(file_id, status) {
 
 	const response = await fetch(
 		`/papi/v1/nifti/${file_id}/set_status/${status}`,
@@ -36,6 +36,13 @@ export async function setNiftiStatus(file_id, status) {
 	return details;
 }
 
+export async function getFiles(iec) {
+
+	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
+	const details = await response.json();
+
+	return details.file_ids;
+}
 
 //export async function getNiftiGroupFiles(file_id) {
 //	// console.log("getNiftiFiles", iec);

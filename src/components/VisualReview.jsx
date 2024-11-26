@@ -17,6 +17,7 @@ function VisualReview({ details, files, iecs, iec }) {
         setLeftPanelVisible,
         rightPanelVisible,
         setRightPanelVisible,
+        topPanelVisible,
         layout,
 
     } = useContext(Context);
@@ -32,7 +33,7 @@ function VisualReview({ details, files, iecs, iec }) {
     return (
         <div id="app" className={`relative grid grid-rows-[auto,1fr] gap-2 w-screen min-w-[1300px] h-screen p-2 dark:bg-blue-950 overflow-hidden`}>
             <Header />
-            {/*{topPanelVisibility && <TopPanel />}*/}
+            {topPanelVisible && <TopPanel />}
             <div id="main" className={`h-full w-full grid ${gridTemplate} rounded-lg gap-2 transition-all duration-200 overflow-hidden`}>
                 <div id="leftPanel" className={`w-full h-full rounded-lg overflow-hidden`}>
                     <LeftPanel />

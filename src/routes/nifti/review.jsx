@@ -3,12 +3,12 @@ import { useLoaderData } from 'react-router-dom';
 import VisualReview from '../../components/VisualReview.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
-import { getUsername, getDetails } from '../../nifti.js';
+import { getUsername, getNiftiDetails } from '../../nifti.js';
 import { TASK_CONFIGS } from '../../config/config';
 
 export async function loader({ params }) {
 
-    const details = await getDetails(params.fileId);
+    const details = await getNiftiDetails(params.fileId);
     const files = [params.fileId];
     return { details, files };
 }

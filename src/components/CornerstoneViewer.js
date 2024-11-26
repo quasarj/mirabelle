@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect, useLayoutEffect, useRef } from 'react';
 
 // Components
-import MiddlelBottomPanel from './MiddlelBottomPanel.jsx';
+import MiddleBottomPanel from './MiddleBottomPanel.jsx';
 
 // Context
 import { Context } from './Context.js';
@@ -18,7 +18,8 @@ import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-l
 // Utilities
 import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
-import { getDetails, setStatus } from '../nifti';
+import { getNiftiDetails, setNiftiStatus } from '../nifti';
+import { getDicomDetails, setDicomStatus } from '../dicom';
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -1730,24 +1731,28 @@ function CornerstoneViewer({ volumeName, files, iec }) {
         alert("Marked as Non-Maskable!");
     }
     async function handleMarkGood() {
-        await setStatus(files[0], "Good");
+        await setNiftiStatus(files[0], "Good");
         alert("Marked as Good!");
     }
     async function handleMarkBad() {
-        await setStatus(files[0], "Bad");
+        await setNiftiStatus(files[0], "Bad");
         alert("Marked as Bad!");
     }
     async function handleMarkBlank() {
-        await setStatus(files[0], "Blank");
+        await setNiftiStatus(files[0], "Blank");
         alert("Marked as Blank!");
     }
     async function handleMarkScout() {
-        await setStatus(files[0], "Scout");
+        await setNiftiStatus(files[0], "Scout");
         alert("Marked as Scout!");
     }
     async function handleMarkOther() {
-        await setStatus(files[0], "Other");
+        await setNiftiStatus(files[0], "Other");
         alert("Marked as Other!");
+    }
+    async function handleMarkFlag() {
+        await setNiftiStatus(files[0], "Flag for Masking");
+        alert("Flagged for Masking");
     }
 
     return (
@@ -1755,7 +1760,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             <div ref={containerRef}
                 style={{ width: '100%', height: '100%' }}
                 id="container"></div>
-            <MiddlelBottomPanel
+            <MiddleBottomPanel
                 onAccept={handleAcceptSelection}
                 onClear={handleClearSelection}
                 onExpand={handleExpandSelection}
@@ -1770,6 +1775,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 onMarkBlank={handleMarkBlank}
                 onMarkScout={handleMarkScout}
                 onMarkOther={handleMarkOther}
+                onMarkFlag={handleMarkFlag}
             />
         </>
     );

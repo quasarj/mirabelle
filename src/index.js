@@ -30,6 +30,10 @@ import MaskVR, {
 	loader as vrLoader,
 } from './routes/mask/vr';
 
+import ReviewDICOM, {
+	loader as dicomReviewLoader,
+} from './routes/dicom/review';
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -55,6 +59,11 @@ const router = createBrowserRouter([
 		path: "review/nifti/:fileId",
 		element: <ReviewNIFTI />,
 		loader: niftiReviewLoader,
+	},
+	{
+		path: "review/dicom/:iec",
+		element: <ReviewDICOM />,
+		loader: dicomReviewLoader,
 	},
 ], {
 	basename: "/mira",

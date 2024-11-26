@@ -2,14 +2,14 @@ import React, { useContext } from 'react';
 import { Context } from './Context.js';
 
 function ReviewPanel({
-    onMarkGood, onMarkBad, onMarkBlank, onMarkScout, onMarkOther
-}) {
+    onMarkGood, onMarkBad, onMarkBlank, onMarkScout, onMarkOther, onMarkFlag}) {
     const {
         visualReviewPanelGoodVisible,
         visualReviewPanelBadVisible,
         visualReviewPanelBlankVisible,
         visualReviewPanelScoutVisible,
-        visualReviewPanelOtherVisible
+        visualReviewPanelOtherVisible,
+        visualReviewPanelFlagVisible
     } = useContext(Context);
 
     // The review buttons
@@ -50,8 +50,15 @@ function ReviewPanel({
                     className="text-white bg-yellow-700 hover:bg-yellow-800">
                     Other
                 </button>}
+            {visualReviewPanelFlagVisible &&
+                <button
+                    id="markFlag"
+                    onClick={onMarkFlag}
+                    className="text-white bg-blue-700 hover:bg-blue-800">
+                    Flag for Masking
+                </button>}
         </div>
-    )
+    );
 }
 
 export default ReviewPanel;
