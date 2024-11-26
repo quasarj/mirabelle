@@ -14,6 +14,17 @@ module.exports = {
   },
   resolve: {
     extensions: ['.jsx', '...'],
+    fallback: {
+        "fs": false,
+        "tls": false,
+        "net": false,
+        "path": false,
+        "zlib": false,
+        "http": false,
+        "https": false,
+        "stream": false,
+        "crypto": false,
+    },
   },
   experiments: {
       asyncWebAssembly: true,
@@ -64,12 +75,12 @@ module.exports = {
             "Cross-Origin-Embedder-Policy": "require-corp",
         },
     proxy: [
-            //{
-            //    // Local
-            //    context: ['/papi'],
-            //    target: 'http://localhost',
-            //    headers: { 'Authorization': 'Bearer e9a63bc2-bfa5-4299-afb3-c844fb2ef38b' },
-            //},
+            // {
+            //     // Local
+            //     context: ['/papi'],
+            //     target: 'http://localhost',
+            //     headers: { 'Authorization': 'Bearer e9a63bc2-bfa5-4299-afb3-c844fb2ef38b' },
+            // },
             {
                 // PROD
                 context: ['/papi'],
