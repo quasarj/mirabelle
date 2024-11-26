@@ -18,8 +18,7 @@ import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-l
 // Utilities
 import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
-import { getNiftiDetails, setNiftiStatus } from '../nifti';
-import { getDicomDetails, setDicomStatus } from '../dicom';
+import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus } from '../visualreview';
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);

@@ -37,10 +37,36 @@ export async function setNiftiStatus(file_id, status) {
 }
 
 
-//export async function getNiftiGroupFiles(file_id) {
-//	// console.log("getNiftiFiles", iec);
-//	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
-//	const details = await response.json();
 
-//	return details.file_ids;
-//}
+export async function getDicomDetails(file_id) {
+
+	const response = await fetch(`/papi/v1/nifti/${file_id}`);
+	const details = await response.json();
+
+	return details;
+}
+
+export async function setDicomStatus(file_id, status) {
+
+	const response = await fetch(
+		`/papi/v1/nifti/${file_id}/set_status/${status}`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
+	const details = await response.json();
+
+	return details;
+}
+
+export async function getFiles(iec) {
+
+	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
+	const details = await response.json();
+
+	return details.file_ids;
+}
+

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLoaderData, Link } from 'react-router-dom';
-import Masker from '../../components/Masker.jsx';
+import MainPanel from '../../components/MainPanel.jsx';
 
 
 import { getDetails, getIECsForVR } from '../../masking.js';
@@ -192,7 +192,7 @@ export default function MaskVR() {
             resetViewportsValue, setResetViewportsValue,
 
         }}>
-            <Masker iecs={iecs} />
+            <MainPanel iecs={iecs} />
         </Context.Provider>
     );
 }

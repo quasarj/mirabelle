@@ -10,7 +10,7 @@ import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
 
-function VisualReview({ details, files, iecs, iec }) {
+function MainPanel({ details, files, iecs, iec }) {
 
     const {
         leftPanelVisible,
@@ -38,11 +38,6 @@ function VisualReview({ details, files, iecs, iec }) {
                 <div id="leftPanel" className={`w-full h-full rounded-lg overflow-hidden`}>
                     <LeftPanel />
                 </div>
-                {/*{leftPanelVisible && (
-                  <div id="leftPanel" className={`w-72 h-full rounded-lg overflow-y-hidden ${leftPanelVisible ? 'slide-in' : 'slide-out'}`} >
-                    <LeftPanel />
-                  </div>
-                )}*/}
                 <MiddlePanel
                     files={files}
                     iecs={iecs}
@@ -53,11 +48,6 @@ function VisualReview({ details, files, iecs, iec }) {
                         details={details}
                     />
                 </div>
-                {/*{rightPanelVisible && (
-                  <div id="rightPanel" className="w-72 h-full rounded-lg overflow-hidden">
-                    <RightPanel />
-                  </div>
-                )}*/}
             </div>
             <button
                 id="leftPanelButton"
@@ -75,4 +65,4 @@ function VisualReview({ details, files, iecs, iec }) {
     )
 }
 
-export default VisualReview
+export default MainPanel

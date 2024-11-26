@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import Masker from '../../components/Masker.jsx';
+import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDetails, getFiles } from '../../masking.js';
@@ -33,7 +33,7 @@ export default function ReviewIEC() {
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ ...configState }}>
-            <Masker details={details} files={files} iec={iec} />
+            <MainPanel details={details} files={files} iec={iec} />
         </Context.Provider>
     );
 }

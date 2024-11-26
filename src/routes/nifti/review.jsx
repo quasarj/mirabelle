@@ -1,9 +1,9 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import VisualReview from '../../components/VisualReview.jsx';
+import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
-import { getUsername, getNiftiDetails } from '../../nifti.js';
+import { getUsername, getNiftiDetails } from '../../visualreview.js';
 import { TASK_CONFIGS } from '../../config/config';
 
 export async function loader({ params }) {
@@ -23,7 +23,7 @@ export default function ReviewNIFTI() {
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ ...configState }}>
-            <VisualReview details={details} files={files} />
+            <MainPanel details={details} files={files} />
         </Context.Provider>
     );
 }

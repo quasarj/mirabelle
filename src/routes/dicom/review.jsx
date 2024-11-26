@@ -1,9 +1,9 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import VisualReview from '../../components/VisualReview.jsx';
+import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
-import { getDicomDetails, getFiles } from '../../dicom.js';
+import { getDicomDetails, getFiles } from '../../visualreview.js';
 import { TASK_CONFIGS } from '../../config/config';
 
 export async function loader({ params }) {
@@ -35,7 +35,7 @@ export default function ReviewDICOM() {
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ ...configState }}>
-            <VisualReview details={details} files={files} iec={iec} />
+            <MainPanel details={details} files={files} iec={iec} />
         </Context.Provider>
     );
 }
