@@ -1,6 +1,12 @@
+/**
+ * This component exists only to initialize Cornerstone
+ * It then delegates tool setup to a sub-component
+ * And it delegates viewport display to another sub-component
+ *
+ */
 import React, { useState, useEffect } from 'react';
-import TestPanel from './TestPanel';
 import TestToolsPanel from './TestToolsPanel';
+import TestFilesPanel from './TestFilesPanel';
 
 import { RenderingEngine, Enums, volumeLoader, cornerstoneStreamingImageVolumeLoader } from "@cornerstonejs/core"
 import {init as csRenderInit} from "@cornerstonejs/core"
@@ -9,17 +15,8 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 import {init as dicomImageLoaderInit} from "@cornerstonejs/dicom-image-loader"
 
 const {
-  PanTool,
-  WindowLevelTool,
-  StackScrollTool,
-  ZoomTool,
-  PlanarRotateTool,
   ToolGroupManager,
-  Enums: csToolsEnums,
 } = cornerstoneTools;
-
-const { ViewportType } = Enums;
-const { MouseBindings } = csToolsEnums;
 
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
@@ -53,23 +50,18 @@ function ViewPanel({ files, volumeName, iec }) {
     return <div>Loading...</div>;
   }
 
+  // These should probably both be stored in a State. As they are here,
+  // they would get re-generated anytime this component is redrawn
   toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
   renderingEngine = new RenderingEngine(renderingEngineId);
 
   return (
     <div>
       <TestToolsPanel toolGroup={toolGroup} />
-      <TestPanel 
+      <TestFilesPanel
         renderingEngine={renderingEngine}
-        viewportId='CT1'
         toolGroup={toolGroup}
       />
-      <TestPanel 
-        renderingEngine={renderingEngine}
-        viewportId='CT2'
-        toolGroup={toolGroup}
-      />
-      Loaded!!
     </div>
   );
 
