@@ -159,7 +159,7 @@ export async function getFileInfo(iec) {
 		volumetric = fileInfo.volumetric;
 
 		for (let file of fileInfo.frames) {
-			console.log(file);
+			//console.log(file);
 			for (let i = 0; i < file.num_of_frames; i++) {
 				if (frames.num_of_frames > 1) {
 					frames.push(`wadouri:/papi/v1/files/${file.file_id}/data?frame=${i}`);

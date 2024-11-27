@@ -5,10 +5,10 @@ const BASE_DEFAULTS = {
     layout: '',
     viewport_layout: 'volume',   // 'volume' or 'stack'
     title: '',
-    details: null,
-    files: [],
-    iec: null,
-    iecs: [],
+    //details: null,
+    //files: [],
+    //iec: null,
+    //iecs: [],
     nifti: false,
 
     // left Panel
@@ -411,6 +411,10 @@ export const TASK_CONFIGS = {
         // -- tools panel
         toolsPanelVisible: true,
 
+        viewToolGroupVisible: true,
+        viewToolGroupValue: 'stack',
+        viewToolStackVisible: true,
+
         leftClickToolGroupVisible: true,
         leftClickToolGroupValue: 'windowlevel',
         leftClickToolWindowLevelVisible: true,
@@ -462,6 +466,7 @@ export const TASK_CONFIGS = {
         viewToolGroupValue: 'projection',
         viewToolVolumeVisible: true,
         viewToolProjectionVisible: true,
+        viewToolStackVisible: true,
 
         leftClickToolGroupVisible: true,
         leftClickToolGroupValue: 'windowlevel',
