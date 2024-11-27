@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Context } from './Context.js';
 import MiddleTopPanel from './MiddleTopPanel.jsx';
 import ViewPanel from './ViewPanel.jsx';
-import { getFiles } from '../masking.js';
+import { getFiles, getFileInfo } from '../utilities.js';
 
 function MiddlePanel({ files, iecs, iec }) {
 

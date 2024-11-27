@@ -132,3 +132,59 @@ export function calculateDistance(point1, point2) {
 	return distance;
 }
 
+export async function getUsername() {
+	const response = await fetch(`/papi/v1/other/testme`);
+	const details = await response.json();
+
+	return details.username;
+}
+
+export async function getFiles(iec) {
+
+	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
+	const details = await response.json();
+
+	return details.file_ids;
+}
+
+export async function getFileInfo(iec) {
+
+	let response = await fetch(`/papi/v1/iecs/${iec}/frames`);
+
+	let volumetric;
+	let frames = [];
+
+	if (response.ok) {
+		let fileInfo = await response.json();
+		volumetric = fileInfo.volumetric;
+
+		for (let file of fileInfo.frames) {
+			console.log(file);
+			for (let i = 0; i < file.num_of_frames; i++) {
+				if (frames.num_of_frames > 1) {
+					frames.push(`wadouri:/papi/v1/files/${file.file_id}/data?frame=${i}`);
+				} else {
+					frames.push(`wadouri:/papi/v1/files/${file.file_id}/data`);
+				}
+			}
+		}
+	}
+	return { volumetric, frames };
+}
+
+export async function getReviewFiles(iec) {
+
+	const response = await fetch(`/papi/v1/masking/${iec}/reviewfiles`);
+	const details = await response.json();
+
+	return details;
+}
+
+export async function getIECsForVR(visual_review_id) {
+
+	const response = await fetch(
+		`/papi/v1/masking/visualreview/${visual_review_id}`);
+	const details = await response.json();
+
+	return details;
+}

@@ -10,7 +10,7 @@ import TopPanel from './TopPanel.jsx';
 
 import { Context } from './Context.js';
 
-function MainPanel({ details, files, iecs, iec }) {
+function MainPanel({ details, files, iec }) {
 
     const {
         leftPanelVisible,
@@ -40,7 +40,6 @@ function MainPanel({ details, files, iecs, iec }) {
                 </div>
                 <MiddlePanel
                     files={files}
-                    iecs={iecs}
                     iec={iec}
                 />
                 <div id="rightPanel" className="w-full h-full rounded-lg overflow-hidden">

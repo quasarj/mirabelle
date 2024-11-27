@@ -1015,22 +1015,18 @@ function CornerstoneViewer({ volumeName, files, iec }) {
         cornerstone.cache.purgeVolumeCache();
 
         let volume = null;
-        let stack = null;
+        let stack = files;
         const renderingEngine = renderingEngineRef.current;
 
         async function getFileData() {
 
-            if (context.viewport_layout == 'stack') {
-                stack = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);                
-            }
-            else if (context.viewport_layout == 'volume') {
+            if (context.viewport_layout == 'volume') {
                 // TODO: could probably use a better way to generate unique volumeIds
                 if (context.nifti) {
                     // console.log("volumeId:", volumeId);
                     volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
                 } else {
-                    let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
-                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
+                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: files });
                 }
             }
         }

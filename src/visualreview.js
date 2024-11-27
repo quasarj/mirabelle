@@ -5,13 +5,6 @@
 // TODO experiment for singleton value
 export let loaded = { loaded: false };
 
-export async function getUsername() {
-	const response = await fetch(`/papi/v1/other/testme`);
-	const details = await response.json();
-
-	return details.username;
-}
-
 export async function getNiftiDetails(file_id) {
 
 	const response = await fetch(`/papi/v1/nifti/${file_id}`);
@@ -61,12 +54,3 @@ export async function setDicomStatus(file_id, status) {
 
 	return details;
 }
-
-export async function getFiles(iec) {
-
-	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
-	const details = await response.json();
-
-	return details.file_ids;
-}
-

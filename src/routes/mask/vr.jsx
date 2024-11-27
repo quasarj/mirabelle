@@ -3,7 +3,8 @@ import { useLoaderData, Link } from 'react-router-dom';
 import MainPanel from '../../components/MainPanel.jsx';
 
 
-import { getDetails, getIECsForVR } from '../../masking.js';
+import { getDetails } from '../../masking.js';
+import { getIECsForVR } from '../../utilities';
 
 import { Context } from '../../components/Context';
 
