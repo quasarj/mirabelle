@@ -4,7 +4,7 @@ import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getUsername, getNiftiDetails } from '../../visualreview.js';
-import { TASK_CONFIGS } from '../../config/config';
+import { TASK_CONFIGS } from '../../config/config_new';
 
 export async function loader({ params }) {
 

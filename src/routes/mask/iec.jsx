@@ -5,7 +5,7 @@ import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDetails } from '../../masking.js';
 import { getFiles, getFileInfo } from '../../utilities';
-import { TASK_CONFIGS } from '../../config/config';
+import { TASK_CONFIGS } from '../../config/config_new';
 
 // function to load data for this component
 // will be called by the Router before rendering
@@ -26,7 +26,7 @@ export default function MaskIEC() {
     if (fileInfo.volumetric) {
         configState = useConfigState(TASK_CONFIGS.masker_volume || TASK_CONFIGS.default);
     } else {
-        configState = useConfigState(TASK_CONFIGS.masker_image || TASK_CONFIGS.default);
+        configState = useConfigState(TASK_CONFIGS.masker_stack || TASK_CONFIGS.default);
     }
 
     // Here we just assemble the various panels that we need for this mode

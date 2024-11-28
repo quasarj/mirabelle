@@ -5,7 +5,7 @@ import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDicomDetails } from '../../visualreview.js';
 import { getFiles, getFileInfo } from '../../utilities';
-import { TASK_CONFIGS } from '../../config/config';
+import { TASK_CONFIGS } from '../../config/config_new';
 
 export async function loader({ params }) {
 
@@ -26,7 +26,7 @@ export default function ReviewDICOM() {
     if (fileInfo.volumetric) {
         configState = useConfigState(TASK_CONFIGS.dicom_review_volume || TASK_CONFIGS.default);
     } else {
-        configState = useConfigState(TASK_CONFIGS.dicom_review_image || TASK_CONFIGS.default);
+        configState = useConfigState(TASK_CONFIGS.dicom_review_stack || TASK_CONFIGS.default);
     }
 
     // Here we just assemble the various panels that we need for this mode
