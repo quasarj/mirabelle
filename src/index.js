@@ -1,3 +1,4 @@
+import ViewPanel from './components/ViewPanel';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -76,6 +77,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 // 	</React.StrictMode>
 // );
 //
+// root.render(
+// 		<RouterProvider router={router} />
+// );
 root.render(
-		<RouterProvider router={router} />
+		<ViewPanel />
 );

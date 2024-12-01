@@ -1,15 +1,13 @@
-/*
+/**
  *
- * This component generates the list of imageIds to be displayed
- *
+ * This component loads the files into a volume 
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { volumeLoader } from "@cornerstonejs/core"
 
-import CSStackViewPanel from './CSSTackViewPanel';
 import CSVolumeViewPanel from './CSVolumeViewPanel';
 
-function TestFilesPanel({ renderingEngine, toolGroup, series }) {
+function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [files, setFiles] = useState([]);
   const [volumeId, setVolumeId] = useState(null);
@@ -62,7 +60,7 @@ function TestFilesPanel({ renderingEngine, toolGroup, series }) {
   }
 
   return (
-    <div id="testFilesPanel" className=" p-6 rounded-lg overflow-hidden bg-blue-100 dark:bg-blue-900">
+    <>
       <CSVolumeViewPanel
         renderingEngine={renderingEngine}
         viewportId='1'
@@ -84,8 +82,8 @@ function TestFilesPanel({ renderingEngine, toolGroup, series }) {
         volumeId={volumeId}
         orientation="SAGITTAL"
       />
-    </div>
+    </>
   );
 }
 
-export default TestFilesPanel;
+export default CSVolumeFiles;

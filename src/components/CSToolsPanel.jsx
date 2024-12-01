@@ -15,7 +15,7 @@ const {
 const { ViewportType } = Enums;
 const { MouseBindings } = csToolsEnums;
 
-function TestToolsPanel({ toolGroup }) {
+function CSToolsPanel({ toolGroup }) {
 
   // setup the global tools situation
 
@@ -52,4 +52,4 @@ function TestToolsPanel({ toolGroup }) {
   );
 }
 
-export default TestToolsPanel;
+export default CSToolsPanel;

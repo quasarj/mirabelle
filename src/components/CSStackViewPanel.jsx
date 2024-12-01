@@ -19,7 +19,7 @@ const { MouseBindings } = csToolsEnums;
 
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
-function TestPanel({ viewportId, renderingEngine, toolGroup, imageIds }) {
+function CSStackViewPanel({ viewportId, renderingEngine, toolGroup, imageIds }) {
   const elementRef = useRef(null)
   // This came from an example, I am not sure why it's using
   // a ref and not a State?? Maybe to avoid a redraw?
@@ -72,4 +72,4 @@ function TestPanel({ viewportId, renderingEngine, toolGroup, imageIds }) {
   )
 }
 
-export default TestPanel;
+export default CSStackViewPanel;

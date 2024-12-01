@@ -1,15 +1,13 @@
-/*
+/**
  *
- * This component generates the list of imageIds to be displayed
- *
+ * This component loads the files into a volume 
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { volumeLoader } from "@cornerstonejs/core"
 
-import CSStackViewPanel from './CSSTackViewPanel';
-import CSVolumeViewPanel from './CSVolumeViewPanel';
+import CSStackViewPanel from './CSStackViewPanel';
 
-function TestFilesPanel({ renderingEngine, toolGroup, series }) {
+function CSStackFiles({ renderingEngine, toolGroup, series }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [files, setFiles] = useState([]);
   const [volumeId, setVolumeId] = useState(null);
@@ -38,17 +36,6 @@ function TestFilesPanel({ renderingEngine, toolGroup, series }) {
         }
       }
 
-      const newvolumeId = `vol-${series}`; // TODO fix this
-      const volume = await volumeLoader.createAndCacheVolume(newvolumeId, {
-        imageIds: final_files,
-      })
-
-      // Set the volume to load
-      volume.load();
-
-
-
-      setVolumeId(newvolumeId);
       setFiles(final_files); // TODO this should be removed
       setIsInitialized(true);
     };
@@ -62,30 +49,15 @@ function TestFilesPanel({ renderingEngine, toolGroup, series }) {
   }
 
   return (
-    <div id="testFilesPanel" className=" p-6 rounded-lg overflow-hidden bg-blue-100 dark:bg-blue-900">
-      <CSVolumeViewPanel
+    <>
+      <CSStackViewPanel
         renderingEngine={renderingEngine}
         viewportId='1'
         toolGroup={toolGroup}
-        volumeId={volumeId}
-        orientation="CORONAL"
+        imageIds={files}
       />
-      <CSVolumeViewPanel
-        renderingEngine={renderingEngine}
-        viewportId='2'
-        toolGroup={toolGroup}
-        volumeId={volumeId}
-        orientation="AXIAL"
-      />
-      <CSVolumeViewPanel
-        renderingEngine={renderingEngine}
-        viewportId='3'
-        toolGroup={toolGroup}
-        volumeId={volumeId}
-        orientation="SAGITTAL"
-      />
-    </div>
+    </>
   );
 }
 
-export default TestFilesPanel;
+export default CSStackFiles;
