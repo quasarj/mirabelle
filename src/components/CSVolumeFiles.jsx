@@ -25,7 +25,7 @@ function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
       if (response.ok) {
         let resjson = await response.json();
         for (const o of resjson) {
-          console.log(o);
+          // console.log(o);
           if (o.frames == 1) {
             final_files.push(`wadouri:/papi/v1/files/${o.file_id}/data`);
           } else {

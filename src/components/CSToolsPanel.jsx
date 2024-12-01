@@ -6,6 +6,7 @@ const {
   PanTool,
   WindowLevelTool,
   StackScrollTool,
+  StackScrollMouseWheelTool,
   ZoomTool,
   PlanarRotateTool,
   ToolGroupManager,
@@ -21,17 +22,24 @@ function CSToolsPanel({ toolGroup }) {
 
   useEffect(() => {
     const setup = async () => {
-      cornerstoneTools.addTool(PanTool);
-      cornerstoneTools.addTool(WindowLevelTool);
-      cornerstoneTools.addTool(StackScrollTool);
-      cornerstoneTools.addTool(ZoomTool);
-      cornerstoneTools.addTool(PlanarRotateTool);
+      try {
+        cornerstoneTools.addTool(PanTool);
+        cornerstoneTools.addTool(WindowLevelTool);
+        // cornerstoneTools.addTool(StackScrollTool);
+        cornerstoneTools.addTool(StackScrollMouseWheelTool);
+        cornerstoneTools.addTool(ZoomTool);
+        cornerstoneTools.addTool(PlanarRotateTool);
+      } catch (error) {
+        // just ignore any errors loading the tools, so they
+        // can be loaded multiple times
+        // console.log("Error calling addTool:", error);
+      }
 
 
-      toolGroup.addTool(StackScrollTool.toolName, { loop: false });
+      toolGroup.addTool(StackScrollMouseWheelTool.toolName, { loop: false });
       // toolGroup.addTool(PlanarRotateTool.toolName);
 
-      toolGroup.setToolActive(StackScrollTool.toolName, {
+      toolGroup.setToolActive(StackScrollMouseWheelTool.toolName, {
         bindings: [
           {
             mouseButton: MouseBindings.Wheel, // Wheel Mouse
@@ -42,8 +50,6 @@ function CSToolsPanel({ toolGroup }) {
 
     setup();
   }, []); // no watch variable, will run ONLY ONCE on mount
-
-
 
   return (
     <div id="filesPanel" className=" p-6 rounded-lg overflow-hidden bg-blue-100 dark:bg-blue-900">
