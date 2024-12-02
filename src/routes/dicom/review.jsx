@@ -4,15 +4,15 @@ import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDicomDetails } from '../../visualreview.js';
-import { getFiles, getFileInfo } from '../../utilities';
-import { TASK_CONFIGS } from '../../config/config_new';
+import { getFiles, getIECInfo } from '../../utilities';
+import { TASK_CONFIGS } from '../../config/config';
 
 export async function loader({ params }) {
 
     //const details = await getDicomDetails(params.fileId);
     let details;
     //const files = await getFiles(params.iec);
-    const fileInfo = await getFileInfo(params.iec);
+    const fileInfo = await getIECInfo(params.iec);
     return { details, fileInfo, iec: params.iec };
 }
 

@@ -147,7 +147,7 @@ export async function getFiles(iec) {
 	return details.file_ids;
 }
 
-export async function getFileInfo(iec) {
+export async function getIECInfo(iec) {
 
 	let response = await fetch(`/papi/v1/iecs/${iec}/frames`);
 

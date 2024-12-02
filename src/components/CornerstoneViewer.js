@@ -46,7 +46,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
         { id: 't3d_coronal', state: 'normal' },
     ]);
 
-    const renderingEngineId = 'viewer_render_engine'; 
+    const renderingEngineId = 'viewer_render_engine';
     const renderingEngineRef = useRef(null);
     const containerRef = useRef(null);
 
@@ -66,7 +66,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
     } else {
         volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
     }
-    
+
     //console.log(volumeId);
 
     useLayoutEffect(() => {
@@ -1038,7 +1038,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             await getFileData();
 
             if (context.viewport_layout == 'stack') {
-                
+
                 const viewport = renderingEngine.getViewport('dicom_stack');
                 //console.log(stack)
                 //console.log(renderingEngine)
@@ -1116,7 +1116,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 ).then(() => {
                     const viewport = renderingEngine.getViewport('t3d_coronal');
                     viewport.setProperties({ preset: context.presetToolValue });
-                }); 
+                });
 
                 //// make sure it doesn't already exist
                 //cornerstoneTools.segmentation.state.removeSegmentation(segId);
@@ -1535,7 +1535,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                             async function createSegmentation() {
                                 const group = getOrCreateToolgroup(toolGroupId);
                                 // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                    
+
                                 // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
                                 group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
@@ -1565,7 +1565,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
                                 // Add the segmentation representation to the tool group
                                 const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                                toolGroupId,
+                                    toolGroupId,
                                     [
                                         {
                                             segmentationId: segId,
@@ -1584,7 +1584,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                                 if (context.leftClickToolGroupValue === 'selection') {
                                     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
                                         bindings: [
-                                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
                                         ],
                                     });
 
@@ -1619,7 +1619,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
 
             }
-            else if (context.viewport_layout == 'volume') {                
+            else if (context.viewport_layout == 'volume') {
 
                 // reset cameras for all the viewports that its wrapper is visible
                 const renderingEngine = renderingEngineRef.current;

@@ -7,10 +7,11 @@ import LeftPanel from './LeftPanel.jsx';
 import MiddlePanel from './MiddlePanel.jsx';
 import RightPanel from './RightPanel.jsx';
 import TopPanel from './TopPanel.jsx';
+import BottomPanel from './BottomPanel.jsx';
 
 import { Context } from './Context.js';
 
-function MainPanel({ details, files, iec }) {
+function MainPanel({ details, files, iec, iecs }) {
 
     const {
         leftPanelVisible,
@@ -18,17 +19,18 @@ function MainPanel({ details, files, iec }) {
         rightPanelVisible,
         setRightPanelVisible,
         topPanelVisible,
+        bottomPanelVisible,
         layout,
 
     } = useContext(Context);
 
     const gridTemplate = leftPanelVisible && rightPanelVisible
-        ? 'grid-cols-[18rem,1fr,18rem]'
+            ? 'grid-cols-[18rem,1fr,18rem]'
         : leftPanelVisible
-            ? 'grid-cols-[18rem,1fr,0rem]'
+                ? 'grid-cols-[18rem,1fr,0rem]'
             : rightPanelVisible
-                ? 'grid-cols-[0rem,1fr,18rem]'
-                : 'grid-cols-[0rem,1fr,0rem]';
+                    ? 'grid-cols-[0rem,1fr,18rem]'
+                    : 'grid-cols-[0rem,1fr,0rem]';
 
     return (
         <div id="app" className={`relative grid grid-rows-[auto,1fr] gap-2 w-screen min-w-[1300px] h-screen p-2 dark:bg-blue-950 overflow-hidden`}>
@@ -40,6 +42,7 @@ function MainPanel({ details, files, iec }) {
                 </div>
                 <MiddlePanel
                     files={files}
+                    iecs={iecs}
                     iec={iec}
                 />
                 <div id="rightPanel" className="w-full h-full rounded-lg overflow-hidden">
@@ -48,6 +51,7 @@ function MainPanel({ details, files, iec }) {
                     />
                 </div>
             </div>
+            {bottomPanelVisible && <BottomPanel />}
             <button
                 id="leftPanelButton"
                 onClick={() => setLeftPanelVisible(!leftPanelVisible)}

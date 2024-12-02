@@ -5,15 +5,12 @@ const BASE_DEFAULTS = {
     layout: '',
     viewport_layout: 'volume',   // 'volume' or 'stack'
     title: '',
-    //details: null,
-    //files: [],
-    //iec: null,
-    //iecs: [],
     nifti: false,
 
     // left Panel
     // ----------------------------------
     leftPanelVisible: false,
+    leftPanelOpen: false,
 
     // -- files panel
     filesPanelVisible: false,
@@ -65,6 +62,7 @@ const BASE_DEFAULTS = {
     // right panel
     // ----------------------------------
     rightPanelVisible: false,
+    rightPanelOpen: false,
 
     // -- description panel
     descriptionPanelVisible: false,
@@ -106,408 +104,209 @@ const BASE_DEFAULTS = {
 
 };
 
+const MASKER_CONFIG = {
+    layout: 'Masker',
+
+    leftPanelVisible: true,
+    leftPanelOpen: true,
+
+    toolsPanelVisible: true,
+
+    functionToolGroupVisible: true,
+
+    formToolGroupVisible: true,
+
+    leftClickToolGroupVisible: true,
+    leftClickToolGroupValue: 'selection',
+    leftClickToolWindowLevelVisible: true,
+    leftClickToolRectangleScissorsVisible: true,
+
+    rightClickToolGroupVisible: true,
+    rightClickToolGroupValue: 'zoom',
+    rightClickToolZoomVisible: true,
+    rightClickToolPanVisible: true,
+
+    resetViewportsVisible: true,
+};
+
+const MASKER_REVIEW_CONFIG = {
+    layout: 'MaskerReview',
+
+    leftPanelVisible: true,
+    leftPanelOpen: true,
+
+    toolsPanelVisible: true,
+
+    leftClickToolGroupVisible: true,
+    leftClickToolGroupValue: 'windowlevel',
+    leftClickToolWindowLevelVisible: true,
+
+    rightClickToolGroupVisible: true,
+    rightClickToolGroupValue: 'zoom',
+    rightClickToolZoomVisible: true,
+    rightClickToolPanVisible: true,
+
+    resetViewportsVisible: true,
+
+    maskerReviewPanelVisible: true,
+    maskerReviewPanelAcceptedVisible: true,
+    maskerReviewPanelRejectedVisible: true,
+    maskerReviewPanelSkipVisible: true,
+    maskerReviewPanelNonMaskableVisible: true,
+
+    maskerPanelVisible: true,
+    maskerPanelExpandSelectionVisible: true,
+    maskerPanelClearSelectionVisible: true,
+    maskerPanelAcceptSelectionVisible: true,
+};
+
+const VISUAL_REVIEW_CONFIG = {
+    layout: 'VisualReview',
+
+    leftPanelVisible: true,
+    leftPanelOpen: true,
+
+    toolsPanelVisible: true,
+
+    leftClickToolGroupVisible: true,
+    leftClickToolGroupValue: 'windowlevel',
+    leftClickToolWindowLevelVisible: true,
+
+    rightClickToolGroupVisible: true,
+    rightClickToolGroupValue: 'zoom',
+    rightClickToolZoomVisible: true,
+    rightClickToolPanVisible: true,
+
+    resetViewportsVisible: true,
+
+    rightPanelVisible: true,
+    rightPanelOpen: true,
+
+    descriptionPanelVisible: true,
+
+    visualReviewPanelVisible: true,
+    visualReviewPanelGoodVisible: true,
+    visualReviewPanelBadVisible: true,
+    visualReviewPanelBlankVisible: true,
+    visualReviewPanelScoutVisible: true,
+    visualReviewPanelOtherVisible: true,
+    visualReviewPanelFlagVisible: true,
+};
+
+const STACK_CONFIG = {
+    viewport_layout: 'stack',
+
+    viewToolGroupVisible: true,
+    viewToolGroupValue: 'stack',
+    viewToolStackVisible: true,
+
+    functionToolGroupValue: 'blackout',
+    functionToolBlackoutVisible: true,
+
+    formToolGroupValue: 'cuboid',
+    formToolCuboidVisible: true,
+
+};
+
+const VOLUME_CONFIG = {
+    viewport_layout: 'volume',
+
+    viewToolGroupVisible: true,
+    viewToolGroupValue: 'volume',
+    viewToolVolumeVisible: true,
+    viewToolProjectionVisible: true,
+    viewToolStackVisible: true,
+
+    functionToolGroupValue: 'mask',
+    functionToolMaskVisible: true,
+    functionToolBlackoutVisible: true,
+    functionToolSliceRemoveVisible: true,
+
+    formToolGroupValue: 'cylinder',
+    formToolCuboidVisible: true,
+    formToolCylinderVisible: true,
+
+    leftClickToolCrossHairsVisible: true,
+
+    opacityToolVisible: true,
+    presetToolVisible: true,
+
+};
+
 // Extend base configuration with route-specific overrides
 export const TASK_CONFIGS = {
     default: { ...BASE_DEFAULTS },
 
-    masker_image: {
+    masker_stack: {
         ...BASE_DEFAULTS,
+        ...MASKER_CONFIG,
+        ...STACK_CONFIG,
 
-        layout: 'Masker',
-        viewport_layout: 'stack',
         title: 'Image Masker',
 
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
+        maskerPanelExpandSelectionVisible: false,
 
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        functionToolGroupVisible: true,
-        functionToolGroupValue: 'blackout',
-        functionToolBlackoutVisible: true,
-
-        formToolGroupVisible: true,
-        formToolGroupValue: 'cuboid',
-        formToolCuboidVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'selection',
-        leftClickToolWindowLevelVisible: true,
-        leftClickToolRectangleScissorsVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: false,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- masker panel
-        maskerPanelVisible: true,
-        maskerPanelClearSelectionVisible: true,
-        maskerPanelAcceptSelectionVisible: true,
     },
 
     masker_volume: {
         ...BASE_DEFAULTS,
-        layout: 'Masker',
+        ...MASKER_CONFIG,
+        ...VOLUME_CONFIG,
+
         title: 'Volume Masker',
 
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
-
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        viewToolGroupVisible: true,
-        viewToolGroupValue: 'volume',
-        viewToolVolumeVisible: true,
-        viewToolProjectionVisible: true,
-
-        functionToolGroupVisible: true,
-        functionToolGroupValue: 'mask',
-        functionToolMaskVisible: true,
-        functionToolBlackoutVisible: true,
-        functionToolSliceRemoveVisible: true,
-
-        formToolGroupVisible: true,
-        formToolGroupValue: 'cylinder',
-        formToolCuboidVisible: true,
-        formToolCylinderVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'selection',
-        leftClickToolWindowLevelVisible: true,
-        leftClickToolCrossHairsVisible: true,
-        leftClickToolRectangleScissorsVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        opacityToolVisible: true,
-        opacityToolMin: 0,
-        opacityToolMax: 1,
-        opacityToolStep: 0.01,
-        opacityToolValue: 0.3,
-
-        presetToolVisible: true,
-        presetToolList: [],
-        presetToolValue: 'CT-MIP',
-
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: false,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- masker panel
-        maskerPanelVisible: true,
-        maskerPanelExpandSelectionVisible: true,
-        maskerPanelClearSelectionVisible: true,
-        maskerPanelAcceptSelectionVisible: true,
+        viewToolStackVisible: false,
 
     },
 
-    masker_review_image: {
+    masker_review_stack: {
         ...BASE_DEFAULTS,
-        layout: 'MaskerReview',
-        viewport_layout: 'stack',
+        ...MASKER_REVIEW_CONFIG,
+        ...STACK_CONFIG,
+
         title: 'Image Masker Review',
 
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
-
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'windowlevel',
-        leftClickToolWindowLevelVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: false,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- masker review panel
-        maskerReviewPanelVisible: true,
-        maskerReviewPanelAcceptedVisible: true,
-        maskerReviewPanelRejectedVisible: true,
-        maskerReviewPanelSkipVisible: true,
-        maskerReviewPanelNonMaskableVisible: true,
     },
 
     masker_review_volume: {
         ...BASE_DEFAULTS,
-        layout: 'MaskerReview',
+        ...MASKER_REVIEW_CONFIG,
+        ...VOLUME_CONFIG,
+
         title: 'Volume Masker Review',
-
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
-
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        viewToolGroupVisible: true,
-        viewToolGroupValue: 'volume',
-        viewToolVolumeVisible: true,
-        viewToolProjectionVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'windowlevel',
-        leftClickToolWindowLevelVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        opacityToolVisible: true,
-        opacityToolMin: 0,
-        opacityToolMax: 1,
-        opacityToolStep: 0.01,
-        opacityToolValue: 0.3,
-
-        presetToolVisible: true,
-        presetToolList: [],
-        presetToolValue: 'CT-MIP',
-
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: false,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- masker review panel
-        maskerReviewPanelVisible: true,
-        maskerReviewPanelAcceptedVisible: true,
-        maskerReviewPanelRejectedVisible: true,
-        maskerReviewPanelSkipVisible: true,
-        maskerReviewPanelNonMaskableVisible: true,
     },
 
     nifti_review: {
         ...BASE_DEFAULTS,
-        layout: 'NiftiReview',
+        ...VISUAL_REVIEW_CONFIG,
+        ...VOLUME_CONFIG,
+
         title: 'NIfTI Review',
         nifti: true,
 
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
-
-        // -- files panel
-        filesPanelVisible: false,
-
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        viewToolGroupVisible: true,
-        viewToolGroupValue: 'projection',
-        viewToolVolumeVisible: true,
-        viewToolProjectionVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'windowlevel',
-        leftClickToolWindowLevelVisible: true,
-        leftClickToolCrossHairsVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        opacityToolVisible: true,
-        opacityToolMin: 0,
-        opacityToolMax: 1,
-        opacityToolStep: 0.01,
-        opacityToolValue: 0.3,
-
-        presetToolVisible: true,
-        presetToolList: [],
         presetToolValue: 'MR-Default',
 
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: true,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- visual review panel
-        visualReviewPanelVisible: true,
-        visualReviewPanelGoodVisible: true,
-        visualReviewPanelBadVisible: true,
-        visualReviewPanelBlankVisible: true,
-        visualReviewPanelScoutVisible: true,
-        visualReviewPanelOtherVisible: true,
-        //visualReviewPanelFlagVisible: true,
+        visualReviewPanelFlagVisible: false,
     },
 
-    dicom_review_image: {
+    dicom_review_stack: {
         ...BASE_DEFAULTS,
-        layout: 'DicomReview',
-        viewport_layout: 'stack',
+        ...VISUAL_REVIEW_CONFIG,
+        ...STACK_CONFIG,
+
         title: 'DICOM Image Review',
+        //topPanelVisible: true,
+        //bottomPanelVisible: true,
 
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
-
-        // -- files panel
-        filesPanelVisible: false,
-
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        viewToolGroupVisible: true,
-        viewToolGroupValue: 'stack',
-        viewToolStackVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'windowlevel',
-        leftClickToolWindowLevelVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: true,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- visual review panel
-        visualReviewPanelVisible: true,
-        visualReviewPanelGoodVisible: true,
-        visualReviewPanelBadVisible: true,
-        visualReviewPanelBlankVisible: true,
-        visualReviewPanelScoutVisible: true,
-        visualReviewPanelOtherVisible: true,
-        visualReviewPanelFlagVisible: true,
     },
 
     dicom_review_volume: {
         ...BASE_DEFAULTS,
-        layout: 'DicomReview',
+        ...VISUAL_REVIEW_CONFIG,
+        ...VOLUME_CONFIG,
+
         title: 'DICOM Volume Review',
 
-        // left Panel
-        // ----------------------------------
-        leftPanelVisible: true,
-
-        // -- files panel
-        filesPanelVisible: false,
-
-        // -- tools panel
-        toolsPanelVisible: true,
-
-        viewToolGroupVisible: true,
-        viewToolGroupValue: 'projection',
-        viewToolVolumeVisible: true,
-        viewToolProjectionVisible: true,
-        viewToolStackVisible: true,
-
-        leftClickToolGroupVisible: true,
-        leftClickToolGroupValue: 'windowlevel',
-        leftClickToolWindowLevelVisible: true,
-        leftClickToolCrossHairsVisible: true,
-
-        rightClickToolGroupVisible: true,
-        rightClickToolGroupValue: 'zoom',
-        rightClickToolZoomVisible: true,
-        rightClickToolPanVisible: true,
-
-        opacityToolVisible: true,
-        opacityToolMin: 0,
-        opacityToolMax: 1,
-        opacityToolStep: 0.01,
-        opacityToolValue: 0.3,
-
-        presetToolVisible: true,
-        presetToolList: [],
-
-        resetViewportsVisible: true,
-
-        // right panel
-        // ----------------------------------
-        rightPanelVisible: true,
-
-        // -- description panel
-        descriptionPanelVisible: true,
-
-        // bottom panel
-        // ----------------------------------
-        bottomPanelVisible: true,
-
-        // -- visual review panel
-        visualReviewPanelVisible: true,
-        visualReviewPanelGoodVisible: true,
-        visualReviewPanelBadVisible: true,
-        visualReviewPanelBlankVisible: true,
-        visualReviewPanelScoutVisible: true,
-        visualReviewPanelOtherVisible: true,
-        visualReviewPanelFlagVisible: true,
     },
 
 };

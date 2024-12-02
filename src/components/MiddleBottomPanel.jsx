@@ -5,15 +5,19 @@ import MaskerPanel from './MaskerPanel.jsx';
 import ReviewPanel from './ReviewPanel.jsx';
 import NavigationPanel from './NavigationPanel.jsx';
 
-function MiddleBottomPanel({ onExpand,
+function MiddleBottomPanel({
+    onExpand,
     onClear,
     onAccept,
+
     onNext,
     onPrevious,
+
     onMarkAccepted,
     onMarkRejected,
     onMarkSkip,
     onMarkNonMaskable,
+
     onMarkGood,
     onMarkBad,
     onMarkBlank,
