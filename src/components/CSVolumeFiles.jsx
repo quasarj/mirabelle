@@ -1,9 +1,11 @@
-/**
+/*
+ * *
  *
  * This component loads the files into a volume 
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { volumeLoader } from "@cornerstonejs/core"
+import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import CSVolumeViewPanel from './CSVolumeViewPanel';
 
@@ -44,6 +46,38 @@ function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
       // Set the volume to load
       volume.load();
 
+      let segId = "a_test_seg_id";
+      // create and bind a new segmentation
+      await volumeLoader.createAndCacheDerivedSegmentationVolume(
+          newvolumeId,
+          { volumeId: segId }
+      );
+
+
+      // make sure it doesn't already exist
+      cornerstoneTools.segmentation.state.removeSegmentation(segId);
+      // cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
+      cornerstoneTools.segmentation.addSegmentations([
+          {
+              segmentationId: segId,
+              representation: {
+                  type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                  data: {
+                      volumeId: segId,
+                  },
+              },
+          },
+      ]);
+
+      await cornerstoneTools.segmentation.addSegmentationRepresentations(
+          toolGroup.id,
+          [
+              {
+                  segmentationId: segId,
+                  type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+              },
+          ]
+      );
 
 
       setVolumeId(newvolumeId);
