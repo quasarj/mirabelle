@@ -49,6 +49,10 @@ function CSVolumeViewPanel({ viewportId, renderingEngine, toolGroup, volumeId, o
       }
       running.current = true
 
+      // await volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
+      //   volumeId: "someSegId7",
+      // });
+
       const viewportInput = {
         viewportId,
         type: Enums.ViewportType.ORTHOGRAPHIC,
@@ -70,6 +74,14 @@ function CSVolumeViewPanel({ viewportId, renderingEngine, toolGroup, volumeId, o
 
       // Render the image
       viewport.render()
+
+
+		// console.log("creating derived volume for ", volumeId);
+		// await volumeLoader.createAndCacheDerivedVolume(volumeId, {
+		// 	volumeId: "someSegId8",
+		// });
+
+
     }
 
     setup()

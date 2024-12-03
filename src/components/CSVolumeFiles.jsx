@@ -9,8 +9,9 @@ import CSVolumeViewPanel from './CSVolumeViewPanel';
 
 function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [files, setFiles] = useState([]);
   const [volumeId, setVolumeId] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+
 
   useEffect(() => {
     const initialize = async () => {
@@ -42,22 +43,44 @@ function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
       })
 
       // Set the volume to load
-      volume.load();
+      volume.load(() => {
+        setLoaded(true);
+      });
+
+      console.log("the volume is:", volume.loadStatus);
 
 
 
       setVolumeId(newvolumeId);
-      setFiles(final_files); // TODO this should be removed
-      setIsInitialized(true);
+      // setIsInitialized(true);
     };
 
     initialize();
   }, []); // passing no value causes this to run ONLY ONCE during mount
 
+
+  useEffect(() => {
+    const doit = async () => {
+      console.log("volume is fully loaded?");
+
+      // await volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
+      //   volumeId: "someSegId",
+      // });
+
+      setIsInitialized(true); // NOW we are finally done loading
+    }
+
+    // Finalize only when the volume has actually finished loading
+    if (loaded) {
+      doit();
+    }
+  }, [loaded]);
+
   // short-circuit if Cornerstone hasn't loaded yet
   if (!isInitialized) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <>
