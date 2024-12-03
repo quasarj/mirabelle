@@ -127,6 +127,11 @@ const MASKER_CONFIG = {
     rightClickToolPanVisible: true,
 
     resetViewportsVisible: true,
+
+    maskerPanelVisible: true,
+    maskerPanelExpandSelectionVisible: true,
+    maskerPanelClearSelectionVisible: true,
+    maskerPanelAcceptSelectionVisible: true,
 };
 
 const MASKER_REVIEW_CONFIG = {
@@ -153,11 +158,6 @@ const MASKER_REVIEW_CONFIG = {
     maskerReviewPanelRejectedVisible: true,
     maskerReviewPanelSkipVisible: true,
     maskerReviewPanelNonMaskableVisible: true,
-
-    maskerPanelVisible: true,
-    maskerPanelExpandSelectionVisible: true,
-    maskerPanelClearSelectionVisible: true,
-    maskerPanelAcceptSelectionVisible: true,
 };
 
 const VISUAL_REVIEW_CONFIG = {
