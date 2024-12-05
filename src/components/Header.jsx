@@ -4,7 +4,7 @@ import { Context } from './Context.js';
 import { Link } from 'react-router-dom';
 import logoLight from '../assets/mirabelle-logo-light.svg';
 import logoDark from '../assets/mirabelle-logo-dark.svg'; 
-import { getUsername } from '../masking';
+import { getUsername } from '../utilities';
 
 function Header() {
   const [ username, setUsername ] = useState("Username");

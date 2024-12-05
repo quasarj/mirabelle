@@ -1,247 +1,264 @@
 import React, { useState, useContext } from 'react';
 import { Context } from './Context.js';
 import NavigationPanel from './NavigationPanel';
-import FunctionPanel from './FunctionPanel';
-import FormPanel from './FormPanel';
-
 
 function ToolsPanel() {
-  const { 
-    defaultLayout,
-    defaultZoom,
-    defaultOpacity,
-    defaultPresets,
-    // defaultSelectedPreset,
-    defaultWindowLevel,
-    defaultCrosshairs,
-    defaultRectangleScissors,
-    defaultViewportNavigation,
-    defaultResetViewports,
-    defaultLeftPanelVisibility,
-    defaultRightPanelVisibility,
-    defaultView,
 
-    layout, setLayout,
-    zoom, setZoom,
-    opacity, setOpacity,
-    presets, setPresets,
-    selectedPreset, setSelectedPreset,
-    leftPanelVisibility, setLeftPanelVisibility,
-    rightPanelVisibility, setRightPanelVisibility,
-    windowLevel, setWindowLevel,
-    crosshairs, setCrosshairs,
-    rectangleScissors, setRectangleScissors,
-    viewportNavigation, setViewportNavigation,
-    resetViewports, setResetViewports,
-    view, setView,
-  } = useContext(Context);
+    const context = useContext(Context);
+    
+    const handleOpacityChange = (event) => {
+        const newOpacity = parseFloat(event.target.value);
+        context.setOpacityToolValue(newOpacity);
+    };
 
-  const handleZoomChange = (event) => {
-    const newZoom = event.target.value;
-    setZoom(newZoom);
-  };
+    const handlePresetChange = (event) => {
+        const newPreset = event.target.value;
+        context.setPresetToolValue(newPreset);
+    };
 
-  const handleOpacityChange = (event) => {
-    const newOpacity = parseFloat(event.target.value);
-    setOpacity(newOpacity);
-  };
+    function handleOnNext() {
+        alert("Not yet implemented :(");
+    }
+    function handleOnPrevious() {
+        alert("Not yet implemented :(");
+    }
 
-  const handlePresetChange = (event) => {
-    const newPreset = event.target.value;
-    setSelectedPreset(newPreset);
-  };
+    return (
+        <div id="toolsPanel" className="overflow-y-auto no-scrollbars p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
+            {/*<div className="mb-2 font-semib  old">Tools</div>*/}
+            <ul className=" h-full pb-4">
 
-  const handleWindowLevelButtonClick = () => {
-    setWindowLevel(true);
-    setCrosshairs(false);
-    setRectangleScissors(false);
-  };
+                {/*Navigation Panel*/}
+                {
+                    context.navigationPanelVisible &&
+                    <NavigationPanel
+                        onNext={handleOnNext}
+                        onPrevious={handleOnPrevious}
+                    />
+                }
 
-  const handleCrosshairsButtonClick = () => {
-    setWindowLevel(false);
-    setCrosshairs(true);
-    setRectangleScissors(false);
-  };
+                {/*View Group*/}
+                {
+                    context.viewToolGroupVisible && (
+                        <>
+                            View:
+                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+                            {
+                                context.viewToolVolumeVisible &&
+                                <button 
+                                    title="Volume"
+                                    onClick={() => context.setViewToolGroupValue("volume")}
+                                    className={`w-full ${context.viewToolGroupValue === "volume" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                    <span className='material-symbols-rounded'>deployed_code</span>
+                                </button>
+                            }
+                            {
+                                context.viewToolProjectionVisible &&
+                                <button 
+                                    title="Maximum Intensity Projection"
+                                    onClick={() => context.setViewToolGroupValue("projection")} 
+                                    className={`w-full ${context.viewToolGroupValue === "projection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                    <span className='material-symbols-rounded'>light_mode</span>
+                                </button>
+                            }
+                            {
+                                context.viewToolStackVisible &&
+                                <button
+                                    title="Stack"
+                                    onClick={() => context.setViewToolGroupValue("stack")}
+                                    className={`w-full ${context.viewToolGroupValue === "stack" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                    <span className='material-symbols-rounded'>stacks</span>
+                                </button>
+                            }
+                            </li>
+                        </>
+                    )
+                }
 
-  const handleRectangleScissorsButtonClick = () => {
-    setWindowLevel(false);
-    setCrosshairs(false);
-    setRectangleScissors(true);
-  };
+                {/*Function Group*/}
+                {
+                    context.functionToolGroupVisible && (
+                        <>
+                            Function:
+                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+                                {
+                                    context.functionToolMaskVisible &&
+                                    <button
+                                        title="Mask"
+                                        onClick={() => context.setFunctionToolGroupValue("mask")} 
+                                        className={`w-full ${context.functionToolGroupValue === "mask" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                        <span className='material-symbols-rounded'>domino_mask</span>
+                                    </button>
+                                }
+                                {
+                                    context.functionToolBlackoutVisible &&
+                                    <button
+                                        title="Blackout"
+                                        onClick={() => context.setFunctionToolGroupValue("blackout")} 
+                                        className={`w-full ${context.functionToolGroupValue === "blackout" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                        <span className='material-symbols-rounded'>imagesearch_roller</span>
+                                    </button>
+                                }
+                                {
+                                    context.functionToolSliceRemoveVisible &&
+                                    <button
+                                        title="Slice Removal"
+                                        onClick={() => context.setFunctionToolGroupValue("sliceremove")} 
+                                        className={`w-full ${context.functionToolGroupValue === "sliceremove" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                        <span className='material-symbols-rounded'>content_cut</span>
+                                    </button>
+                                }
+                            </li>
+                        </>
+                    )
+                }
 
-  const handleZoomButtonClick = () => {
-    setViewportNavigation("Zoom");
-    // console.log('Zoom button clicked');
-  };
+                {/*Form Group*/}
+                {
+                    context.formToolGroupVisible && (
+                        <>
+                            Form:
+                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+                                {
+                                    context.formToolCuboidVisible &&
+                                    <button
+                                        title="Cuboid"
+                                        onClick={() => context.setFormToolGroupValue("cuboid")}
+                                        className={`w-full ${context.formToolGroupValue === "cuboid" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                        <span className='material-symbols-rounded'>square</span>
+                                    </button>
+                                }
+                                {
+                                    context.formToolCylinderVisible &&
+                                    <button
+                                        title="Cylinder"
+                                        onClick={() => context.setFormToolGroupValue("cylinder")}
+                                        className={`w-full ${context.formToolGroupValue === "cylinder" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                        <span className='material-symbols-rounded'>circle</span>
+                                    </button>
+                                }
+                            </li>
+                        </>
+                    )
+                }
 
-  const handlePanButtonClick = () => {
-    setViewportNavigation("Pan");
-    // console.log('Pan button clicked');
-  };
+                {/*Left-Click Group*/}
+                {
+                    context.leftClickToolGroupVisible && (
+                        <>
+                            Left-Click:
+                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+                            {
+                                context.leftClickToolWindowLevelVisible &&
+                                <button 
+                                    title="Window Level"
+                                    onClick={() => context.setLeftClickToolGroupValue("windowlevel")} 
+                                    className={`w-full ${context.leftClickToolGroupValue === "windowlevel" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                    <span className="material-symbols-rounded">exposure</span>
+                                </button>
+                            }
+                            {
+                                context.leftClickToolCrossHairsVisible &&
+                                <button 
+                                    title="Crosshairs"
+                                    onClick={() => context.setLeftClickToolGroupValue("crosshairs")} 
+                                    className={`w-full ${context.leftClickToolGroupValue === "crosshairs" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                    <span className="material-symbols-rounded">point_scan</span>
+                                </button>
+                            }
+                            {
+                                context.leftClickToolRectangleScissorsVisible &&
+                                <button 
+                                    title="Selection"
+                                    onClick={() => context.setLeftClickToolGroupValue("selection")} 
+                                    className={`w-full ${context.leftClickToolGroupValue === "selection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
+                                    <span className="material-symbols-rounded">gesture_select</span>
+                                </button>
+                            }
+                            </li>
+                        </>
+                    )
+                }
 
-  const handleVolumeButtonClick = () => {
-    setView("Volume");
-    // console.log('Volume button clicked');
-  };
+                {/*Right-Click Group*/}
+                {
+                    context.rightClickToolGroupVisible && (
+                        <>                            
+                            Right-Click:
+                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+                                {
+                                    context.rightClickToolZoomVisible &&
+                                    <button
+                                        onClick={() => context.setRightClickToolGroupValue("zoom")} 
+                                        className={`w-full ${context.rightClickToolGroupValue === "zoom" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
+                                        title='Zoom'>
+                                        <span className="material-symbols-rounded">search</span>
+                                    </button>
+                                }
+                                {
+                                    context.rightClickToolPanVisible &&
+                                    <button
+                                        onClick={() => context.setRightClickToolGroupValue("pan")} 
+                                        className={`w-full ${context.rightClickToolGroupValue === "pan" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
+                                        title='Pan'>
+                                        <span className="material-symbols-rounded">pan_tool</span>
+                                    </button>
+                                }
+                            </li>
+                        </>
+                    )
+                }
 
-  const handleProjectionButtonClick = () => {
-    setView("Projection");
-    // console.log('Projection button clicked');
-  };
+                {/*Opacity*/}
+                {
+                    context.opacityToolVisible &&
+                    <li className="pt-2 dark:bg-opacity-5 rounded-lg">
+                        Opacity:
+                        <input
+                            className='w-full cursor-pointer'
+                            type="range"
+                            min={context.opacityToolMin}
+                            max={context.opacityToolMax}
+                            step={context.opacityToolStep}
+                            value={context.opacityToolValue}
+                            onChange={handleOpacityChange}
+                        />
+                        <span>{context.opacityToolValue}</span>
+                    </li>
+                }
 
-  const handleAllButtonClick = () => {
-    setView("All");
-    // console.log('All button clicked');
-  };
+                {/*Preset*/}
+                {
+                    context.presetToolVisible &&
+                    <li className="pb-2 pt-2 rounded-lg">
+                        Preset:
+                            <select
+                            name="preset"
+                            value={context.presetToolValue} 
+                            onChange={handlePresetChange} 
+                            className="w-full cursor-pointer text-black dark:text-white border border-gray-300 dark:bg-slate-800 rounded-lg p-2 mt-1">
+                            {context.presetToolList.map((preset) => (<option key={preset} value={preset}>{preset}</option>))}
+                        </select>
+                    </li>
+                }
 
-  const handleResetViewportsButtonClick = () => {
-    setResetViewports(true);
-  };
-
-  function handleOnNext() {
-    alert("Not yet implemented :(");
-  }
-  function handleOnPrevious() {
-    alert("Not yet implemented :(");
-  }
-
-  return (
-    <div id="toolsPanel" className="overflow-y-auto no-scrollbars p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
-      {/*<div className="mb-2 font-semib  old">Tools</div>*/}
-      <ul className=" h-full pb-4">
-
-        {
-          layout === "MaskerVR" &&  
-          <NavigationPanel 
-            onNext={handleOnNext}
-            onPrevious={handleOnPrevious}
-          />
-        }
-
-        <label>View:</label>
-        <li className="pt-1 dark:bg-opacity-5  rounded-lg">
-          <button onClick={handleVolumeButtonClick}className={`w-full ${ view === "Volume" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            Volume
-          </button>
-        </li>
-        <li className=" pt-2 mb-4 dark:bg-opacity-5  rounded-lg">
-          <button onClick={handleProjectionButtonClick}className={`w-full ${ view === "Projection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            Projection
-          </button>
-        </li>
-        {/*<li className="pb-4 pt-2 dark:bg-opacity-5  rounded-lg">
-          <button onClick={handleAllButtonClick}className={`w-full ${ view === "All" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            All
-          </button>
-        </li>*/}
-
-        {
-          layout === "Masker" &&  
-          <>
-            <FunctionPanel />
-            <FormPanel />
-          </>
-        }
-
-        {/*<li className="mb-2 pb-2 pt-2 dark:bg-opacity-5  rounded-lg">
-          <label>Zoom:</label>
-          <input
-            className='w-full cursor-pointer'
-            type="range"
-            min="1"
-            max="250"
-            step="1"
-            value={zoom}
-            onChange={handleZoomChange}
-          />
-          <span>{zoom}</span>
-        </li>*/}
-        <label>Left-Click:</label>
-        <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handleWindowLevelButtonClick} className={`w-full ${ windowLevel ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            Window Level
-          </button>
-        </li>
-        <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handleCrosshairsButtonClick} className={`w-full ${ crosshairs ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-            Crosshairs
-          </button>
-        </li>
-
-        {
-          layout === "Masker" &&  
-          <li className="mb-1 pt-1 rounded-lg">
-            <button onClick={handleRectangleScissorsButtonClick} className={`w-full ${ rectangleScissors ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-              Selection
-            </button>
-          </li>
-        }
-        {/*{ rectangleScissors ? <><li className="pb-1 pt-1 rounded-lg">
-          <button className={`w-full bg-slate-900`}>
-            Expand
-          </button>
-        </li>
-        <li className="pb-1 pt-1 rounded-lg">
-          <button className={`w-full bg-slate-900`}>
-            Clear
-          </button>
-        </li>
-        <li className="pb-2 pt-1 rounded-lg">
-          <button className={`w-full  bg-slate-900`}>
-            Accept
-          </button>
-        </li>
-        </> : null } */}
-        <div className="h-2"></div>
-        <label>Right-Click:</label>
-        <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handleZoomButtonClick} className={`w-full ${ viewportNavigation === "Zoom" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
-          title='Zoom'>
-            <span className="material-symbols-rounded">
-              search
-            </span>
-          </button>
-        </li>
-        <li className="pb-1 pt-1 rounded-lg">
-          <button onClick={handlePanButtonClick} className={`w-full ${ viewportNavigation === "Pan" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}
-          title='Pan'>
-            <span className="material-symbols-rounded">
-              pan_tool
-            </span>
-          </button>
-        </li>
-        <li className="pt-2 dark:bg-opacity-5 rounded-lg">
-          <label>Opacity:</label>
-          <input
-            className='w-full cursor-pointer'
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={opacity}
-            onChange={handleOpacityChange}
-          />
-          <span>{opacity}</span>
-        </li>
-        <li className="pb-2 pt-2 rounded-lg">
-          <label>Preset:</label>
-          <select value={selectedPreset} onChange={handlePresetChange} className="w-full cursor-pointer text-black dark:text-white border border-gray-300 dark:bg-slate-800 rounded-lg p-2 mt-1">
-            {presets.map((preset) => (
-              <option key={preset} value={preset}>{preset}</option>
-            ))}
-          </select>
-        </li>
-        <li className="mb-2 pb-2 pt-4 rounded-lg">
-          <button onClick={handleResetViewportsButtonClick}className="w-full text-white bg-red-600"
-          title='Reset Viewports'>
-            <span className="material-symbols-rounded">
-              refresh
-            </span>
-          </button>
-        </li>
-      </ul>
-    </div>
-  );
+                {/*Reset Viewports*/}
+                {
+                    context.resetViewportsVisible &&
+                    <li className="mb-2 pb-2 pt-4 rounded-lg">
+                        <button 
+                            onClick={() => context.setResetViewportsValue(true)}
+                            className="w-full text-white bg-red-600"
+                            title='Reset Viewports'>
+                            <span className="material-symbols-rounded">
+                                refresh
+                            </span>
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    );
 }
 
 export default ToolsPanel;

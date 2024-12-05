@@ -8,9 +8,9 @@ import {
 
 import ErrorPage from './error-page';
 import './index.css'
-import './transitions.css';
+//import './transitions.css';
 
-import App from './App';
+//import App from './App';
 
 import Home from './routes/home';
 
@@ -30,6 +30,10 @@ import MaskVR, {
 	loader as vrLoader,
 } from './routes/mask/vr';
 
+import ReviewDICOM, {
+	loader as dicomReviewLoader,
+} from './routes/dicom/review';
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -47,14 +51,19 @@ const router = createBrowserRouter([
 		loader: vrLoader,
 	},
 	{
-		path: "review/iec/:iec",
+		path: "review/mask/iec/:iec",
 		element: <ReviewIEC />,
 		loader: iecReviewLoader,
 	},
 	{
-		path: "review/nifti/:fileId",
+		path: "review/nifti/fileId/:fileId",
 		element: <ReviewNIFTI />,
 		loader: niftiReviewLoader,
+	},
+	{
+		path: "review/dicom/iec/:iec",
+		element: <ReviewDICOM />,
+		loader: dicomReviewLoader,
 	},
 ], {
 	basename: "/mira",

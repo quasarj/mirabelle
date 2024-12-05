@@ -5,26 +5,31 @@ import MaskerPanel from './MaskerPanel.jsx';
 import ReviewPanel from './ReviewPanel.jsx';
 import NavigationPanel from './NavigationPanel.jsx';
 
-function MiddlelBottomPanel({ onExpand,
+function MiddleBottomPanel({
+    onExpand,
     onClear,
     onAccept,
+
     onNext,
     onPrevious,
+
     onMarkAccepted,
     onMarkRejected,
     onMarkSkip,
     onMarkNonMaskable,
+
     onMarkGood,
     onMarkBad,
     onMarkBlank,
     onMarkScout,
-    onMarkOther}) {
+    onMarkOther,
+    onMarkFlag}) {
 
     const {
-        layout,
+        layout, maskerPanelVisible, maskerReviewPanelVisible, visualReviewPanelVisible, navigationPanelVisible
     } = useContext(Context);
 
-    if (layout === "Masker" || layout === "MaskerVR" || layout === "MaskerReview") {
+    if (maskerPanelVisible || maskerReviewPanelVisible) {
         return (
             <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
                 <MaskerPanel
@@ -36,7 +41,7 @@ function MiddlelBottomPanel({ onExpand,
                     onMarkSkip={onMarkSkip}
                     onMarkNonMaskable={onMarkNonMaskable}
                 />
-                {layout === "MaskerVR" && (
+                {navigationPanelVisible && (
                     <NavigationPanel
                         onNext={onNext}
                         onPrevious={onPrevious}
@@ -46,7 +51,7 @@ function MiddlelBottomPanel({ onExpand,
         );
     }
 
-    else if (layout === "NiftiReview" || layout === "DicomReview") {
+    else if (visualReviewPanelVisible) {
         return (
             <div id="middleBottomPanel" className="w-full h-12 flex justify-center gap-2">
                 <ReviewPanel
@@ -55,13 +60,16 @@ function MiddlelBottomPanel({ onExpand,
                     onMarkBlank={onMarkBlank}
                     onMarkScout={onMarkScout}
                     onMarkOther={onMarkOther}
+                    onMarkFlag={onMarkFlag}
                 />
-                {/*<NavigationPanel*/}
-                {/*    onNext={onNext}*/}
-                {/*    onPrevious={onPrevious}*/}
-                {/*/>*/}
+                {navigationPanelVisible && (
+                    <NavigationPanel
+                        onNext={onNext}
+                        onPrevious={onPrevious}
+                    />
+                )}
             </div>
         );
     }
 }
-export default MiddlelBottomPanel;
+export default MiddleBottomPanel;
