@@ -51,17 +51,17 @@ const router = createBrowserRouter([
 		loader: vrLoader,
 	},
 	{
-		path: "review/iec/:iec",
+		path: "review/mask/iec/:iec",
 		element: <ReviewIEC />,
 		loader: iecReviewLoader,
 	},
 	{
-		path: "review/nifti/:fileId",
+		path: "review/nifti/fileId/:fileId",
 		element: <ReviewNIFTI />,
 		loader: niftiReviewLoader,
 	},
 	{
-		path: "review/dicom/:iec",
+		path: "review/dicom/iec/:iec",
 		element: <ReviewDICOM />,
 		loader: dicomReviewLoader,
 	},
