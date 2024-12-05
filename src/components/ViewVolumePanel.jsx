@@ -18,7 +18,7 @@ import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-l
 // Utilities
 import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
-import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus } from '../visualreview';
+import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -1282,7 +1282,6 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
         if (context.resetViewportsValue) {
 
-
             // Reset View
             if (context.viewToolGroupVisible) {
                 //// Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
@@ -1323,154 +1322,33 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 context.setPresetToolValue(context.presetToolValue);
             }
 
-            // Reset stack layouts
-            if (context.viewport_layout == 'stack') {
-
-                // Reset cameras
-                const renderingEngine = renderingEngineRef.current;
-                renderingEngine.getViewports().forEach((viewport) => {
+            // reset cameras for all the viewports that its wrapper is visible
+            const renderingEngine = renderingEngineRef.current;
+            renderingEngine.getViewports().forEach((viewport) => {
+                // if the viewport parent node is visible, reset camera
+                const viewportElement = document.getElementById(viewport.id);
+                if (viewportElement.parentNode.style.display !== 'none') {
                     viewport.resetCamera(true, true, true, true);
                     viewport.render();
-                });
-
-                // Reset Window Level
-                if (context.leftClickToolWindowLevelVisible) {
-                    // reset window level tool (https://github.com/cornerstonejs/cornerstone3D/blob/089ac3e50d40067ff93e73a4c0e6bbf6594a6c98/packages/tools/src/tools/WindowLevelTool.ts)
-                    const viewportId = 'dicom_stack';
-                    const viewport = renderingEngine.getViewport(viewportId);
-
-                    // Access the currently displayed image
-                    const imageId = viewport.getCurrentImageId();
-                    const image = cornerstone.cache.getImage(imageId);
-
-                    // Reset window level to default (from image metadata)
-                    viewport.setProperties({
-                        voiRange: cornerstone.utilities.windowLevel.toLowHighRange(image.windowWidth, image.windowCenter),
-                    });
                 }
+            });
 
-                // Remove active segmentation
-                if (context.leftClickToolRectangleScissorsVisible) {
-                    const toolGroupId = 'stack_tool_group';
-                    const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
+            // Remove all segmentations
+            const segVolume = cornerstone.cache.getVolume(segId);
+            //console.log("segVolume is", segVolume);
+            const scalarData = segVolume.scalarData;
+            // console.log("scalarData is", scalarData);
+            scalarData.fill(0);
+            // redraw segmentation
+            cornerstoneTools.segmentation
+                .triggerSegmentationEvents
+                .triggerSegmentationDataModified(segId);
 
-                    if (segmentationIds.length) {
-                        // Get active segmentation
-                        const activeSegmentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentation(toolGroupId);
-                        const activeSegmentationRepresentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentationRepresentation(toolGroupId);
+            // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
+            setTimeout(() => {
 
-                        if (activeSegmentation && activeSegmentationRepresentation) {
-                            // Remove the segmentation from the tool group
-                            cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(toolGroupId, [
-                                activeSegmentationRepresentation.segmentationRepresentationUID
-                            ]);
-
-                            // Remove the segmentation from the state
-                            cornerstoneTools.segmentation.state.removeSegmentation(activeSegmentation.segmentationId);
-
-                            // Remove cached images associated with the segmentation
-                            const labelmap = activeSegmentation.representationData[cornerstoneTools.Enums.SegmentationRepresentations.Labelmap];
-
-                            if (labelmap.imageIdReferenceMap) {
-                                labelmap.imageIdReferenceMap.forEach((derivedImagesId) => {
-                                    cornerstone.cache.removeImageLoadObject(derivedImagesId);
-                                });
-                            }
-
-                            // Create a new segmentation
-                            async function createSegmentation() {
-                                const group = getOrCreateToolgroup(toolGroupId);
-                                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-
-                                // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-                                group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
-
-                                // Get the current imageId from the viewport
-                                const viewportId = 'dicom_stack';
-                                const viewport = renderingEngine.getViewport(viewportId);
-                                const currentImageId = viewport.getCurrentImageId();
-
-                                // Create a derived segmentation image for the current image
-                                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
-
-                                // Create a unique segmentationId
-                                //const segmentationId = `SEGMENTATION_${newSegImageId}`;
-
-                                // Add the segmentation to the segmentation state
-                                cornerstoneTools.segmentation.addSegmentations([
-                                    {
-                                        segmentationId: segId,
-                                        representation: {
-                                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                                            data: {
-                                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                                            },
-                                        },
-                                    },
-                                ]);
-
-                                // Add the segmentation representation to the tool group
-                                const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                                    toolGroupId,
-                                    [
-                                        {
-                                            segmentationId: segId,
-                                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                                        },
-                                    ]
-                                );
-
-                                // Set the active segmentation representation
-                                cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
-                                    toolGroupId,
-                                    uid
-                                );
-
-                                // RectangleScissorsTool
-                                if (context.leftClickToolGroupValue === 'selection') {
-                                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                                        bindings: [
-                                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                                        ],
-                                    });
-
-                                    console.log('selection activated');
-                                }
-                            }
-                            createSegmentation();
-                        }
-                    }
-                }
-
-
-                ////Remove active segmentation
-                //if (context.leftClickToolRectangleScissorsVisible) {
-                //    // Remove all segmentations
-
-                //    const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
-                //    console.log("segmentationIds is", segmentationIds);
-
-                //    const segVolume = cornerstone.cache.getVolume(segId);
-                //    console.log("segVolume is", segVolume);
-
-                //    const scalarData = segVolume.scalarData;
-                //    console.log("scalarData is", scalarData);
-
-                //    scalarData.fill(0);
-                //    // redraw segmentation
-                //    cornerstoneTools.segmentation
-                //        .triggerSegmentationEvents
-                //        .triggerSegmentationDataModified(segId);
-                //}
-
-
-            }
-            else if (context.viewport_layout == 'volume') {
-
-                // reset cameras for all the viewports that its wrapper is visible
-                const renderingEngine = renderingEngineRef.current;
+                // if the viewport parent node is visible, reset camera
                 renderingEngine.getViewports().forEach((viewport) => {
-                    // if the viewport parent node is visible, reset camera
                     const viewportElement = document.getElementById(viewport.id);
                     if (viewportElement.parentNode.style.display !== 'none') {
                         viewport.resetCamera(true, true, true, true);
@@ -1478,42 +1356,13 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     }
                 });
 
-                // Remove all segmentations
-                const segVolume = cornerstone.cache.getVolume(segId);
-                //console.log("segVolume is", segVolume);
-                const scalarData = segVolume.scalarData;
-                // console.log("scalarData is", scalarData);
-                scalarData.fill(0);
-                // redraw segmentation
-                cornerstoneTools.segmentation
-                    .triggerSegmentationEvents
-                    .triggerSegmentationDataModified(segId);
-
-
-
-
-                // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
-                setTimeout(() => {
-
-                    // if the viewport parent node is visible, reset camera
-                    renderingEngine.getViewports().forEach((viewport) => {
-                        const viewportElement = document.getElementById(viewport.id);
-                        if (viewportElement.parentNode.style.display !== 'none') {
-                            viewport.resetCamera(true, true, true, true);
-                            viewport.render();
-                        }
-                    });
-
-                    // reset crosshairs tool slab thickness if the volume viewport is visible
-                    if (document.getElementById('vol_axial_wrapper').style.display !== 'none') {
-                        const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
-                        const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
-                        crosshairsToolInstance.resetCrosshairs();
-                    }
-                }, 150);
-
-
-            }
+                // reset crosshairs tool slab thickness if the volume viewport is visible
+                if (document.getElementById('vol_axial_wrapper').style.display !== 'none') {
+                    const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+                    const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
+                    crosshairsToolInstance.resetCrosshairs();
+                }
+            }, 150);
         }
         context.setResetViewportsValue(false);
 
@@ -1553,6 +1402,8 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             .triggerSegmentationDataModified(segId);
     }
     async function handleAcceptSelection() {
+        const maskForm = context.formToolGroupValue
+        const maskFunction = context.functionToolGroupValue
         await finalCalc(coords, volumeId, iec, maskForm, maskFunction);
     }
     async function handleMarkAccepted() {
@@ -1572,27 +1423,52 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         alert("Marked as Non-Maskable!");
     }
     async function handleMarkGood() {
-        await setNiftiStatus(files[0], "Good");
+        if (context.nifti) {
+            await setNiftiStatus(files[0], "Good");
+        } else {
+            await setDicomStatus(iec, "Good");
+        }
         alert("Marked as Good!");
     }
     async function handleMarkBad() {
-        await setNiftiStatus(files[0], "Bad");
+        if (context.nifti) {
+            await setNiftiStatus(files[0], "Bad");
+        } else {
+            await setDicomStatus(iec, "Bad");
+        }
         alert("Marked as Bad!");
+
     }
     async function handleMarkBlank() {
-        await setNiftiStatus(files[0], "Blank");
+        if (context.nifti) {
+            await setNiftiStatus(files[0], "Blank");
+        } else {
+            await setDicomStatus(iec, "Blank");
+        }
         alert("Marked as Blank!");
     }
     async function handleMarkScout() {
-        await setNiftiStatus(files[0], "Scout");
+        if (context.nifti) {
+            await setNiftiStatus(files[0], "Scout");
+        } else {
+            await setDicomStatus(iec, "Scout");
+        }
         alert("Marked as Scout!");
     }
     async function handleMarkOther() {
-        await setNiftiStatus(files[0], "Other");
+        if (context.nifti) {
+            await setNiftiStatus(files[0], "Other");
+        } else {
+            await setDicomStatus(iec, "Other");
+        }
         alert("Marked as Other!");
     }
     async function handleMarkFlag() {
-        await setNiftiStatus(files[0], "Flag for Masking");
+        if (context.nifti) {
+            await setMaskingFlag(files[0]);
+        } else {
+            await setMaskingFlag(iec);
+        }
         alert("Flagged for Masking");
     }
 

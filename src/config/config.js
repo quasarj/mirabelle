@@ -190,7 +190,6 @@ const VISUAL_REVIEW_CONFIG = {
     visualReviewPanelBlankVisible: true,
     visualReviewPanelScoutVisible: true,
     visualReviewPanelOtherVisible: true,
-    visualReviewPanelFlagVisible: true,
 };
 
 const STACK_CONFIG = {
@@ -215,7 +214,7 @@ const VOLUME_CONFIG = {
     viewToolGroupValue: 'volume',
     viewToolVolumeVisible: true,
     viewToolProjectionVisible: true,
-    viewToolStackVisible: true,
+    viewToolStackVisible: false,
 
     functionToolGroupValue: 'mask',
     functionToolMaskVisible: true,
@@ -231,6 +230,7 @@ const VOLUME_CONFIG = {
     opacityToolVisible: true,
     presetToolVisible: true,
 
+    visualReviewPanelFlagVisible: true,
 };
 
 // Extend base configuration with route-specific overrides

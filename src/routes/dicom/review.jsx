@@ -9,9 +9,7 @@ import { TASK_CONFIGS } from '../../config/config';
 
 export async function loader({ params }) {
 
-    //const details = await getDicomDetails(params.fileId);
-    let details;
-    //const files = await getFiles(params.iec);
+    const details = await getDicomDetails(params.iec);
     const fileInfo = await getIECInfo(params.iec);
     return { details, fileInfo, iec: params.iec };
 }
