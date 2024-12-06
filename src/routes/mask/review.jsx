@@ -11,7 +11,7 @@ export async function loader({ params }) {
 
     const details = await getDetails(params.iec);
     //const files = await getFiles(params.iec);
-    const fileInfo = await getIECInfo(params.iec);
+    const fileInfo = await getIECInfo(params.iec, true);
     return { details, fileInfo, iec: params.iec };
 }
 

@@ -147,14 +147,20 @@ export async function getFiles(iec) {
 	return details.file_ids;
 }
 
-export async function getIECInfo(iec) {
+export async function getIECInfo(iec, mask_review=false) {
 
-	let response = await fetch(`/papi/v1/iecs/${iec}/frames`);
+	let response
+
+	if (mask_review) {
+		response = await fetch(`/papi/v1/masking/${iec}/reviewfiles`);
+	} else {
+		response = await fetch(`/papi/v1/iecs/${iec}/frames`);
+	}
 
 	let volumetric;
 	let frames = [];
 
-	if (response.ok) {
+	if (response && response.ok) {
 		let fileInfo = await response.json();
 		volumetric = fileInfo.volumetric;
 
@@ -170,14 +176,6 @@ export async function getIECInfo(iec) {
 		}
 	}
 	return { volumetric, frames };
-}
-
-export async function getReviewFiles(iec) {
-
-	const response = await fetch(`/papi/v1/masking/${iec}/reviewfiles`);
-	const details = await response.json();
-
-	return details;
 }
 
 export async function getIECsForVR(visual_review_id) {
