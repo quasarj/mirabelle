@@ -28,16 +28,8 @@ function CSStackDemo() {
       <CSVolumeFiles
         renderingEngine={renderingEngine2}
         toolGroup={toolGroup2}
-        series2="1.3.6.1.4.1.14519.5.2.1.120504135771743324054518448238055482080:7333"
-        series_bad_no_iop="1.3.6.1.4.1.14519.5.2.1.2454584743577153265662869565560000617@260"
-        series="1.3.6.1.4.1.14519.5.2.1.7009.2401.339279835610748520609872183315"
-      />
-
-      <CSToolsPanel toolGroup={toolGroup} />
-      <CSStackFiles 
-        renderingEngine={renderingEngine}
-        toolGroup={toolGroup}
-        series="1.3.6.1.4.1.14519.5.2.1.2454584743577153265662869565560000617@260"
+        series="1.3.6.1.4.1.14519.5.2.1.4801.5885.194372676203706186283173165298"
+	    timepoint="2"
       />
     </div>
   );

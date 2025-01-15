@@ -3,42 +3,28 @@
  * This component loads the files into a volume 
  */
 import React, { useState, useEffect, useRef } from 'react';
-import { volumeLoader } from "@cornerstonejs/core"
+import { volumeLoader } from "@cornerstonejs/core";
+import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
 
 import CSVolumeViewPanel from './CSVolumeViewPanel';
 
-function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
+function CSVolumeFiles({ renderingEngine, toolGroup, series, timepoint }) {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [files, setFiles] = useState([]);
   const [volumeId, setVolumeId] = useState(null);
 
   useEffect(() => {
     const initialize = async () => {
-
-      // TODO: this can be cleaned up
-      // This is just a quick and dirty implementation of reading the
-      // frames data from a series
-      // Perhaps this series could be a prop?
-      // let series = '1.3.6.1.4.1.14519.5.2.1.2454584743577153265662869565560000617@260';
-      let response = await fetch(`/papi/v1/series/${series}/frames`);
-      let final_files = [];
-      if (response.ok) {
-        let resjson = await response.json();
-        for (const o of resjson) {
-          console.log(o);
-          if (o.frames == 1) {
-            final_files.push(`wadouri:/papi/v1/files/${o.file_id}/data`);
-          } else {
-            for (let i = 0; i < o.frames; i++) {
-              final_files.push(`wadouri:/papi/v1/files/${o.file_id}/data?frame=${i}`);
-            }
-          }
-        }
-      }
+      const imageIds = await createImageIdsAndCacheMetaData({
+        StudyInstanceUID:
+          "doesn't really matter",
+        SeriesInstanceUID:
+          series,
+        wadoRsRoot: `/papi/v1/wadors/timepoint/${timepoint}`,
+      })
 
       const newvolumeId = `vol-${series}`; // TODO fix this
       const volume = await volumeLoader.createAndCacheVolume(newvolumeId, {
-        imageIds: final_files,
+        imageIds,
       })
 
       // Set the volume to load
@@ -47,7 +33,6 @@ function CSVolumeFiles({ renderingEngine, toolGroup, series }) {
 
 
       setVolumeId(newvolumeId);
-      setFiles(final_files); // TODO this should be removed
       setIsInitialized(true);
     };
 
