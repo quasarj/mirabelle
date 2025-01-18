@@ -9,14 +9,23 @@ import { Context } from './Context.js';
 
 // Cornerstone
 import * as cornerstone from '@cornerstonejs/core';
+
+import {
+    cornerstoneStreamingImageVolumeLoader,
+    cornerstoneStreamingDynamicImageVolumeLoader, 
+} from '@cornerstonejs/core';
+
 import * as cornerstoneTools from '@cornerstonejs/tools';
-import { cornerstoneStreamingImageVolumeLoader, cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
+// import { cornerstoneStreamingImageVolumeLoader, cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dicomParser from 'dicom-parser';
-import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
-
+// import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
+import {
+  cornerstoneNiftiImageLoader,
+  createNiftiImageIdsAndCacheMetadata,
+} from '@cornerstonejs/nifti-volume-loader';
 // Utilities
-import { expandSegTo3D } from '../utilities';
+// import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getDetails, setStatus } from '../nifti';
 
@@ -53,7 +62,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
     let coords;
     //let segId = 'seg' + volumeName;
-    let segId = 'seg_id';
+    // let segId = 'seg_id';
     let volumeId;
 
     //// if the browser url contains the word nifti, then set a nifti variable to true
@@ -79,40 +88,40 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             volumeLoader.registerUnknownVolumeLoader(cornerstoneStreamingImageVolumeLoader);
             volumeLoader.registerVolumeLoader('cornerstoneStreamingImageVolume', cornerstoneStreamingImageVolumeLoader);
             volumeLoader.registerVolumeLoader('cornerstoneStreamingDynamicImageVolume', cornerstoneStreamingDynamicImageVolumeLoader);
-            volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
+            volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageLoader);
             // todo: add stack loader for single image
         }
 
         function initCornerstoneDICOMImageLoader() {
             const { preferSizeOverAccuracy, useNorm16Texture } = cornerstone.getConfiguration().rendering;
-            cornerstoneDICOMImageLoader.external.cornerstone = cornerstone;
-            cornerstoneDICOMImageLoader.external.dicomParser = dicomParser;
-            cornerstoneDICOMImageLoader.configure({
-                useWebWorkers: true,
-                decodeConfig: {
-                    convertFloatPixelDataToInt: false,
-                    use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
-                },
-            });
+            // cornerstoneDICOMImageLoader.external.cornerstone = cornerstone;
+            // cornerstoneDICOMImageLoader.external.dicomParser = dicomParser;
+            // cornerstoneDICOMImageLoader.configure({
+            //     useWebWorkers: true,
+            //     decodeConfig: {
+            //         convertFloatPixelDataToInt: false,
+            //         use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
+            //     },
+            // });
 
-            let maxWebWorkers = 1;
+            // let maxWebWorkers = 1;
 
-            if (navigator.hardwareConcurrency) {
-                maxWebWorkers = Math.min(navigator.hardwareConcurrency, 7);
-            }
+            // if (navigator.hardwareConcurrency) {
+            //     maxWebWorkers = Math.min(navigator.hardwareConcurrency, 7);
+            // }
 
-            const config = {
-                maxWebWorkers,
-                startWebWorkersOnDemand: false,
-                taskConfiguration: {
-                    decodeTask: {
-                        initializeCodecsOnStartup: false,
-                        strict: false,
-                    },
-                },
-            };
+            // const config = {
+            //     maxWebWorkers,
+            //     startWebWorkersOnDemand: false,
+            //     taskConfiguration: {
+            //         decodeTask: {
+            //             initializeCodecsOnStartup: false,
+            //             strict: false,
+            //         },
+            //     },
+            // };
 
-            cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
+            // cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
         }
 
         const resizeObserver = new ResizeObserver(() => {
@@ -199,27 +208,27 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             }
 
             // Segmentations
-            cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+            // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
 
             // RectangleScissorsTool
-            cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+            // cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
 
             // Activate the RectangleScissorsTool
-            group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+            // group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-            if (context.leftClickToolGroupValue === 'selection') {
-                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ],
-                });
+            // if (context.leftClickToolGroupValue === 'selection') {
+            //     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+            //         bindings: [
+            //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+            //         ],
+            //     });
 
-                //console.log('selection activated');
-            }
+            //     //console.log('selection activated');
+            // }
         }
 
         function setupVolumePanel(panelId) {
@@ -236,7 +245,6 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             panelWrapper.style.borderRadius = '8px';
             panelWrapper.style.overflow = 'hidden';
             panelWrapper.style.backgroundColor = 'black';
-            panelWrapper.style.visibility = 'hidden';
 
             // remove default button styling
             resizeButton.style.border = 'none';
@@ -422,8 +430,8 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
             // Segmentation Display
             // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-            t3dToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            t3dToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // t3dToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // t3dToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
         }
 
         function setupVolViewportTools() {
@@ -473,9 +481,9 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             }
 
             try {
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                // cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                // cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
                 cornerstoneTools.addTool(cornerstoneTools.PanTool);
                 cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
                 cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
@@ -492,22 +500,22 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             group.addViewport('vol_coronal', 'viewer_render_engine');
 
             // Stack Scroll Tool
-            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+            // group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+            // group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-            group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+            // group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-            if (context.leftClickToolGroupValue === 'selection') {
-                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ]
-                });
-            }
+            // if (context.leftClickToolGroupValue === 'selection') {
+            //     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+            //         bindings: [
+            //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+            //         ]
+            //     });
+            // }
 
             group.addTool(cornerstoneTools.PanTool.toolName);
             group.addTool(cornerstoneTools.ZoomTool.toolName);
@@ -618,9 +626,9 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             }
 
             try {
-                cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                // cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
+                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                // cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
                 cornerstoneTools.addTool(cornerstoneTools.PanTool);
                 cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
                 cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
@@ -637,22 +645,22 @@ function CornerstoneViewer({ volumeName, files, iec }) {
             group.addViewport('mip_coronal', 'viewer_render_engine');
 
             // Stack Scroll Tool
-            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+            // group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+            // group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-            group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+            // group.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
 
-            if (context.leftClickToolGroupValue === 'selection') {
-                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                    bindings: [
-                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                    ]
-                });
-            }
+            // if (context.leftClickToolGroupValue === 'selection') {
+            //     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+            //         bindings: [
+            //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+            //         ]
+            //     });
+            // }
 
             group.addTool(cornerstoneTools.PanTool.toolName);
             group.addTool(cornerstoneTools.ZoomTool.toolName);
@@ -722,7 +730,8 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 await cornerstone.init();
                 cornerstoneTools.init();
                 initVolumeLoader();
-                initCornerstoneDICOMImageLoader();
+                // initCornerstoneDICOMImageLoader();
+                cornerstoneDICOMImageLoader.init();
                 loaded.loaded = true;
             }
 
@@ -806,6 +815,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                         element: volAxialContent.childNodes[0],
                         defaultOptions: {
                             orientation: cornerstone.Enums.OrientationAxis.AXIAL,
+                            parallelScale: 0.5,
                         },
                     },
                     {
@@ -1030,7 +1040,7 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                     volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
                 } else {
                     let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
-                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList });
+                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList, progressiveRendering: false });
                 }
             }
         }
@@ -1053,31 +1063,31 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 const currentImageId = viewport.getCurrentImageId();
 
                 // Create a derived segmentation image for the current image
-                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+                // const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
                 // Add the segmentation to the segmentation state
-                cornerstoneTools.segmentation.addSegmentations([
-                    {
-                        segmentationId: segId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                            },
-                        },
-                    },
-                ]);
+                // cornerstoneTools.segmentation.addSegmentations([
+                //     {
+                //         segmentationId: segId,
+                //         representation: {
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //             data: {
+                //                 imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                //             },
+                //         },
+                //     },
+                // ]);
 
                 // Add the segmentation representation to the tool group
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'stack_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'stack_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
 
             }
             else if (context.viewport_layout == 'volume') {
@@ -1127,42 +1137,42 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 //cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
 
                 // create and bind a new segmentation
-                await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
-                    volumeId,
-                    { volumeId: segId }
-                );
+                // await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                //     volumeId,
+                //     { volumeId: segId }
+                // );
 
-                cornerstoneTools.segmentation.addSegmentations([
-                    {
-                        segmentationId: segId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                volumeId: segId,
-                            },
-                        },
-                    },
-                ]);
+                // cornerstoneTools.segmentation.addSegmentations([
+                //     {
+                //         segmentationId: segId,
+                //         representation: {
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //             data: {
+                //                 volumeId: segId,
+                //             },
+                //         },
+                //     },
+                // ]);
 
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'vol_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'vol_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
 
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'mip_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'mip_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
             }
 
             setFilesLoaded(true);
@@ -1257,16 +1267,16 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                     }
                 }
 
-                // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
-                if (context.leftClickToolGroupValue === 'selection') {
-                    stackToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                        bindings: [
-                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                        ],
-                    });
-                } else {
-                    stackToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
-                }
+                // // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
+                // if (context.leftClickToolGroupValue === 'selection') {
+                //     stackToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                //         bindings: [
+                //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                //         ],
+                //     });
+                // } else {
+                //     stackToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                // }
             }
         }
         else if (context.viewport_layout == 'volume') {
@@ -1299,15 +1309,15 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 }
 
                 // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
-                if (context.leftClickToolGroupValue === 'selection') {
-                    volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                        bindings: [
-                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                        ],
-                    });
-                } else {
-                    volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
-                }
+                // if (context.leftClickToolGroupValue === 'selection') {
+                //     volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                //         bindings: [
+                //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                //         ],
+                //     });
+                // } else {
+                //     volToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                // }
             }
 
             // MIPs
@@ -1339,15 +1349,15 @@ function CornerstoneViewer({ volumeName, files, iec }) {
 
 
                 // Activate or deactivate the RectangleScissorsTool based on the rectangleScissors state
-                if (context.leftClickToolGroupValue === 'selection') {
-                    mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                        bindings: [
-                            { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                        ],
-                    });
-                } else {
-                    mipToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
-                }
+                // if (context.leftClickToolGroupValue === 'selection') {
+                //     mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                //         bindings: [
+                //             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                //         ],
+                //     });
+                // } else {
+                //     mipToolGroup.setToolDisabled(cornerstoneTools.RectangleScissorsTool.toolName);
+                // }
             }
         }
     }, [context.leftClickToolGroupValue]);
@@ -1508,97 +1518,97 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 }
 
                 // Remove active segmentation
-                if (context.leftClickToolRectangleScissorsVisible) {
-                    const toolGroupId = 'stack_tool_group';
-                    const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
+                // if (context.leftClickToolRectangleScissorsVisible) {
+                //     const toolGroupId = 'stack_tool_group';
+                //     const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
 
-                    if (segmentationIds.length) {
-                        // Get active segmentation
-                        const activeSegmentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentation(toolGroupId);
-                        const activeSegmentationRepresentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentationRepresentation(toolGroupId);
+                //     if (segmentationIds.length) {
+                //         // Get active segmentation
+                //         const activeSegmentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentation(toolGroupId);
+                //         const activeSegmentationRepresentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentationRepresentation(toolGroupId);
 
-                        if (activeSegmentation && activeSegmentationRepresentation) {
-                            // Remove the segmentation from the tool group
-                            cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(toolGroupId, [
-                                activeSegmentationRepresentation.segmentationRepresentationUID
-                            ]);
+                //         if (activeSegmentation && activeSegmentationRepresentation) {
+                //             // Remove the segmentation from the tool group
+                //             cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(toolGroupId, [
+                //                 activeSegmentationRepresentation.segmentationRepresentationUID
+                //             ]);
 
-                            // Remove the segmentation from the state
-                            cornerstoneTools.segmentation.state.removeSegmentation(activeSegmentation.segmentationId);
+                //             // Remove the segmentation from the state
+                //             cornerstoneTools.segmentation.state.removeSegmentation(activeSegmentation.segmentationId);
 
-                            // Remove cached images associated with the segmentation
-                            const labelmap = activeSegmentation.representationData[cornerstoneTools.Enums.SegmentationRepresentations.Labelmap];
+                //             // Remove cached images associated with the segmentation
+                //             const labelmap = activeSegmentation.representationData[cornerstoneTools.Enums.SegmentationRepresentations.Labelmap];
 
-                            if (labelmap.imageIdReferenceMap) {
-                                labelmap.imageIdReferenceMap.forEach((derivedImagesId) => {
-                                    cornerstone.cache.removeImageLoadObject(derivedImagesId);
-                                });
-                            }
+                //             if (labelmap.imageIdReferenceMap) {
+                //                 labelmap.imageIdReferenceMap.forEach((derivedImagesId) => {
+                //                     cornerstone.cache.removeImageLoadObject(derivedImagesId);
+                //                 });
+                //             }
 
-                            // Create a new segmentation
-                            async function createSegmentation() {
-                                const group = getOrCreateToolgroup(toolGroupId);
-                                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                //             // Create a new segmentation
+                //             async function createSegmentation() {
+                //                 const group = getOrCreateToolgroup(toolGroupId);
+                //                 // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
                     
-                                // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-                                group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+                //                 // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+                //                 group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-                                // Get the current imageId from the viewport
-                                const viewportId = 'dicom_stack';
-                                const viewport = renderingEngine.getViewport(viewportId);
-                                const currentImageId = viewport.getCurrentImageId();
+                //                 // Get the current imageId from the viewport
+                //                 const viewportId = 'dicom_stack';
+                //                 const viewport = renderingEngine.getViewport(viewportId);
+                //                 const currentImageId = viewport.getCurrentImageId();
 
-                                // Create a derived segmentation image for the current image
-                                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+                //                 // Create a derived segmentation image for the current image
+                //                 const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
-                                // Create a unique segmentationId
-                                //const segmentationId = `SEGMENTATION_${newSegImageId}`;
+                //                 // Create a unique segmentationId
+                //                 //const segmentationId = `SEGMENTATION_${newSegImageId}`;
 
-                                // Add the segmentation to the segmentation state
-                                cornerstoneTools.segmentation.addSegmentations([
-                                    {
-                                        segmentationId: segId,
-                                        representation: {
-                                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                                            data: {
-                                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                                            },
-                                        },
-                                    },
-                                ]);
+                //                 // Add the segmentation to the segmentation state
+                //                 cornerstoneTools.segmentation.addSegmentations([
+                //                     {
+                //                         segmentationId: segId,
+                //                         representation: {
+                //                             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //                             data: {
+                //                                 imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                //                             },
+                //                         },
+                //                     },
+                //                 ]);
 
-                                // Add the segmentation representation to the tool group
-                                const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                                toolGroupId,
-                                    [
-                                        {
-                                            segmentationId: segId,
-                                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                                        },
-                                    ]
-                                );
+                //                 // Add the segmentation representation to the tool group
+                //                 const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //                 toolGroupId,
+                //                     [
+                //                         {
+                //                             segmentationId: segId,
+                //                             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //                         },
+                //                     ]
+                //                 );
 
-                                // Set the active segmentation representation
-                                cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
-                                    toolGroupId,
-                                    uid
-                                );
+                //                 // Set the active segmentation representation
+                //                 cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
+                //                     toolGroupId,
+                //                     uid
+                //                 );
 
-                                // RectangleScissorsTool
-                                if (context.leftClickToolGroupValue === 'selection') {
-                                    group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                                        bindings: [
-                                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                                        ],
-                                    });
+                //                 // RectangleScissorsTool
+                //                 if (context.leftClickToolGroupValue === 'selection') {
+                //                     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                //                         bindings: [
+                //                         { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+                //                         ],
+                //                     });
 
-                                    console.log('selection activated');
-                                }
-                            }
-                            createSegmentation();
-                        }
-                    }
-                }
+                //                     console.log('selection activated');
+                //                 }
+                //             }
+                //             createSegmentation();
+                //         }
+                //     }
+                // }
 
 
                 ////Remove active segmentation
@@ -1637,15 +1647,15 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 });
 
                 // Remove all segmentations
-                const segVolume = cornerstone.cache.getVolume(segId);
-                //console.log("segVolume is", segVolume);
-                const scalarData = segVolume.scalarData;
-                // console.log("scalarData is", scalarData);
-                scalarData.fill(0);
-                // redraw segmentation
-                cornerstoneTools.segmentation
-                    .triggerSegmentationEvents
-                    .triggerSegmentationDataModified(segId);
+                // const segVolume = cornerstone.cache.getVolume(segId);
+                // //console.log("segVolume is", segVolume);
+                // const scalarData = segVolume.scalarData;
+                // // console.log("scalarData is", scalarData);
+                // scalarData.fill(0);
+                // // redraw segmentation
+                // cornerstoneTools.segmentation
+                //     .triggerSegmentationEvents
+                //     .triggerSegmentationDataModified(segId);
 
 
 
@@ -1678,38 +1688,38 @@ function CornerstoneViewer({ volumeName, files, iec }) {
     }, [context.resetViewportsValue]);
 
 
-    async function handleExpandSelection() {
-        // console.log('handleExpandSelection called, setId is', segId);
-        coords = expandSegTo3D(segId);
+    // async function handleExpandSelection() {
+    //     // console.log('handleExpandSelection called, setId is', segId);
+    //     coords = expandSegTo3D(segId);
 
-        cornerstoneTools.segmentation
-            .triggerSegmentationEvents
-            .triggerSegmentationDataModified(segId);
+    //     cornerstoneTools.segmentation
+    //         .triggerSegmentationEvents
+    //         .triggerSegmentationDataModified(segId);
 
-        await cornerstoneTools.segmentation.addSegmentationRepresentations(
-            't3d_tool_group', [
-            {
-                segmentationId: segId,
-                type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
-                options: {
-                    polySeg: {
-                        enabled: true,
-                    }
-                }
-            }
-        ]
-        );
-    }
-    async function handleClearSelection() {
-        const segVolume = cornerstone.cache.getVolume(segId);
-        const scalarData = segVolume.scalarData;
-        scalarData.fill(0);
+    //     await cornerstoneTools.segmentation.addSegmentationRepresentations(
+    //         't3d_tool_group', [
+    //         {
+    //             segmentationId: segId,
+    //             type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
+    //             options: {
+    //                 polySeg: {
+    //                     enabled: true,
+    //                 }
+    //             }
+    //         }
+    //     ]
+    //     );
+    // }
+    // async function handleClearSelection() {
+    //     const segVolume = cornerstone.cache.getVolume(segId);
+    //     const scalarData = segVolume.scalarData;
+    //     scalarData.fill(0);
 
-        // redraw segmentation
-        cornerstoneTools.segmentation
-            .triggerSegmentationEvents
-            .triggerSegmentationDataModified(segId);
-    }
+    //     // redraw segmentation
+    //     cornerstoneTools.segmentation
+    //         .triggerSegmentationEvents
+    //         .triggerSegmentationDataModified(segId);
+    // }
     async function handleAcceptSelection() {
         await finalCalc(coords, volumeId, iec, maskForm, maskFunction);
     }
@@ -1757,8 +1767,6 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                 id="container"></div>
             <MiddlelBottomPanel
                 onAccept={handleAcceptSelection}
-                onClear={handleClearSelection}
-                onExpand={handleExpandSelection}
 
                 onMarkAccepted={handleMarkAccepted}
                 onMarkRejected={handleMarkRejected}

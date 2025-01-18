@@ -3,7 +3,7 @@ import { Context } from './Context';
 
 export default function ContextProvider({ children, initialLayout = '' }) {
     const [layout, setlayout] = useState(initialLayout);
-    const [zoom, setZoom] = useState(250);
+    const [zoom, setZoom] = useState(0);
     const [opacity, setOpacity] = useState(0.3);
     const [presets, setPresets] = useState([]);
     const [selectedPreset, setSelectedPreset] = useState('CT-MIP');

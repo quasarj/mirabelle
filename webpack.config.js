@@ -14,6 +14,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.jsx', '...'],
+    fallback: {
+      "fs": false,
+      "path": require.resolve("path-browserify")
+    }
   },
   experiments: {
       asyncWebAssembly: true,
@@ -85,7 +89,7 @@ module.exports = {
         ],
     // historyApiFallback: true, // This helps with routing; ensure it's true if using React Router
     // compress: true,
-    port: 3000,
+    port: 3002,
   },
    plugins: [
       new HtmlWebpackPlugin({
