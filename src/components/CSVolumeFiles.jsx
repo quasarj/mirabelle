@@ -8,18 +8,34 @@ import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaDat
 
 import CSVolumeViewPanel from './CSVolumeViewPanel';
 
-function CSVolumeFiles({ renderingEngine, toolGroup, series, timepoint }) {
+function CSVolumeFiles({ renderingEngine, toolGroup, series, timepoint, iec }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [volumeId, setVolumeId] = useState(null);
 
   useEffect(() => {
     const initialize = async () => {
+      // const imageIds = await createImageIdsAndCacheMetaData({
+      //   StudyInstanceUID:
+      //     "doesn't really matter",
+      //   SeriesInstanceUID:
+      //     series,
+      //   wadoRsRoot: `/papi/v1/wadors/timepoint/${timepoint}`,
+      // })
+
+      // const imageIds = await createImageIdsAndCacheMetaData({
+      //   StudyInstanceUID:
+      //     `timepoint:${timepoint}`,
+      //   SeriesInstanceUID:
+      //     series,
+      //   wadoRsRoot: "/papi/v1/wadors",
+      // })
+
       const imageIds = await createImageIdsAndCacheMetaData({
         StudyInstanceUID:
-          "doesn't really matter",
+          `iec:${iec}`,
         SeriesInstanceUID:
-          series,
-        wadoRsRoot: `/papi/v1/wadors/timepoint/${timepoint}`,
+          "any",
+        wadoRsRoot: "/papi/v1/wadors",
       })
 
       const newvolumeId = `vol-${series}`; // TODO fix this

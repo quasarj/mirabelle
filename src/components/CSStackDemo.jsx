@@ -30,6 +30,7 @@ function CSStackDemo() {
         toolGroup={toolGroup2}
         series="1.3.6.1.4.1.14519.5.2.1.4801.5885.194372676203706186283173165298"
 	    timepoint="2"
+	    iec="3"
       />
     </div>
   );
