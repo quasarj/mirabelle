@@ -28,6 +28,7 @@ import {
 // import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getDetails, setStatus } from '../nifti';
+import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -1039,8 +1040,16 @@ function CornerstoneViewer({ volumeName, files, iec }) {
                     // console.log("volumeId:", volumeId);
                     volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
                 } else {
-                    let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
-                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: fileList, progressiveRendering: false });
+                    // let fileList = files.map(file_id => `wadouri:/papi/v1/files/${file_id}/data`);
+
+                    const imageIds = await createImageIdsAndCacheMetaData({
+                        StudyInstanceUID:
+                        `iec:${iec}`,
+                        SeriesInstanceUID:
+                        "any",
+                        wadoRsRoot: "/papi/v1/wadors",
+                    })
+                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds });
                 }
             }
         }
