@@ -85,7 +85,7 @@ module.exports = {
         ],
     // historyApiFallback: true, // This helps with routing; ensure it's true if using React Router
     // compress: true,
-    port: 3000,
+    port: 3004,
   },
    plugins: [
       new HtmlWebpackPlugin({

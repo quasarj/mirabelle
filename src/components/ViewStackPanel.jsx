@@ -16,6 +16,7 @@ import dicomParser from 'dicom-parser';
 // Utilities
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
+import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -267,7 +268,17 @@ function ViewStackPanel({ volumeName, files, iec }) {
                     // console.log("volumeId:", volumeId);
                     volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
                 } else {
-                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: files });
+                    // volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: files });
+
+                    const imageIds = await createImageIdsAndCacheMetaData({
+                        StudyInstanceUID:
+                            `iec:${iec}`,
+                        SeriesInstanceUID:
+                            "any",
+                        wadoRsRoot: "/papi/v1/wadors",
+                    })
+
+                    volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds });
                 }
             }
         }
