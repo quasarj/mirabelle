@@ -13,10 +13,10 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 import { cornerstoneStreamingImageVolumeLoader, cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dicomParser from 'dicom-parser';
-import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
+import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader';
 
 // Utilities
-import { expandSegTo3D } from '../utilities';
+// import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
 import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
@@ -50,7 +50,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
 
     let coords;
-    let segId = 'seg_id';
+    // let segId = 'seg_id';
     let volumeId;
 
     if (context.nifti) {
@@ -69,7 +69,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             volumeLoader.registerUnknownVolumeLoader(cornerstoneStreamingImageVolumeLoader);
             volumeLoader.registerVolumeLoader('cornerstoneStreamingImageVolume', cornerstoneStreamingImageVolumeLoader);
             volumeLoader.registerVolumeLoader('cornerstoneStreamingDynamicImageVolume', cornerstoneStreamingDynamicImageVolumeLoader);
-            volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageVolumeLoader);
+            volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageLoader);
         }
 
         function initCornerstoneDICOMImageLoader() {
@@ -311,8 +311,8 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Segmentation Display
             // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-            t3dToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            t3dToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // t3dToolGroup.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // t3dToolGroup.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
         }
 
         function setupVolViewportTools() {
@@ -363,8 +363,8 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             try {
                 cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
                 cornerstoneTools.addTool(cornerstoneTools.PanTool);
                 cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
                 cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
@@ -381,10 +381,10 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             group.addViewport('vol_coronal', 'viewer_render_engine');
 
             // Stack Scroll Tool
-            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+            group.addTool(cornerstoneTools.StackScrollTool.toolName);
+            group.setToolActive(cornerstoneTools.StackScrollTool.toolName);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
@@ -508,8 +508,8 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             try {
                 cornerstoneTools.addTool(cornerstoneTools.RectangleScissorsTool);
-                cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
-                cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+                // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+                cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
                 cornerstoneTools.addTool(cornerstoneTools.PanTool);
                 cornerstoneTools.addTool(cornerstoneTools.ZoomTool);
                 cornerstoneTools.addTool(cornerstoneTools.CrosshairsTool);
@@ -526,10 +526,10 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             group.addViewport('mip_coronal', 'viewer_render_engine');
 
             // Stack Scroll Tool
-            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+            group.addTool(cornerstoneTools.StackScrollTool.toolName);
+            group.setToolActive(cornerstoneTools.StackScrollTool.toolName);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolEnabled(cornerstoneTools.SegmentationDisplayTool.toolName);
 
@@ -905,31 +905,31 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 const currentImageId = viewport.getCurrentImageId();
 
                 // Create a derived segmentation image for the current image
-                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+                // const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
                 // Add the segmentation to the segmentation state
-                cornerstoneTools.segmentation.addSegmentations([
-                    {
-                        segmentationId: segId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                            },
-                        },
-                    },
-                ]);
+                // cornerstoneTools.segmentation.addSegmentations([
+                //     {
+                //         segmentationId: segId,
+                //         representation: {
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //             data: {
+                //                 imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                //             },
+                //         },
+                //     },
+                // ]);
 
                 // Add the segmentation representation to the tool group
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'stack_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'stack_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
 
             }
             else if (context.viewport_layout == 'volume') {
@@ -979,42 +979,42 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 //cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
 
                 // create and bind a new segmentation
-                await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
-                    volumeId,
-                    { volumeId: segId }
-                );
+                // await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                //     volumeId,
+                //     { volumeId: segId }
+                // );
 
-                cornerstoneTools.segmentation.addSegmentations([
-                    {
-                        segmentationId: segId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                volumeId: segId,
-                            },
-                        },
-                    },
-                ]);
+                // cornerstoneTools.segmentation.addSegmentations([
+                //     {
+                //         segmentationId: segId,
+                //         representation: {
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //             data: {
+                //                 volumeId: segId,
+                //             },
+                //         },
+                //     },
+                // ]);
 
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'vol_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'vol_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
 
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'mip_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'mip_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
             }
 
             setFilesLoaded(true);
@@ -1343,16 +1343,16 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 }
             });
 
-            // Remove all segmentations
-            const segVolume = cornerstone.cache.getVolume(segId);
-            //console.log("segVolume is", segVolume);
-            const scalarData = segVolume.scalarData;
-            // console.log("scalarData is", scalarData);
-            scalarData.fill(0);
-            // redraw segmentation
-            cornerstoneTools.segmentation
-                .triggerSegmentationEvents
-                .triggerSegmentationDataModified(segId);
+            // // Remove all segmentations
+            // const segVolume = cornerstone.cache.getVolume(segId);
+            // //console.log("segVolume is", segVolume);
+            // const scalarData = segVolume.scalarData;
+            // // console.log("scalarData is", scalarData);
+            // scalarData.fill(0);
+            // // redraw segmentation
+            // cornerstoneTools.segmentation
+            //     .triggerSegmentationEvents
+            //     .triggerSegmentationDataModified(segId);
 
             // Wait 100ms then reset the cameras and crosshairs of all the viewports that its wrapper is visible
             setTimeout(() => {
@@ -1381,35 +1381,35 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
     async function handleExpandSelection() {
         // console.log('handleExpandSelection called, setId is', segId);
-        coords = expandSegTo3D(segId);
+        // coords = expandSegTo3D(segId);
 
-        cornerstoneTools.segmentation
-            .triggerSegmentationEvents
-            .triggerSegmentationDataModified(segId);
+        // cornerstoneTools.segmentation
+        //     .triggerSegmentationEvents
+        //     .triggerSegmentationDataModified(segId);
 
-        await cornerstoneTools.segmentation.addSegmentationRepresentations(
-            't3d_tool_group', [
-            {
-                segmentationId: segId,
-                type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
-                options: {
-                    polySeg: {
-                        enabled: true,
-                    }
-                }
-            }
-        ]
-        );
+        // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+        //     't3d_tool_group', [
+        //     {
+        //         segmentationId: segId,
+        //         type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
+        //         options: {
+        //             polySeg: {
+        //                 enabled: true,
+        //             }
+        //         }
+        //     }
+        // ]
+        // );
     }
     async function handleClearSelection() {
-        const segVolume = cornerstone.cache.getVolume(segId);
-        const scalarData = segVolume.scalarData;
-        scalarData.fill(0);
+        // const segVolume = cornerstone.cache.getVolume(segId);
+        // const scalarData = segVolume.scalarData;
+        // scalarData.fill(0);
 
-        // redraw segmentation
-        cornerstoneTools.segmentation
-            .triggerSegmentationEvents
-            .triggerSegmentationDataModified(segId);
+        // // redraw segmentation
+        // cornerstoneTools.segmentation
+        //     .triggerSegmentationEvents
+        //     .triggerSegmentationDataModified(segId);
     }
     async function handleAcceptSelection() {
         const maskForm = context.formToolGroupValue

@@ -5,7 +5,7 @@ import {
 } from '@cornerstonejs/streaming-image-volume-loader';
 import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dicomParser from 'dicom-parser';
-import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
+import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader';
 
 const { volumeLoader } = cornerstone;
 
@@ -23,7 +23,7 @@ export function initVolumeLoader() {
 	);
 	volumeLoader.registerVolumeLoader(
 		'nifti',
-		cornerstoneNiftiImageVolumeLoader
+		cornerstoneNiftiImageLoader
 	);
 }
 

@@ -14,6 +14,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.jsx', '...'],
+    fallback: {
+      "fs": false,
+      "path": require.resolve("path-browserify")
+    },
   },
   experiments: {
       asyncWebAssembly: true,

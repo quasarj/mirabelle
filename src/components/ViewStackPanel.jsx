@@ -38,7 +38,7 @@ function ViewStackPanel({ volumeName, files, iec }) {
     const containerRef = useRef(null);
 
     let coords;
-    let segId = 'seg_id';
+    // let segId = 'seg_id';
     let volumeId;
 
     if (context.nifti) {
@@ -166,11 +166,11 @@ function ViewStackPanel({ volumeName, files, iec }) {
                 //console.log('pan activated');
             }
 
-            // Segmentations
-            cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+            // // Segmentations
+            // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
 
-            group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-            group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
 
             // RectangleScissorsTool
@@ -300,32 +300,32 @@ function ViewStackPanel({ volumeName, files, iec }) {
 
                 const currentImageId = viewport.getCurrentImageId();
 
-                // Create a derived segmentation image for the current image
-                const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+                // // Create a derived segmentation image for the current image
+                // const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
-                // Add the segmentation to the segmentation state
-                cornerstoneTools.segmentation.addSegmentations([
-                    {
-                        segmentationId: segId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                            },
-                        },
-                    },
-                ]);
+                // // Add the segmentation to the segmentation state
+                // cornerstoneTools.segmentation.addSegmentations([
+                //     {
+                //         segmentationId: segId,
+                //         representation: {
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //             data: {
+                //                 imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+                //             },
+                //         },
+                //     },
+                // ]);
 
-                // Add the segmentation representation to the tool group
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'stack_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // // Add the segmentation representation to the tool group
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'stack_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
 
             }
             else if (context.viewport_layout == 'volume') {
@@ -375,42 +375,42 @@ function ViewStackPanel({ volumeName, files, iec }) {
                 //cornerstoneTools.segmentation.state.removeSegmentationRepresentations('t3d_tool_group');
 
                 // create and bind a new segmentation
-                await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
-                    volumeId,
-                    { volumeId: segId }
-                );
+                // await cornerstone.volumeLoader.createAndCacheDerivedSegmentationVolume(
+                //     volumeId,
+                //     { volumeId: segId }
+                // );
 
-                cornerstoneTools.segmentation.addSegmentations([
-                    {
-                        segmentationId: segId,
-                        representation: {
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                            data: {
-                                volumeId: segId,
-                            },
-                        },
-                    },
-                ]);
+                // cornerstoneTools.segmentation.addSegmentations([
+                //     {
+                //         segmentationId: segId,
+                //         representation: {
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //             data: {
+                //                 volumeId: segId,
+                //             },
+                //         },
+                //     },
+                // ]);
 
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'vol_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'vol_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
 
-                await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                    'mip_tool_group',
-                    [
-                        {
-                            segmentationId: segId,
-                            type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                        },
-                    ]
-                );
+                // await cornerstoneTools.segmentation.addSegmentationRepresentations(
+                //     'mip_tool_group',
+                //     [
+                //         {
+                //             segmentationId: segId,
+                //             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+                //         },
+                //     ]
+                // );
             }
 
             setFilesLoaded(true);
@@ -701,97 +701,97 @@ function ViewStackPanel({ volumeName, files, iec }) {
             }
 
             // Remove active segmentation
-            if (context.leftClickToolRectangleScissorsVisible) {
-                const toolGroupId = 'stack_tool_group';
-                const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
+            // if (context.leftClickToolRectangleScissorsVisible) {
+            //     const toolGroupId = 'stack_tool_group';
+            //     const segmentationIds = cornerstoneTools.segmentation.state.getSegmentations().map(seg => seg.segmentationId);
 
-                if (segmentationIds.length) {
-                    // Get active segmentation
-                    const activeSegmentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentation(toolGroupId);
-                    const activeSegmentationRepresentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentationRepresentation(toolGroupId);
+            //     if (segmentationIds.length) {
+            //         // Get active segmentation
+            //         const activeSegmentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentation(toolGroupId);
+            //         const activeSegmentationRepresentation = cornerstoneTools.segmentation.activeSegmentation.getActiveSegmentationRepresentation(toolGroupId);
 
-                    if (activeSegmentation && activeSegmentationRepresentation) {
-                        // Remove the segmentation from the tool group
-                        cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(toolGroupId, [
-                            activeSegmentationRepresentation.segmentationRepresentationUID
-                        ]);
+            //         if (activeSegmentation && activeSegmentationRepresentation) {
+            //             // Remove the segmentation from the tool group
+            //             cornerstoneTools.segmentation.removeSegmentationsFromToolGroup(toolGroupId, [
+            //                 activeSegmentationRepresentation.segmentationRepresentationUID
+            //             ]);
 
-                        // Remove the segmentation from the state
-                        cornerstoneTools.segmentation.state.removeSegmentation(activeSegmentation.segmentationId);
+            //             // Remove the segmentation from the state
+            //             cornerstoneTools.segmentation.state.removeSegmentation(activeSegmentation.segmentationId);
 
-                        // Remove cached images associated with the segmentation
-                        const labelmap = activeSegmentation.representationData[cornerstoneTools.Enums.SegmentationRepresentations.Labelmap];
+            //             // Remove cached images associated with the segmentation
+            //             const labelmap = activeSegmentation.representationData[cornerstoneTools.Enums.SegmentationRepresentations.Labelmap];
 
-                        if (labelmap.imageIdReferenceMap) {
-                            labelmap.imageIdReferenceMap.forEach((derivedImagesId) => {
-                                cornerstone.cache.removeImageLoadObject(derivedImagesId);
-                            });
-                        }
+            //             if (labelmap.imageIdReferenceMap) {
+            //                 labelmap.imageIdReferenceMap.forEach((derivedImagesId) => {
+            //                     cornerstone.cache.removeImageLoadObject(derivedImagesId);
+            //                 });
+            //             }
 
-                        // Create a new segmentation
-                        async function createSegmentation() {
-                            const group = getOrCreateToolgroup(toolGroupId);
-                            // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
+            //             // Create a new segmentation
+            //             async function createSegmentation() {
+            //                 const group = getOrCreateToolgroup(toolGroupId);
+            //                 // cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
 
-                            // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
-                            group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
+            //                 // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
+            //                 group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
 
-                            // Get the current imageId from the viewport
-                            const viewportId = 'dicom_stack';
-                            const viewport = renderingEngine.getViewport(viewportId);
-                            const currentImageId = viewport.getCurrentImageId();
+            //                 // Get the current imageId from the viewport
+            //                 const viewportId = 'dicom_stack';
+            //                 const viewport = renderingEngine.getViewport(viewportId);
+            //                 const currentImageId = viewport.getCurrentImageId();
 
-                            // Create a derived segmentation image for the current image
-                            const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
+            //                 // Create a derived segmentation image for the current image
+            //                 const { imageId: newSegImageId } = await cornerstone.imageLoader.createAndCacheDerivedSegmentationImage(currentImageId);
 
-                            // Create a unique segmentationId
-                            //const segmentationId = `SEGMENTATION_${newSegImageId}`;
+            //                 // Create a unique segmentationId
+            //                 //const segmentationId = `SEGMENTATION_${newSegImageId}`;
 
-                            // Add the segmentation to the segmentation state
-                            cornerstoneTools.segmentation.addSegmentations([
-                                {
-                                    segmentationId: segId,
-                                    representation: {
-                                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                                        data: {
-                                            imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
-                                        },
-                                    },
-                                },
-                            ]);
+            //                 // Add the segmentation to the segmentation state
+            //                 cornerstoneTools.segmentation.addSegmentations([
+            //                     {
+            //                         segmentationId: segId,
+            //                         representation: {
+            //                             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+            //                             data: {
+            //                                 imageIdReferenceMap: new Map([[currentImageId, newSegImageId]]),
+            //                             },
+            //                         },
+            //                     },
+            //                 ]);
 
-                            // Add the segmentation representation to the tool group
-                            const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
-                                toolGroupId,
-                                [
-                                    {
-                                        segmentationId: segId,
-                                        type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
-                                    },
-                                ]
-                            );
+            //                 // Add the segmentation representation to the tool group
+            //                 const [uid] = await cornerstoneTools.segmentation.addSegmentationRepresentations(
+            //                     toolGroupId,
+            //                     [
+            //                         {
+            //                             segmentationId: segId,
+            //                             type: cornerstoneTools.Enums.SegmentationRepresentations.Labelmap,
+            //                         },
+            //                     ]
+            //                 );
 
-                            // Set the active segmentation representation
-                            cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
-                                toolGroupId,
-                                uid
-                            );
+            //                 // Set the active segmentation representation
+            //                 cornerstoneTools.segmentation.activeSegmentation.setActiveSegmentationRepresentation(
+            //                     toolGroupId,
+            //                     uid
+            //                 );
 
-                            // RectangleScissorsTool
-                            if (context.leftClickToolGroupValue === 'selection') {
-                                group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
-                                    bindings: [
-                                        { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
-                                    ],
-                                });
+            //                 // RectangleScissorsTool
+            //                 if (context.leftClickToolGroupValue === 'selection') {
+            //                     group.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+            //                         bindings: [
+            //                             { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary },
+            //                         ],
+            //                     });
 
-                                console.log('selection activated');
-                            }
-                        }
-                        createSegmentation();
-                    }
-                }
-            }
+            //                     console.log('selection activated');
+            //                 }
+            //             }
+            //             createSegmentation();
+            //         }
+            //     }
+            // }
 
 
             ////Remove active segmentation
@@ -820,14 +820,14 @@ function ViewStackPanel({ volumeName, files, iec }) {
     }, [context.resetViewportsValue]);
 
     async function handleClearSelection() {
-        const segVolume = cornerstone.cache.getVolume(segId);
-        const scalarData = segVolume.scalarData;
-        scalarData.fill(0);
+        // const segVolume = cornerstone.cache.getVolume(segId);
+        // const scalarData = segVolume.scalarData;
+        // scalarData.fill(0);
 
-        // redraw segmentation
-        cornerstoneTools.segmentation
-            .triggerSegmentationEvents
-            .triggerSegmentationDataModified(segId);
+        // // redraw segmentation
+        // cornerstoneTools.segmentation
+        //     .triggerSegmentationEvents
+        //     .triggerSegmentationDataModified(segId);
     }
     async function handleAcceptSelection() {
         const maskForm = context.formToolGroupValue
