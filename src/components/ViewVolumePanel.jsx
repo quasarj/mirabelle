@@ -10,8 +10,11 @@ import { Context } from './Context.js';
 // Cornerstone
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
-import { cornerstoneStreamingImageVolumeLoader, cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
-import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
+// import { cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
+import {init as dicomImageLoaderInit} from "@cornerstonejs/dicom-image-loader"
+import {init as csRenderInit} from "@cornerstonejs/core"
+import {init as csToolsInit} from "@cornerstonejs/tools"
+
 import dicomParser from 'dicom-parser';
 import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader';
 
@@ -64,45 +67,6 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         cornerstone.cache.purgeCache();
 
         const { volumeLoader } = cornerstone;
-
-        function initVolumeLoader() {
-            volumeLoader.registerUnknownVolumeLoader(cornerstoneStreamingImageVolumeLoader);
-            volumeLoader.registerVolumeLoader('cornerstoneStreamingImageVolume', cornerstoneStreamingImageVolumeLoader);
-            volumeLoader.registerVolumeLoader('cornerstoneStreamingDynamicImageVolume', cornerstoneStreamingDynamicImageVolumeLoader);
-            volumeLoader.registerVolumeLoader('nifti', cornerstoneNiftiImageLoader);
-        }
-
-        function initCornerstoneDICOMImageLoader() {
-            const { preferSizeOverAccuracy, useNorm16Texture } = cornerstone.getConfiguration().rendering;
-            cornerstoneDICOMImageLoader.external.cornerstone = cornerstone;
-            cornerstoneDICOMImageLoader.external.dicomParser = dicomParser;
-            cornerstoneDICOMImageLoader.configure({
-                useWebWorkers: true,
-                decodeConfig: {
-                    convertFloatPixelDataToInt: false,
-                    use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
-                },
-            });
-
-            let maxWebWorkers = 1;
-
-            if (navigator.hardwareConcurrency) {
-                maxWebWorkers = Math.min(navigator.hardwareConcurrency, 7);
-            }
-
-            const config = {
-                maxWebWorkers,
-                startWebWorkersOnDemand: false,
-                taskConfiguration: {
-                    decodeTask: {
-                        initializeCodecsOnStartup: false,
-                        strict: false,
-                    },
-                },
-            };
-
-            cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
-        }
 
         const resizeObserver = new ResizeObserver(() => {
             const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
@@ -608,10 +572,10 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         async function run() {
 
             if (!loaded.loaded) {
-                await cornerstone.init();
-                cornerstoneTools.init();
-                initVolumeLoader();
-                initCornerstoneDICOMImageLoader();
+                // new 2.0 init routines
+                await csRenderInit()
+                await csToolsInit()
+                dicomImageLoaderInit({maxWebWorkers:1});
                 loaded.loaded = true;
             }
 
@@ -872,10 +836,12 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             if (context.nifti) {
                 // console.log("volumeId:", volumeId);
+                console.log("Proceeding in Nifti context!");
                 volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
             } else {
                 // volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: files });
 
+                console.log("Proceeding in DICOM context, loading via WADO-RS");
                 const imageIds = await createImageIdsAndCacheMetaData({
                     StudyInstanceUID:
                         `iec:${iec}`,
