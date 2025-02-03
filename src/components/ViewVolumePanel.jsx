@@ -11,24 +11,45 @@ import { Context } from './Context.js';
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 // import { cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
-import {init as dicomImageLoaderInit} from "@cornerstonejs/dicom-image-loader"
-import {init as csRenderInit} from "@cornerstonejs/core"
-import {init as csToolsInit} from "@cornerstonejs/tools"
+import { init as dicomImageLoaderInit } from "@cornerstonejs/dicom-image-loader"
+import { init as csRenderInit } from "@cornerstonejs/core"
+import { init as csToolsInit } from "@cornerstonejs/tools"
 
 import dicomParser from 'dicom-parser';
 import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader';
 
 // Utilities
-// import { expandSegTo3D } from '../utilities';
+import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
 import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
+
+//Segmentation V2
+let segId = 'seg_id';
+
+const {
+    segmentation,
+    RectangleScissorsTool,
+    Enums: csToolsEnums,
+} = cornerstoneTools;
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
     if (group === undefined) {
         group = cornerstoneTools.ToolGroupManager.createToolGroup(toolgroup_name);
     }
+
+    // Segmentation V2
+    cornerstoneTools.segmentation.addSegmentationRepresentations(
+        group,
+        [
+            {
+                segmentationId: segId,
+                type: csToolsEnums.SegmentationRepresentations.Labelmap,
+            },
+        ]
+    );
+
     return group;
 }
 
@@ -53,7 +74,6 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
 
     let coords;
-    // let segId = 'seg_id';
     let volumeId;
 
     if (context.nifti) {
@@ -229,6 +249,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             const t3dToolGroup = getOrCreateToolgroup('t3d_tool_group');
             t3dToolGroup.addViewport('t3d_coronal', 'viewer_render_engine');
 
+            // Disabled it because of a bug in cornerstone v2
             // Trackball Rotate
             t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
             t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
@@ -575,7 +596,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 // new 2.0 init routines
                 await csRenderInit()
                 await csToolsInit()
-                dicomImageLoaderInit({maxWebWorkers:1});
+                dicomImageLoaderInit({ maxWebWorkers: 1 });
                 loaded.loaded = true;
             }
 
@@ -938,6 +959,62 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 ).then(() => {
                     const viewport = renderingEngine.getViewport('t3d_coronal');
                     viewport.setProperties({ preset: context.presetToolValue });
+                });
+
+                // Segmentation v2
+                await cornerstone.volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
+                    volumeId: segId,
+                });
+
+                // Add the segmentation to the segmentation state.
+                // (This registers the segmentation with the segmentation module.)
+                cornerstoneTools.segmentation.addSegmentations([
+                    {
+                        segmentationId: segId,
+                        representation: {
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                            data: { volumeId: segId },
+                        },
+                    },
+                ]);
+
+                await cornerstoneTools.segmentation.addLabelmapRepresentationToViewportMap({
+                    vol_axial: [
+                        {
+                            segmentationId: segId,
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                        },
+                    ],
+                    vol_sagittal: [
+                        {
+                            segmentationId: segId,
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                        },
+                    ],
+                    vol_coronal: [
+                        {
+                            segmentationId: segId,
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                        },
+                    ],
+                    mip_axial: [
+                        {
+                            segmentationId: segId,
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                        },
+                    ],
+                    // mip_sagittal: [
+                    //     {
+                    //         segmentationId: segId,
+                    //         type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    //     },
+                    // ],
+                    // mip_coronal: [
+                    //     {
+                    //         segmentationId: segId,
+                    //         type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    //     },
+                    // ],
                 });
 
                 //// make sure it doesn't already exist
@@ -1346,26 +1423,26 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
 
     async function handleExpandSelection() {
-        // console.log('handleExpandSelection called, setId is', segId);
-        // coords = expandSegTo3D(segId);
+        console.log('handleExpandSelection called, setId is', segId);
+        coords = expandSegTo3D(segId);
 
-        // cornerstoneTools.segmentation
-        //     .triggerSegmentationEvents
-        //     .triggerSegmentationDataModified(segId);
+        cornerstoneTools.segmentation
+            .triggerSegmentationEvents
+            .triggerSegmentationDataModified(segId);
 
-        // await cornerstoneTools.segmentation.addSegmentationRepresentations(
-        //     't3d_tool_group', [
-        //     {
-        //         segmentationId: segId,
-        //         type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
-        //         options: {
-        //             polySeg: {
-        //                 enabled: true,
-        //             }
-        //         }
-        //     }
-        // ]
-        // );
+        await cornerstoneTools.segmentation.addSegmentationRepresentations(
+            't3d_tool_group', [
+            {
+                segmentationId: segId,
+                type: cornerstoneTools.Enums.SegmentationRepresentations.Surface,
+                options: {
+                    polySeg: {
+                        enabled: true,
+                    }
+                }
+            }
+        ]
+        );
     }
     async function handleClearSelection() {
         // const segVolume = cornerstone.cache.getVolume(segId);
