@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Context } from './Context.js';
-import NavigationPanel from './NavigationPanel';
+// import NavigationPanel from './NavigationPanel';
+import MaterialButtonSet from './MaterialButtonSet';
 
 function ToolsPanel() {
 
@@ -23,95 +24,103 @@ function ToolsPanel() {
         alert("Not yet implemented :(");
     }
 
+    // --------------------------------------------------------------------- //
+    //  View group button config and handlers
+    // --------------------------------------------------------------------- //
+    function switchViewMode(mode) {
+        // TODO actually update the tool group settings or make other
+        // calls as necessary (may actually need to update context here)
+        console.log("switch to view mode: ", mode);
+    }
+
+    // TODO somehow work these in, might have to build the config
+    // item-by-item, not sure of a clever way to do it
+    //
+    // context.viewToolVolumeVisible &&
+    // context.viewToolProjectionVisible &&
+    // context.viewToolStackVisible &&
+
+    const viewGroupButtonConfig = [
+		{
+			name: "Volume",
+			icon: "deployed_code",
+			action: () => switchViewMode("volume"),
+		},
+		{
+			name: "Maximum Intensity Projection (MIP)",
+			icon: "light_mode",
+			action: () => switchViewMode("mip"),
+		},
+		{
+			name: "Stack",
+			icon: "stacks",
+			action: () => switchViewMode("stack"),
+		},
+
+    ];
+
+    // --------------------------------------------------------------------- //
+    //  Function group button config and handlers
+    // --------------------------------------------------------------------- //
+    function switchFunctionMode(mode) {
+        // TODO actually update the tool group settings or make other
+        // calls as necessary (may actually need to update context here)
+        console.log("switch to function mode: ", mode);
+    }
+
+    // TODO somehow work these in, might have to build the config
+    // item-by-item, not sure of a clever way to do it
+    //
+        // context.functionToolMaskVisible &&
+        // context.functionToolBlackoutVisible &&
+        // context.functionToolSliceRemoveVisible &&
+
+    const functionGroupButtonConfig = [
+		{
+			name: "Mask",
+			icon: "domino_mask",
+			action: () => switchFunctionMode("mask"),
+		},
+		{
+			name: "Blackout",
+			icon: "imagesearch_roller",
+			action: () => switchFunctionMode("blackout"),
+		},
+		{
+			name: "Slice Removal",
+			icon: "content_cut",
+			action: () => switchFunctionMode("slice_removal"),
+		},
+
+    ];
+
     return (
-        <div id="toolsPanel" className="overflow-y-auto no-scrollbars p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
-            {/*<div className="mb-2 font-semib  old">Tools</div>*/}
-            <ul className=" h-full pb-4">
+      <div id="toolsPanel" className="overflow-y-auto no-scrollbars p-6 rounded-lg bg-blue-100 dark:bg-blue-900">
+        <ul className=" h-full pb-4">
 
-                {/*Navigation Panel*/}
-                {
-                    context.navigationPanelVisible &&
-                    <NavigationPanel
-                        onNext={handleOnNext}
-                        onPrevious={handleOnPrevious}
-                    />
-                }
+      {/*View Group*/}
+      {
+        context.viewToolGroupVisible && (
+          <>
+            View:
+            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+              <MaterialButtonSet buttonConfig={viewGroupButtonConfig} initialActiveButton="Volume" />
+            </li>
+          </>
+        )
+      }
 
-                {/*View Group*/}
-                {
-                    context.viewToolGroupVisible && (
-                        <>
-                            View:
-                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
-                            {
-                                context.viewToolVolumeVisible &&
-                                <button 
-                                    title="Volume"
-                                    onClick={() => context.setViewToolGroupValue("volume")}
-                                    className={`w-full ${context.viewToolGroupValue === "volume" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-                                    <span className='material-symbols-rounded'>deployed_code</span>
-                                </button>
-                            }
-                            {
-                                context.viewToolProjectionVisible &&
-                                <button 
-                                    title="Maximum Intensity Projection"
-                                    onClick={() => context.setViewToolGroupValue("projection")} 
-                                    className={`w-full ${context.viewToolGroupValue === "projection" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-                                    <span className='material-symbols-rounded'>light_mode</span>
-                                </button>
-                            }
-                            {
-                                context.viewToolStackVisible &&
-                                <button
-                                    title="Stack"
-                                    onClick={() => context.setViewToolGroupValue("stack")}
-                                    className={`w-full ${context.viewToolGroupValue === "stack" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-                                    <span className='material-symbols-rounded'>stacks</span>
-                                </button>
-                            }
-                            </li>
-                        </>
-                    )
-                }
-
-                {/*Function Group*/}
-                {
-                    context.functionToolGroupVisible && (
-                        <>
-                            Function:
-                            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
-                                {
-                                    context.functionToolMaskVisible &&
-                                    <button
-                                        title="Mask"
-                                        onClick={() => context.setFunctionToolGroupValue("mask")} 
-                                        className={`w-full ${context.functionToolGroupValue === "mask" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-                                        <span className='material-symbols-rounded'>domino_mask</span>
-                                    </button>
-                                }
-                                {
-                                    context.functionToolBlackoutVisible &&
-                                    <button
-                                        title="Blackout"
-                                        onClick={() => context.setFunctionToolGroupValue("blackout")} 
-                                        className={`w-full ${context.functionToolGroupValue === "blackout" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-                                        <span className='material-symbols-rounded'>imagesearch_roller</span>
-                                    </button>
-                                }
-                                {
-                                    context.functionToolSliceRemoveVisible &&
-                                    <button
-                                        title="Slice Removal"
-                                        onClick={() => context.setFunctionToolGroupValue("sliceremove")} 
-                                        className={`w-full ${context.functionToolGroupValue === "sliceremove" ? 'text-white bg-blue-500' : 'bg-white dark:bg-slate-900'}`}>
-                                        <span className='material-symbols-rounded'>content_cut</span>
-                                    </button>
-                                }
-                            </li>
-                        </>
-                    )
-                }
+      {/*Function Group*/}
+      {
+        context.functionToolGroupVisible && (
+          <>
+            Function:
+            <li className="pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2">
+              <MaterialButtonSet buttonConfig={functionGroupButtonConfig} initialActiveButton="Mask" />
+            </li>
+          </>
+        )
+      }
 
                 {/*Form Group*/}
                 {

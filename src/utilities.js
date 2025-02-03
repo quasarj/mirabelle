@@ -1,63 +1,8 @@
 import * as cornerstone from '@cornerstonejs/core';
-import {
-	cornerstoneStreamingImageVolumeLoader,
-	cornerstoneStreamingDynamicImageVolumeLoader,
-} from '@cornerstonejs/streaming-image-volume-loader';
-import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
 import dicomParser from 'dicom-parser';
-import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
 
 const { volumeLoader } = cornerstone;
 
-export function initVolumeLoader() {
-	volumeLoader.registerUnknownVolumeLoader(
-		cornerstoneStreamingImageVolumeLoader
-	);
-	volumeLoader.registerVolumeLoader(
-		'cornerstoneStreamingImageVolume',
-		cornerstoneStreamingImageVolumeLoader
-	);
-	volumeLoader.registerVolumeLoader(
-		'cornerstoneStreamingDynamicImageVolume',
-		cornerstoneStreamingDynamicImageVolumeLoader
-	);
-	volumeLoader.registerVolumeLoader(
-		'nifti',
-		cornerstoneNiftiImageVolumeLoader
-	);
-}
-
-export function initCornerstoneDICOMImageLoader() {
-	const { preferSizeOverAccuracy, useNorm16Texture } = cornerstone.getConfiguration().rendering;
-	cornerstoneDICOMImageLoader.external.cornerstone = cornerstone;
-	cornerstoneDICOMImageLoader.external.dicomParser = dicomParser;
-	cornerstoneDICOMImageLoader.configure({
-		useWebWorkers: true,
-		decodeConfig: {
-			convertFloatPixelDataToInt: false,
-			use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
-		},
-	});
-
-	let maxWebWorkers = 1;
-
-	if (navigator.hardwareConcurrency) {
-		maxWebWorkers = Math.min(navigator.hardwareConcurrency, 7);
-	}
-
-	var config = {
-		maxWebWorkers,
-		startWebWorkersOnDemand: false,
-		taskConfiguration: {
-			decodeTask: {
-				initializeCodecsOnStartup: false,
-				strict: false,
-			},
-		},
-	};
-
-	cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
-}
 
 export function expandSegTo3D(segmentationId) {
 	const segmentationVolume = cornerstone.cache.getVolume(segmentationId);

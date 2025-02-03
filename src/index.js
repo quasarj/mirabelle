@@ -1,3 +1,7 @@
+/**
+ * This is the true entrypoint of the program
+ */
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -7,10 +11,8 @@ import {
 } from 'react-router-dom';
 
 import ErrorPage from './error-page';
-import './index.css'
-//import './transitions.css';
+// import './index.css'
 
-//import App from './App';
 
 import Home from './routes/home';
 
@@ -18,21 +20,21 @@ import MaskIEC, {
 	loader as iecLoader,
 } from './routes/mask/iec';
 
-import ReviewIEC, {
-  loader as iecReviewLoader,
-} from './routes/mask/review';
+// import ReviewIEC, {
+//   loader as iecReviewLoader,
+// } from './routes/mask/review';
 
-import ReviewNIFTI, {
-  loader as niftiReviewLoader,
-} from './routes/nifti/review';
+// import ReviewNIFTI, {
+//   loader as niftiReviewLoader,
+// } from './routes/nifti/review';
 
-import MaskVR, {
-	loader as vrLoader,
-} from './routes/mask/vr';
+// import MaskVR, {
+// 	loader as vrLoader,
+// } from './routes/mask/vr';
 
-import ReviewDICOM, {
-	loader as dicomReviewLoader,
-} from './routes/dicom/review';
+// import ReviewDICOM, {
+// 	loader as dicomReviewLoader,
+// } from './routes/dicom/review';
 
 const router = createBrowserRouter([
 	{
@@ -45,26 +47,26 @@ const router = createBrowserRouter([
 		element: <MaskIEC />,
 		loader: iecLoader,
 	},
-	{
-		path: "mask/vr/:visual_review_instance_id",
-		element: <MaskVR />,
-		loader: vrLoader,
-	},
-	{
-		path: "review/mask/iec/:iec",
-		element: <ReviewIEC />,
-		loader: iecReviewLoader,
-	},
-	{
-		path: "review/nifti/fileId/:fileId",
-		element: <ReviewNIFTI />,
-		loader: niftiReviewLoader,
-	},
-	{
-		path: "review/dicom/iec/:iec",
-		element: <ReviewDICOM />,
-		loader: dicomReviewLoader,
-	},
+	// {
+	// 	path: "mask/vr/:visual_review_instance_id",
+	// 	element: <MaskVR />,
+	// 	loader: vrLoader,
+	// },
+	// {
+	// 	path: "review/mask/iec/:iec",
+	// 	element: <ReviewIEC />,
+	// 	loader: iecReviewLoader,
+	// },
+	// {
+	// 	path: "review/nifti/fileId/:fileId",
+	// 	element: <ReviewNIFTI />,
+	// 	loader: niftiReviewLoader,
+	// },
+	// {
+	// 	path: "review/dicom/iec/:iec",
+	// 	element: <ReviewDICOM />,
+	// 	loader: dicomReviewLoader,
+	// },
 ], {
 	basename: "/mira",
 });

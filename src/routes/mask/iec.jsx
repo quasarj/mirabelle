@@ -1,6 +1,8 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import MainPanel from '../../components/MainPanel.jsx';
+import MaskIECPanel from '../../components/MaskIECPanel';
+import EnableCornerstone from '../../components/EnableCornerstone';
+
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDetails } from '../../masking.js';
@@ -29,10 +31,13 @@ export default function MaskIEC() {
         configState = useConfigState(TASK_CONFIGS.masker_stack || TASK_CONFIGS.default);
     }
 
+	// TODO: probably files needs to be removed!
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ ...configState }}>
-            <MainPanel details={details} files={fileInfo.frames} iec={iec} />
+			<EnableCornerstone>
+				<MaskIECPanel details={details} files={fileInfo.frames} iec={iec} />
+			</EnableCornerstone>
         </Context.Provider>
     );
 }
