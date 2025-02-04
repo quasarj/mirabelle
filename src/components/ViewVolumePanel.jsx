@@ -249,16 +249,8 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             const t3dToolGroup = getOrCreateToolgroup('t3d_tool_group');
             t3dToolGroup.addViewport('t3d_coronal', 'viewer_render_engine');
 
-            // Disabled it because of a bug in cornerstone v2
             // Trackball Rotate
             t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
-            t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
-                bindings: [
-                    {
-                        mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
-                    },
-                ],
-            });
 
             t3dToolGroup.addTool(cornerstoneTools.PanTool.toolName);
             t3dToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
@@ -721,6 +713,13 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         if (!filesLoaded) {
             return;
         }
+
+        const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+        t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
+            bindings: [
+                { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }
+            ],
+        });
 
         // console.log("viewports loaded");
 
