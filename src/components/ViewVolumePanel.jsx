@@ -180,8 +180,11 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     allPanelWrappers.forEach((panelWrapper) => {
                         if (panelWrapper.classList.contains('Minimized')) {
                             panelWrapper.querySelector('button').title = 'Maximize';
+                            panelWrapper.style.position = 'relative';
+                            panelWrapper.style.width = '100%';
+                            panelWrapper.style.height = '100%';
                             panelWrapper.style.visibility = 'visible';
-                            panelWrapper.style.display = 'block';
+                            // panelWrapper.style.display = 'block';
                             panelWrapper.classList.remove('Minimized');
                         }
                     });
@@ -209,8 +212,13 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     allPanelWrappers.forEach((panelWrapper) => {
                         if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
                             panelWrapper.querySelector('button').title = 'Minimize';
+
+                            // Haydex: Trick to hide the panelWarpper without breaking the WebGL rendering engine, set the width and height to 1px and position to absolute
                             panelWrapper.style.visibility = 'hidden';
-                            panelWrapper.style.display = 'none';
+                            panelWrapper.style.position = 'absolute';
+                            panelWrapper.style.width = '1px';
+                            panelWrapper.style.height = '1px';
+                            // panelWrapper.style.display = 'none'; // Haydex: don't use display:none as it will break the WebGL rendering engine
                             panelWrapper.classList.add('Minimized');
                         }
                     });
@@ -251,6 +259,19 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Trackball Rotate
             t3dToolGroup.addTool(cornerstoneTools.TrackballRotateTool.toolName);
+
+            // delay the activation for 500 milliseconds
+            // setTimeout(() => {
+
+            //     t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
+            //         bindings: [
+            //             {
+            //                 mouseButton: cornerstoneTools.Enums.MouseBindings.Primary, // Left Click
+            //             },
+            //         ],
+            //     });
+
+            // }, 1000);
 
             t3dToolGroup.addTool(cornerstoneTools.PanTool.toolName);
             t3dToolGroup.addTool(cornerstoneTools.ZoomTool.toolName);
@@ -714,6 +735,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             return;
         }
 
+        // Now that the t3d volume is loaded, activate the TrackballRotateTool.
         const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
         t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
             bindings: [

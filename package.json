@@ -25,11 +25,11 @@
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
-    "@cornerstonejs/core": "^2.19.4",
-    "@cornerstonejs/dicom-image-loader": "^2.19.4",
-    "@cornerstonejs/nifti-volume-loader": "^2.19.4",
+    "@cornerstonejs/core": "^2.19.7",
+    "@cornerstonejs/dicom-image-loader": "^2.19.7",
+    "@cornerstonejs/nifti-volume-loader": "^2.19.7",
     "@cornerstonejs/streaming-image-volume-loader": "^1.86.0",
-    "@cornerstonejs/tools": "^2.19.4",
+    "@cornerstonejs/tools": "^2.19.7",
     "@icr/polyseg-wasm": "^0.4.0",
     "autoprefixer": "^10.4.20",
     "dcmjs": "^0.33.1",
