@@ -210,7 +210,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     // hide all other visible panelWrappers
                     const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
                     allPanelWrappers.forEach((panelWrapper) => {
-                        if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
+                        if (panelWrapper.id !== event.currentTarget.parentNode.id) {
                             panelWrapper.querySelector('button').title = 'Minimize';
 
                             // Haydex: Trick to hide the panelWarpper without breaking the WebGL rendering engine, set the width and height to 1px and position to absolute
@@ -772,23 +772,43 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
             // set volume viewport panels to be visible
+            // Haydex: I can improve repetition with classes and looping through the viewports
 
             volAxialContent.style.visibility = 'visible';
+            volAxialContent.style.position = 'relative';
+            volAxialContent.style.width = '100%';
+            volAxialContent.style.height = '100%';
             volSagittalContent.style.visibility = 'visible';
+            volSagittalContent.style.position = 'relative';
+            volSagittalContent.style.width = '100%';
+            volSagittalContent.style.height = '100%';
             volCoronalContent.style.visibility = 'visible';
-            volAxialContent.style.display = 'block';
-            volSagittalContent.style.display = 'block';
-            volCoronalContent.style.display = 'block';
+            volCoronalContent.style.position = 'relative';
+            volCoronalContent.style.width = '100%';
+            volCoronalContent.style.height = '100%';
 
+            // Haydex: Trick to hide the viewports without breaking the WebGL rendering engine, set the width and height to 1px and position to absolute
             mipAxialContent.style.visibility = 'hidden';
+            mipAxialContent.style.position = 'absolute';
+            mipAxialContent.style.width = '1px';
+            mipAxialContent.style.height = '1px';
             mipSagittalContent.style.visibility = 'hidden';
+            mipSagittalContent.style.position = 'absolute';
+            mipSagittalContent.style.width = '1px';
+            mipSagittalContent.style.height = '1px';
             mipCoronalContent.style.visibility = 'hidden';
-            mipAxialContent.style.display = 'none';
-            mipSagittalContent.style.display = 'none';
-            mipCoronalContent.style.display = 'none';
+            mipCoronalContent.style.position = 'absolute';
+            mipCoronalContent.style.width = '1px';
+            mipCoronalContent.style.height = '1px';
+
+            // mipAxialContent.style.display = 'none';
+            // mipSagittalContent.style.display = 'none';
+            // mipCoronalContent.style.display = 'none';
 
             t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
+            t3dCoronalContent.style.position = 'relative';
+            t3dCoronalContent.style.width = '100%';
+            t3dCoronalContent.style.height = '100%';
 
             // move t3dCoronalContent to the top right cell of the grid
             t3dCoronalContent.style.gridColumn = 2;
@@ -820,22 +840,53 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             container.style.gridTemplateRows = 'repeat(2, 1fr)';
 
             // set projection viewport panels to be visible
+            // volAxialContent.style.visibility = 'hidden';
+            // volSagittalContent.style.visibility = 'hidden';
+            // volCoronalContent.style.visibility = 'hidden';
+
+            // WebGL rendering engine trick to hide the viewports without breaking the rendering engine
             volAxialContent.style.visibility = 'hidden';
+            volAxialContent.style.position = 'absolute';
+            volAxialContent.style.width = '1px';
+            volAxialContent.style.height = '1px';
             volSagittalContent.style.visibility = 'hidden';
+            volSagittalContent.style.position = 'absolute';
+            volSagittalContent.style.width = '1px';
+            volSagittalContent.style.height = '1px';
             volCoronalContent.style.visibility = 'hidden';
-            volAxialContent.style.display = 'none';
-            volSagittalContent.style.display = 'none';
-            volCoronalContent.style.display = 'none';
+            volCoronalContent.style.position = 'absolute';
+            volCoronalContent.style.width = '1px';
+            volCoronalContent.style.height = '1px';
+
+
+            // volAxialContent.style.display = 'none';
+            // volSagittalContent.style.display = 'none';
+            // volCoronalContent.style.display = 'none';
 
             mipAxialContent.style.visibility = 'visible';
+            mipAxialContent.style.position = 'relative';
+            mipAxialContent.style.width = '100%';
+            mipAxialContent.style.height = '100%';
             mipSagittalContent.style.visibility = 'visible';
+            mipSagittalContent.style.position = 'relative';
+            mipSagittalContent.style.width = '100%';
+            mipSagittalContent.style.height = '100%';
             mipCoronalContent.style.visibility = 'visible';
-            mipAxialContent.style.display = 'block';
-            mipSagittalContent.style.display = 'block';
-            mipCoronalContent.style.display = 'block';
+            mipCoronalContent.style.position = 'relative';
+            mipCoronalContent.style.width = '100%';
+            mipCoronalContent.style.height = '100%';
+
+            // mipAxialContent.style.visibility = 'visible';
+            // mipSagittalContent.style.visibility = 'visible';
+            // mipCoronalContent.style.visibility = 'visible';
+            // mipAxialContent.style.display = 'block';
+            // mipSagittalContent.style.display = 'block';
+            // mipCoronalContent.style.display = 'block';
 
             t3dCoronalContent.style.visibility = 'visible';
-            t3dCoronalContent.style.display = 'block';
+            t3dCoronalContent.style.position = 'relative';
+            t3dCoronalContent.style.width = '100%';
+            t3dCoronalContent.style.height = '100%';
 
             // move t3dCoronalContent to the top right cell of the grid
             t3dCoronalContent.style.gridColumn = 2;
