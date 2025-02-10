@@ -210,7 +210,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     // hide all other visible panelWrappers
                     const allPanelWrappers = event.currentTarget.parentNode.parentNode.childNodes;
                     allPanelWrappers.forEach((panelWrapper) => {
-                        if (panelWrapper.id !== event.currentTarget.parentNode.id) {
+                        if (panelWrapper.id !== event.currentTarget.parentNode.id && panelWrapper.style.visibility === 'visible') {
                             panelWrapper.querySelector('button').title = 'Minimize';
 
                             // Haydex: Trick to hide the panelWarpper without breaking the WebGL rendering engine, set the width and height to 1px and position to absolute
