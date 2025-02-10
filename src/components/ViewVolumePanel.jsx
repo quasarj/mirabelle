@@ -1453,6 +1453,16 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 // if the viewport parent node is visible, reset camera
                 const viewportElement = document.getElementById(viewport.id);
                 if (viewportElement.parentNode.style.display !== 'none') {
+                    const camera = viewport.getCamera();
+
+                    // Set these values to your volume’s defaults.
+                    camera.position = [0, 0, 1000];
+                    camera.focalPoint = [0, 0, 0];
+                    camera.viewUp = [0, 1, 0];
+
+                    // Apply the updated camera and re-render.
+                    viewport.setCamera(camera);
+                    viewport.render();
                     viewport.resetCamera(true, true, true, true);
                     viewport.render();
                 }
@@ -1476,6 +1486,15 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 renderingEngine.getViewports().forEach((viewport) => {
                     const viewportElement = document.getElementById(viewport.id);
                     if (viewportElement.parentNode.style.display !== 'none') {
+                        const camera = viewport.getCamera();
+
+                        // Set these values to your volume’s defaults.
+                        camera.position = [0, -1000, 0];
+                        camera.focalPoint = [0, 0, 0];
+                        camera.viewUp = [0, 0, 1];
+
+                        // Apply the updated camera and re-render.
+                        viewport.setCamera(camera);
                         viewport.resetCamera(true, true, true, true);
                         viewport.render();
                     }
