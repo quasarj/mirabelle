@@ -1456,13 +1456,12 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     const camera = viewport.getCamera();
 
                     // Set these values to your volume’s defaults.
-                    camera.position = [0, 0, 1000];
+                    camera.position = [0, -1000, 0];
                     camera.focalPoint = [0, 0, 0];
-                    camera.viewUp = [0, 1, 0];
+                    camera.viewUp = [0, 0, 1];
 
                     // Apply the updated camera and re-render.
                     viewport.setCamera(camera);
-                    viewport.render();
                     viewport.resetCamera(true, true, true, true);
                     viewport.render();
                 }
@@ -1506,7 +1505,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                     const crosshairsToolInstance = volToolGroup.getToolInstance(cornerstoneTools.CrosshairsTool.toolName);
                     crosshairsToolInstance.resetCrosshairs();
                 }
-            }, 150);
+            }, 0);
         }
         context.setResetViewportsValue(false);
 
