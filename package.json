@@ -25,12 +25,13 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@cornerstonejs/core": "^2.2.16",
-    "@cornerstonejs/dicom-image-loader": "^2.2.16",
-    "@cornerstonejs/nifti-volume-loader": "^2.2.16",
-    "@cornerstonejs/tools": "^2.2.16",
+    "@cornerstonejs/core": "^2.18.7",
+    "@cornerstonejs/dicom-image-loader": "^2.18.7",
+    "@cornerstonejs/nifti-volume-loader": "^2.18.7",
+    "@cornerstonejs/tools": "^2.18.7",
     "@icr/polyseg-wasm": "^0.4.0",
     "@itk-wasm/morphological-contour-interpolation": "^1.1.0",
+    "@reduxjs/toolkit": "^2.5.1",
     "autoprefixer": "^10.4.19",
     "dcmjs": "^0.33.0",
     "dicom-parser": "^1.8.21",
@@ -41,6 +42,7 @@
     "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^6.23.1",
     "tailwindcss": "^3.4.3"
   }

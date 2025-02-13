@@ -4,13 +4,19 @@ import { RenderingEngine } from "@cornerstonejs/core"
 import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import VolumeViewport from './VolumeViewport';
-// import CSToolsPanel from './CSToolsPanel';
-// import CSVolumeFiles from './CSVolumeFiles';
-// import CSStackFiles from './CSStackFiles';
+import VolumeViewport3d from './VolumeViewport3d';
+import ToolsPanel from './ToolsPanel2';
 
 const {
   ToolGroupManager,
+  TrackballRotateTool,
+  BrushTool,
+  RectangleScissorsTool,
+  StackScrollTool,
+  Enums: csToolsEnums,
 } = cornerstoneTools;
+
+const { MouseBindings } = csToolsEnums;
 
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
@@ -29,29 +35,70 @@ function VolumeView({ volumeId }) {
   let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
   let toolGroup3d = ToolGroupManager.createToolGroup("toolGroup3d");
 
+  cornerstoneTools.addTool(TrackballRotateTool);
+  cornerstoneTools.addTool(BrushTool);
+  cornerstoneTools.addTool(RectangleScissorsTool);
+  cornerstoneTools.addTool(StackScrollTool);
+
+  toolGroup3d.addTool(TrackballRotateTool.toolName);
+
+  toolGroup3d.setToolActive(TrackballRotateTool.toolName, {
+    bindings: [
+      {
+        mouseButton: MouseBindings.Primary,
+      },
+    ],
+  });
+
+
+
   return (
     <>
-      <VolumeViewport 
-        viewportId="axial2d"
-        volumeId={volumeId}
-        renderingEngine={renderingEngine}
-        toolGroup={toolGroup}
-        orientation="AXIAL"
-      />
-      <VolumeViewport 
-        viewportId="sagittal2d"
-        volumeId={volumeId}
-        renderingEngine={renderingEngine}
-        toolGroup={toolGroup}
-        orientation="SAGITTAL"
-      />
-      <VolumeViewport 
-        viewportId="coronal2d"
-        volumeId={volumeId}
-        renderingEngine={renderingEngine}
-        toolGroup={toolGroup}
-        orientation="CORONAL"
-      />
+    <ToolsPanel toolGroup={toolGroup}/>
+    <table>
+      <tbody>
+      <tr>
+        <td>
+        <VolumeViewport3d
+          viewportId="coronal3d"
+          volumeId={volumeId}
+          renderingEngine={renderingEngine}
+          toolGroup={toolGroup3d}
+          orientation="CORONAL"
+        />
+        </td>
+        <td>
+          <VolumeViewport 
+            viewportId="axial2d"
+            volumeId={volumeId}
+            renderingEngine={renderingEngine}
+            toolGroup={toolGroup}
+            orientation="AXIAL"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <VolumeViewport 
+            viewportId="sagittal2d"
+            volumeId={volumeId}
+            renderingEngine={renderingEngine}
+            toolGroup={toolGroup}
+            orientation="SAGITTAL"
+          />
+        </td>
+        <td>
+          <VolumeViewport 
+            viewportId="coronal2d"
+            volumeId={volumeId}
+            renderingEngine={renderingEngine}
+            toolGroup={toolGroup}
+            orientation="CORONAL"
+          />
+        </td>
+      </tr>
+      </tbody>
+    </table>
     </>
   );
 

@@ -2,9 +2,32 @@
  * A simple Button Set component for use in the toolbar or elsewhere
  *
  * Keeps track of which button is active, and calls a callback on click
+ *
+ * buttonConfig should look like:
+    const leftClickGroupButtonConfig = [
+		{
+			name: "Window Level",
+			icon: "exposure",
+			action: () => switchLeftClickMode("winlev"),
+		},
+		{
+			name: "Crosshairs",
+			icon: "point_scan",
+			action: () => switchLeftClickMode("crosshair"),
+		},
+		{
+			name: "Selection",
+			icon: "gesture_select",
+			action: () => switchLeftClickMode("selection"),
+		},
+
+    ];
  */
 import React from 'react';
 import { useState } from 'react';
+import MaterialIcon from './MaterialIcon';
+
+import './MaterialButtonSet.css';
 
 
 function MaterialButtonSet({ buttonConfig, initialActiveButton }) {
@@ -15,28 +38,28 @@ function MaterialButtonSet({ buttonConfig, initialActiveButton }) {
     setActiveButton(item.name);
   }
 
-  function getButtonClassNames(buttonName) {
+  function getActiveClass(buttonName) {
     if (buttonName === activeButton) {
-      // active CSS
-      return 'w-full text-white bg-blue-500';
+      return 'active';
     } else {
-      // default CSS
-      return 'w-full bg-white dark:bg-slate-900';
+      return 'inactive';
     }
   }
 
     return (
-      <>
+      <ul>
         {buttonConfig.map((item, index) => (
+          <li key={index}>
           <button 
               title={item.name}
               onClick={() => buttonClick(item)}
-              className={getButtonClassNames(item.name)}
+              className={getActiveClass(item.name)}
           >
-              <span className='material-symbols-rounded'>{item.icon}</span>
+              <MaterialIcon icon={item.icon} />
           </button>
+          </li>
         ))}
-      </>
+      </ul>
     )
 }
 

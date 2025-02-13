@@ -1,15 +1,19 @@
 import * as cornerstone from '@cornerstonejs/core';
 import dicomParser from 'dicom-parser';
+import * as cornerstoneTools from '@cornerstonejs/tools';
 
 const { volumeLoader } = cornerstone;
 
 
 export function expandSegTo3D(segmentationId) {
 	const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
-	const scalarData = segmentationVolume.scalarData;
-	const dims = segmentationVolume.dimensions;
+	const { dimensions, voxelManager } = segmentationVolume;
 
-	const [x_size, y_size, z_size] = dims;
+	// It's fastest to extract the scalardata as an array
+	// and then set it back later, rather than to update individual pixels
+	let scalarData = voxelManager.getCompleteScalarDataArray();
+
+	const [x_size, y_size, z_size] = dimensions;
 
 	let xmin = z_size * y_size * x_size;
 	let xmax = 0;
@@ -56,6 +60,8 @@ export function expandSegTo3D(segmentationId) {
 			}
 		}
 	}
+
+	voxelManager.setCompleteScalarDataArray(scalarData);
 
 	return {
 		x: { min: xmin, max: xmax },

@@ -2,11 +2,21 @@ import React from 'react';
 
 import { useState, useContext } from 'react';
 
-function OperationsPanel() {
+function OperationsPanel({ onExpand, onClear, onAccept }) {
 
   return (
     <>
-      Operations go here
+      <ol>
+        <button onClick={onExpand}>
+          Expand Selection
+        </button>
+        <button onClick={onClear}>
+          Clear Selection
+        </button>
+        <button onClick={onAccept}>
+          Accept Selection
+        </button>
+      </ol>
     </>
   )
 }

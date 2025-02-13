@@ -2,12 +2,14 @@ import React from 'react';
 import { useLoaderData } from 'react-router-dom';
 import MaskIECPanel from '../../components/MaskIECPanel';
 import EnableCornerstone from '../../components/EnableCornerstone';
+import Header from '../../components/Header';
 
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDetails } from '../../masking.js';
 import { getFiles, getIECInfo } from '../../utilities';
 import { TASK_CONFIGS } from '../../config/config';
+
 
 // function to load data for this component
 // will be called by the Router before rendering
@@ -36,6 +38,7 @@ export default function MaskIEC() {
     return (
         <Context.Provider value={{ ...configState }}>
 			<EnableCornerstone>
+				<Header />
 				<MaskIECPanel details={details} files={fileInfo.frames} iec={iec} />
 			</EnableCornerstone>
         </Context.Provider>
