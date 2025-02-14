@@ -23,6 +23,7 @@ import { expandSegTo3D } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
 import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
+import { viewport } from '@cornerstonejs/tools/utilities';
 
 //Segmentation V2
 let segId = 'seg_id';
@@ -59,6 +60,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
     const [loading, setLoading] = useState(true);
     const [filesLoaded, setFilesLoaded] = useState(false);
+    const [firstPass, setFirstPass] = useState(true);
 
     // set a state variable that will save each viewport's normal/expanded/minimized state
     const [expandedViewports, setExpandedViewports] = useState([
@@ -735,13 +737,30 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             return;
         }
 
-        // Now that the t3d volume is loaded, activate the TrackballRotateTool.
-        const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
-        t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
-            bindings: [
-                { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }
-            ],
-        });
+
+        // Now that the volumes are loaded, on the first pass only:
+        if (firstPass) {
+
+            // activate the TrackballRotateTool.
+            const t3dToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('t3d_tool_group');
+            t3dToolGroup.setToolActive(cornerstoneTools.TrackballRotateTool.toolName, {
+                bindings: [
+                    { mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }
+                ],
+            });
+
+            // Restore all viewport cameras to their default settings.
+            const viewports = renderingEngineRef.current.getViewports();
+            viewports.forEach((viewport) => {
+                viewport.resetCamera(true, true, true, true);
+            });
+
+            console.log('Volumes loaded.');
+
+            setFirstPass(false);
+        }
+
+
 
         // console.log("viewports loaded");
 
@@ -1075,19 +1094,28 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                             type: csToolsEnums.SegmentationRepresentations.Labelmap,
                         },
                     ],
-                    // mip_sagittal: [
-                    //     {
-                    //         segmentationId: segId,
-                    //         type: csToolsEnums.SegmentationRepresentations.Labelmap,
-                    //     },
-                    // ],
-                    // mip_coronal: [
-                    //     {
-                    //         segmentationId: segId,
-                    //         type: csToolsEnums.SegmentationRepresentations.Labelmap,
-                    //     },
-                    // ],
+                    mip_sagittal: [
+                        {
+                            segmentationId: segId,
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                        },
+                    ],
+                    mip_coronal: [
+                        {
+                            segmentationId: segId,
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                        },
+                    ],
                 });
+
+                // setTimeout(() => {
+                //     renderingEngine.getViewports().forEach((viewport) => {
+                //         viewport.resetCamera(true, true, true, true);
+                //     });
+                // }, 50);
+
+
+
 
                 //// make sure it doesn't already exist
                 //cornerstoneTools.segmentation.state.removeSegmentation(segId);
@@ -1409,11 +1437,11 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Reset View
             if (context.viewToolGroupVisible) {
-                //// Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
-                context.setViewToolGroupValue(context.viewToolGroupValue + " "); // force a re-render
-                setTimeout(() => {
-                    context.setViewToolGroupValue(context.viewToolGroupValue);
-                }, 50);
+
+                context.setViewToolGroupValue(context.viewToolGroupValue);
+                // setTimeout(() => {
+                //     // context.setViewToolGroupValue(context.viewToolGroupValue);
+                // }, 50);
                 //context.setViewToolGroupValue(context.viewToolGroupValue);
             }
 
@@ -1451,20 +1479,20 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             const renderingEngine = renderingEngineRef.current;
             renderingEngine.getViewports().forEach((viewport) => {
                 // if the viewport parent node is visible, reset camera
-                const viewportElement = document.getElementById(viewport.id);
-                if (viewportElement.parentNode.style.display !== 'none') {
-                    const camera = viewport.getCamera();
+                // const viewportElement = document.getElementById(viewport.id);
+                //if (viewportElement.parentNode.style.display !== 'none') {
+                const camera = viewport.getCamera();
 
-                    // Set these values to your volume’s defaults.
-                    camera.position = [0, -1000, 0];
-                    camera.focalPoint = [0, 0, 0];
-                    camera.viewUp = [0, 0, 1];
+                // Set these values to your volume’s defaults.
+                camera.position = [0, -1000, 0];
+                camera.focalPoint = [0, 0, 0];
+                camera.viewUp = [0, 0, 1];
 
-                    // Apply the updated camera and re-render.
-                    viewport.setCamera(camera);
-                    viewport.resetCamera(true, true, true, true);
-                    viewport.render();
-                }
+                // Apply the updated camera and re-render.
+                viewport.setCamera(camera);
+                viewport.resetCamera(true, true, true, true);
+                viewport.render();
+                //}
             });
 
             // // Remove all segmentations
@@ -1482,22 +1510,22 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             setTimeout(() => {
 
                 // if the viewport parent node is visible, reset camera
-                renderingEngine.getViewports().forEach((viewport) => {
-                    const viewportElement = document.getElementById(viewport.id);
-                    if (viewportElement.parentNode.style.display !== 'none') {
-                        const camera = viewport.getCamera();
+                // renderingEngine.getViewports().forEach((viewport) => {
+                //     const viewportElement = document.getElementById(viewport.id);
+                //     if (viewportElement.parentNode.style.display !== 'none') {
+                //         const camera = viewport.getCamera();
 
-                        // Set these values to your volume’s defaults.
-                        camera.position = [0, -1000, 0];
-                        camera.focalPoint = [0, 0, 0];
-                        camera.viewUp = [0, 0, 1];
+                //         // Set these values to your volume’s defaults.
+                //         camera.position = [0, -1000, 0];
+                //         camera.focalPoint = [0, 0, 0];
+                //         camera.viewUp = [0, 0, 1];
 
-                        // Apply the updated camera and re-render.
-                        viewport.setCamera(camera);
-                        viewport.resetCamera(true, true, true, true);
-                        viewport.render();
-                    }
-                });
+                //         // Apply the updated camera and re-render.
+                //         viewport.setCamera(camera);
+                //         viewport.resetCamera(true, true, true, true);
+                //         viewport.render();
+                //     }
+                // });
 
                 // reset crosshairs tool slab thickness if the volume viewport is visible
                 if (document.getElementById('vol_axial_wrapper').style.display !== 'none') {
