@@ -1,0 +1,16 @@
+ul {
+  @apply h-full pb-4;
+  display: flex;
+}
+
+li {
+  @apply pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2;
+}
+
+.active {
+  @apply w-full text-white bg-blue-500;
+}
+
+.inactive {
+  @apply w-full bg-white dark:bg-slate-900;
+}

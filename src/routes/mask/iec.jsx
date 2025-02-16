@@ -1,9 +1,12 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import MainPanel from '../../components/MainPanel.jsx';
+
 import { Context } from '../../components/Context';
+import MaskIECPanel from '../../components/MaskIECPanel';
+import EnableCornerstone from '../../components/EnableCornerstone';
+
 import useConfigState from '../../hooks/useConfigState';
-import { getDetails } from '../../masking.js';
+import { getDetails } from '../../masking';
 import { getFiles, getIECInfo } from '../../utilities';
 import { TASK_CONFIGS } from '../../config/config';
 
@@ -18,21 +21,23 @@ export async function loader({ params }) {
 }
 
 export default function MaskIEC() {
-    const { details, fileInfo, iec } = useLoaderData();
+  const { details, fileInfo, iec } = useLoaderData();
 
-    let configState;
+  let configState;
 
-    // Use specific config for this route, fallback to 'default' if not found
-    if (fileInfo.volumetric) {
-        configState = useConfigState(TASK_CONFIGS.masker_volume || TASK_CONFIGS.default);
-    } else {
-        configState = useConfigState(TASK_CONFIGS.masker_stack || TASK_CONFIGS.default);
-    }
+  // Use specific config for this route, fallback to 'default' if not found
+  if (fileInfo.volumetric) {
+    configState = useConfigState(TASK_CONFIGS.masker_volume || TASK_CONFIGS.default);
+  } else {
+    configState = useConfigState(TASK_CONFIGS.masker_stack || TASK_CONFIGS.default);
+  }
 
-    // Here we just assemble the various panels that we need for this mode
-    return (
-        <Context.Provider value={{ ...configState }}>
-            <MainPanel details={details} files={fileInfo.frames} iec={iec} />
-        </Context.Provider>
-    );
+  // Here we just assemble the various panels that we need for this mode
+  return (
+    <Context.Provider value={{ ...configState }}>
+      <EnableCornerstone>
+        <MaskIECPanel iec={iec} />
+      </EnableCornerstone>
+    </Context.Provider>
+  );
 }
