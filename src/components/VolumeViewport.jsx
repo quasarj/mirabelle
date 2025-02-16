@@ -24,7 +24,7 @@ const { segmentation: segmentationUtils } = cstUtils;
 
 const { ViewportType } = Enums;
 
-function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orientation }) {
+function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
   const elementRef = useRef(null);
   // This came from an example, I am not sure why it's using
   // a ref and not a State?? Maybe to avoid a redraw?
@@ -68,8 +68,6 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
       // Set the volume on the viewport and it's default properties
       viewport.setVolumes([{ volumeId }])
 
-      // TODO this must be passed in somehow!
-      const segmentationId = 'MY_SEGMENTATION_ID';
       await segmentation.addLabelmapRepresentationToViewportMap({
         [viewportId]: [
           {

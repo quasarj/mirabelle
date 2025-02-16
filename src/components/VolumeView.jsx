@@ -7,6 +7,8 @@ import VolumeViewport from './VolumeViewport';
 import VolumeViewport3d from './VolumeViewport3d';
 import ToolsPanel from './ToolsPanel2';
 
+import './VolumeView.css';
+
 const {
   ToolGroupManager,
   TrackballRotateTool,
@@ -21,7 +23,7 @@ const { MouseBindings } = csToolsEnums;
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
 
-function VolumeView({ volumeId }) {
+function VolumeView({ volumeId, segmentationId }) {
 
   // These should probably both be stored in a State. As they are here,
   // they would get re-generated anytime this component is redrawn
@@ -53,53 +55,61 @@ function VolumeView({ volumeId }) {
 
 
   return (
-    <>
-    <ToolsPanel toolGroup={toolGroup}/>
-    <table>
-      <tbody>
-      <tr>
-        <td>
-        <VolumeViewport3d
-          viewportId="coronal3d"
-          volumeId={volumeId}
-          renderingEngine={renderingEngine}
-          toolGroup={toolGroup3d}
-          orientation="CORONAL"
-        />
-        </td>
-        <td>
-          <VolumeViewport 
-            viewportId="axial2d"
-            volumeId={volumeId}
-            renderingEngine={renderingEngine}
-            toolGroup={toolGroup}
-            orientation="AXIAL"
-          />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <VolumeViewport 
-            viewportId="sagittal2d"
-            volumeId={volumeId}
-            renderingEngine={renderingEngine}
-            toolGroup={toolGroup}
-            orientation="SAGITTAL"
-          />
-        </td>
-        <td>
-          <VolumeViewport 
-            viewportId="coronal2d"
-            volumeId={volumeId}
-            renderingEngine={renderingEngine}
-            toolGroup={toolGroup}
-            orientation="CORONAL"
-          />
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    </>
+    <div id="VolumeView">
+	  <div id="main">
+	  	<div id="leftPanel">
+			<ToolsPanel toolGroup={toolGroup}/>
+	  	</div>
+	  </div>
+		<table>
+		<tbody>
+		<tr>
+			<td>
+			<VolumeViewport3d
+			viewportId="coronal3d"
+			volumeId={volumeId}
+			renderingEngine={renderingEngine}
+			toolGroup={toolGroup3d}
+			segmentationId={segmentationId}
+			orientation="CORONAL"
+			/>
+			</td>
+			<td>
+			<VolumeViewport 
+				viewportId="axial2d"
+				volumeId={volumeId}
+				renderingEngine={renderingEngine}
+				toolGroup={toolGroup}
+				segmentationId={segmentationId}
+				orientation="AXIAL"
+			/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<VolumeViewport 
+				viewportId="sagittal2d"
+				volumeId={volumeId}
+				renderingEngine={renderingEngine}
+				toolGroup={toolGroup}
+				segmentationId={segmentationId}
+				orientation="SAGITTAL"
+			/>
+			</td>
+			<td>
+			<VolumeViewport 
+				viewportId="coronal2d"
+				volumeId={volumeId}
+				renderingEngine={renderingEngine}
+				toolGroup={toolGroup}
+				segmentationId={segmentationId}
+				orientation="CORONAL"
+			/>
+			</td>
+		</tr>
+		</tbody>
+		</table>
+    </div>
   );
 
 }

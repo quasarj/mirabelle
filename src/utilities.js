@@ -1,8 +1,15 @@
 import * as cornerstone from '@cornerstonejs/core';
 import dicomParser from 'dicom-parser';
 import * as cornerstoneTools from '@cornerstonejs/tools';
+import createImageIdsAndCacheMetaData from './lib/createImageIdsAndCacheMetaData';
 
-const { volumeLoader } = cornerstone;
+const { 
+  volumeLoader,
+} = cornerstone;
+const { 
+  Enums: csToolsEnums,
+  segmentation,
+} = cornerstoneTools;
 
 
 export function expandSegTo3D(segmentationId) {
@@ -136,4 +143,45 @@ export async function getIECsForVR(visual_review_id) {
 	const details = await response.json();
 
 	return details;
+}
+
+
+export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId) {
+  const imageIds = await createImageIdsAndCacheMetaData({
+    StudyInstanceUID:
+    `iec:${iec}`,
+    SeriesInstanceUID:
+    "any",
+    wadoRsRoot: "/papi/v1/wadors",
+  })
+
+  const volume = await volumeLoader.createAndCacheVolume(volumeId, {
+    imageIds,
+  })
+
+  // Create a segmentation of the same resolution as the source data for the CT volume
+  volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
+    volumeId: segmentationId,
+  });
+
+  segmentation.addSegmentations([
+    {
+      segmentationId,
+      representation: {
+        // The type of segmentation
+        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+        // The actual segmentation data, in the case of labelmap this is a
+        // reference to the source volume of the segmentation.
+        data: {
+          volumeId: segmentationId,
+        },
+      },
+    },
+  ]);
+
+
+  // Set the volume to load
+  volume.load();
+
+  return volume;
 }
