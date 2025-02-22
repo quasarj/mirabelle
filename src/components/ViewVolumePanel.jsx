@@ -777,7 +777,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         if (context.viewToolGroupValue === 'volume') {
 
             // Haydex: I can improve this code by using a state variable to keep track of the expanded viewport
-
+            console.log('Drawing volume viewports...');
             // remove all viewports Minimized and Expanded classes
             const allPanelWrappers = container.childNodes;
             allPanelWrappers.forEach((panelWrapper) => {
@@ -1437,8 +1437,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Reset View
             if (context.viewToolGroupVisible) {
-
-                context.setViewToolGroupValue(context.viewToolGroupValue);
+                context.setViewToolGroupValue(context.viewport_layout);
                 // setTimeout(() => {
                 //     // context.setViewToolGroupValue(context.viewToolGroupValue);
                 // }, 50);
@@ -1447,7 +1446,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Reset Function
             if (context.functionToolGroupVisible) {
-                context.setFunctionToolGroupValue(context.functionToolGroupValue);
+                context.setFunctionToolGroupValue(context.functionToolGroupDefaultValue);
             }
 
             // Reset Form
@@ -1494,6 +1493,13 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 viewport.render();
                 //}
             });
+
+            // Remove all segmentations
+            if (cornerstoneTools.segmentation && cornerstoneTools.segmentation.state) {
+                // Remove the segmentation from the segmentation state
+                cornerstoneTools.segmentation.state.removeSegmentation(segId);
+            }
+
 
             // // Remove all segmentations
             // const segVolume = cornerstone.cache.getVolume(segId);

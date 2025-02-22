@@ -48,6 +48,7 @@ export default function MaskVR() {
 
         // function
         functionToolGroupVisible: true,
+        functionToolGroupDefaultValue: 'mask',
         functionToolGroupValue: 'mask',
         functionToolMaskVisible: true,
         functionToolBlackoutVisible: true,
@@ -104,6 +105,7 @@ export default function MaskVR() {
     const [viewToolVolumeVisible, setViewToolVolumeVisible] = useState(defaults.viewToolVolumeVisible);
     const [viewToolProjectionVisible, setViewToolProjectionVisible] = useState(defaults.viewToolProjectionVisible);
     const [functionToolGroupVisible, setFunctionToolGroupVisible] = useState(defaults.functionToolGroupVisible);
+    const [functionToolGroupDefaultValue, setFunctionToolGroupDefaultValue] = useState(defaults.functionToolGroupDefaultValue);
     const [functionToolGroupValue, setFunctionToolGroupValue] = useState(defaults.functionToolGroupValue);
     const [functionToolMaskVisible, setFunctionToolMaskVisible] = useState(defaults.functionToolMaskVisible);
     const [functionToolBlackoutVisible, setFunctionToolBlackoutVisible] = useState(defaults.functionToolBlackoutVisible);
@@ -158,6 +160,7 @@ export default function MaskVR() {
             viewToolProjectionVisible, setViewToolProjectionVisible,
 
             functionToolGroupVisible, setFunctionToolGroupVisible,
+            functionToolGroupDefaultValue, setFunctionToolGroupDefaultValue,
             functionToolGroupValue, setFunctionToolGroupValue,
             functionToolMaskVisible, setFunctionToolMaskVisible,
             functionToolBlackoutVisible, setFunctionToolBlackoutVisible,

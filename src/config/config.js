@@ -25,6 +25,7 @@ const BASE_DEFAULTS = {
     viewToolStackVisible: false,
 
     functionToolGroupVisible: false,
+    functionToolGroupDefaultValue: 'mask',
     functionToolGroupValue: 'mask', // 'mask' or 'blackout' or 'slice-remove'
     functionToolMaskVisible: false,
     functionToolBlackoutVisible: false,
@@ -216,6 +217,7 @@ const VOLUME_CONFIG = {
     viewToolProjectionVisible: true,
     viewToolStackVisible: false,
 
+    functionToolGroupDefaultValue: 'mask',
     functionToolGroupValue: 'mask',
     functionToolMaskVisible: true,
     functionToolBlackoutVisible: true,
