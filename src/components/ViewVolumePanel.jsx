@@ -1561,7 +1561,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 // Reinitialize RectangleScissorsTool for volume viewports
                 const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
                 if (volToolGroup) {
-                    volToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+                    // volToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
                     if (context.leftClickToolGroupValue === 'selection') {
                         volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
                             bindings: [{
@@ -1574,7 +1574,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 // Reinitialize RectangleScissorsTool for MIP viewports
                 const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
                 if (mipToolGroup) {
-                    mipToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+                    // mipToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
                     if (context.leftClickToolGroupValue === 'selection') {
                         mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
                             bindings: [{
