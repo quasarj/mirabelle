@@ -1494,10 +1494,96 @@ function ViewVolumePanel({ volumeName, files, iec }) {
                 //}
             });
 
-            // Remove all segmentations
+            // // Remove all segmentations
+            // if (cornerstoneTools.segmentation && cornerstoneTools.segmentation.state) {
+            //     // Remove the segmentation from the segmentation state
+            //     cornerstoneTools.segmentation.state.removeSegmentation(segId);
+            // }
+
+            // Remove segmentation from the state
             if (cornerstoneTools.segmentation && cornerstoneTools.segmentation.state) {
-                // Remove the segmentation from the segmentation state
                 cornerstoneTools.segmentation.state.removeSegmentation(segId);
+
+                // Reinitialize segmentation
+                // Check if the volume is already in the cache
+                if (cornerstone.cache.getVolume(segId)) {
+                    // Remove the existing volume from the cache
+                    cornerstone.cache.removeVolumeLoadObject(segId);
+                }
+
+                cornerstone.volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
+                    volumeId: segId,
+                });
+
+                // Add the segmentation to the state
+                cornerstoneTools.segmentation.addSegmentations([
+                    {
+                        segmentationId: segId,
+                        representation: {
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                            data: { volumeId: segId },
+                        },
+                    },
+                ]);
+
+                // Add segmentation representations to all relevant viewports
+                cornerstoneTools.segmentation.addLabelmapRepresentationToViewportMap({
+                    vol_axial: [{
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    }],
+                    vol_sagittal: [{
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    }],
+                    vol_coronal: [{
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    }],
+                    mip_axial: [{
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    }],
+                    mip_sagittal: [{
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    }],
+                    mip_coronal: [{
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    }],
+                });
+
+                // Reinitialize RectangleScissorsTool for volume viewports
+                const volToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('vol_tool_group');
+                if (volToolGroup) {
+                    volToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+                    if (context.leftClickToolGroupValue === 'selection') {
+                        volToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                            bindings: [{
+                                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary
+                            }]
+                        });
+                    }
+                }
+
+                // Reinitialize RectangleScissorsTool for MIP viewports
+                const mipToolGroup = cornerstoneTools.ToolGroupManager.getToolGroup('mip_tool_group');
+                if (mipToolGroup) {
+                    mipToolGroup.addTool(cornerstoneTools.RectangleScissorsTool.toolName);
+                    if (context.leftClickToolGroupValue === 'selection') {
+                        mipToolGroup.setToolActive(cornerstoneTools.RectangleScissorsTool.toolName, {
+                            bindings: [{
+                                mouseButton: cornerstoneTools.Enums.MouseBindings.Primary
+                            }]
+                        });
+                    }
+                }
+
+                // Force render all viewports to ensure new segmentation is displayed
+                renderingEngine.getViewports().forEach(viewport => {
+                    viewport.render();
+                });
             }
 
 
