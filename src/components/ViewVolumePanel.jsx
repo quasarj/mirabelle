@@ -382,7 +382,9 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Stack Scroll Tool
             group.addTool(cornerstoneTools.StackScrollTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollTool.toolName);
+            group.setToolActive(cornerstoneTools.StackScrollTool.toolName, {
+                bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Wheel }],
+            });
 
             // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
@@ -527,7 +529,9 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
             // Stack Scroll Tool
             group.addTool(cornerstoneTools.StackScrollTool.toolName);
-            group.setToolActive(cornerstoneTools.StackScrollTool.toolName);
+            group.setToolActive(cornerstoneTools.StackScrollTool.toolName, {
+                bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Wheel }],
+            });
 
             // group.addTool(cornerstoneTools.SegmentationDisplayTool.toolName);
             // group.setToolActive(cornerstoneTools.SegmentationDisplayTool.toolName);
