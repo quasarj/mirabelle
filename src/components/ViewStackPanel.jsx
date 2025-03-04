@@ -463,6 +463,57 @@ function ViewStackPanel({ volumeName, files, iec }) {
     // Handle changes to the `reset viewports` prop
     useEffect(() => {
         if (context.resetViewportsValue) {
+            // Clear the segmentation
+            cornerstoneTools.segmentation.state.removeSegmentation(segId);
+
+            // Segmentation
+            // Start a fresh segmentation setup here
+            async function setupSegmentation() {
+
+                // Create imageIds and cache metadata
+                const imageIds = await createImageIdsAndCacheMetaData({
+                    StudyInstanceUID: `iec:${iec}`,
+                    SeriesInstanceUID: "any",
+                    wadoRsRoot: "/papi/v1/wadors",
+                });
+
+                const imageIdsArray = [imageIds[0]];
+
+                const segImages = await cornerstone.imageLoader.createAndCacheDerivedLabelmapImages(imageIdsArray);
+
+                // Add segmentation with these derived images
+                await segmentation.addSegmentations([
+                    {
+                        segmentationId: segId,
+                        representation: {
+                            type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                            data: {
+                                imageIds: segImages.map(it => it.imageId), // Use the derived images
+                            },
+                        },
+                    },
+                ]);
+
+                // Add segmentation representation to viewport
+                await segmentation.addSegmentationRepresentations('dicom_stack', [
+                    {
+                        segmentationId: segId,
+                        type: csToolsEnums.SegmentationRepresentations.Labelmap,
+                    },
+                ]);
+
+                // Set active segmentation
+                await segmentation.activeSegmentation.setActiveSegmentation(
+                    'dicom_stack',
+                    segId
+                );
+
+                console.log("Segmentation setup complete");
+
+            }
+
+            setupSegmentation();
+
             if (context.viewToolGroupVisible) {
                 context.setViewToolGroupValue(context.viewToolGroupValue + " ");
                 setTimeout(() => {
