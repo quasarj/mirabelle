@@ -535,10 +535,11 @@ function ViewStackPanel({ volumeName, files, iec }) {
                 context.setFormToolGroupValue(context.formToolGroupValue);
             }
             if (context.leftClickToolGroupVisible) {
-                context.setLeftClickToolGroupValue(context.leftClickToolGroupValue);
+                // set context.leftClickToolGroupValue to default value
+                context.setLeftClickToolGroupValue(context.leftClickToolGroupDefaultValue);
             }
             if (context.rightClickToolGroupVisible) {
-                context.setRightClickToolGroupValue(context.rightClickToolGroupValue);
+                context.setRightClickToolGroupValue(context.rightClickToolGroupDefaultValue);
             }
             if (context.opacityToolVisible) {
                 context.setOpacityToolValue(context.opacityToolValue);

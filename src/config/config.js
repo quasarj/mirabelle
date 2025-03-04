@@ -37,12 +37,14 @@ const BASE_DEFAULTS = {
     formToolCylinderVisible: false,
 
     leftClickToolGroupVisible: false,
+    leftClickToolGroupDefaultValue: 'selection',
     leftClickToolGroupValue: 'selection', // 'selection' or 'windowlevel' or 'crosshairs'
     leftClickToolWindowLevelVisible: false,
     leftClickToolCrossHairsVisible: false,
     leftClickToolRectangleScissorsVisible: false,
 
     rightClickToolGroupVisible: false,
+    rightClickToolGroupDefaultValue: 'zoom',
     rightClickToolGroupValue: 'zoom', // 'zoom' or 'pan'
     rightClickToolZoomVisible: false,
     rightClickToolPanVisible: false,
