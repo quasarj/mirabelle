@@ -9,14 +9,16 @@ import { Context } from './Context.js';
 
 // Cornerstone
 import * as cornerstone from '@cornerstonejs/core';
+import { imageLoader } from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 // import { cornerstoneStreamingDynamicImageVolumeLoader } from '@cornerstonejs/streaming-image-volume-loader';
-import { init as dicomImageLoaderInit } from "@cornerstonejs/dicom-image-loader"
-import { init as csRenderInit } from "@cornerstonejs/core"
-import { init as csToolsInit } from "@cornerstonejs/tools"
+import { init as dicomImageLoaderInit } from "@cornerstonejs/dicom-image-loader";
+import { init as csRenderInit } from "@cornerstonejs/core";
+import { init as csToolsInit } from "@cornerstonejs/tools";
+
 
 import dicomParser from 'dicom-parser';
-import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader';
+import { cornerstoneNiftiImageLoader, createNiftiImageIdsAndCacheMetadata } from '@cornerstonejs/nifti-volume-loader';
 
 // Utilities
 import { expandSegTo3D } from '../utilities';
@@ -953,7 +955,13 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             if (context.nifti) {
                 // console.log("volumeId:", volumeId);
                 console.log("Proceeding in Nifti context!");
-                volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
+                // volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
+                // get the viewport id
+                const viewportId = renderingEngine.getViewportId('dicom_stack');
+                imageLoader.registerImageLoader('nifti', cornerstoneNiftiImageLoader);
+                const imageIds = await createNiftiImageIdsAndCacheMetadata({ url: niftiURL });
+                // get rendering engine id
+                const renderingEngineId = renderingEngine.getRenderingEngineId();
             } else {
                 // volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: files });
 
