@@ -36,6 +36,13 @@ function getOrCreateToolgroup(toolgroup_name) {
     return group;
 }
 
+const resizeObserver = new ResizeObserver(() => {
+    const renderingEngine = cornerstone.getRenderingEngine('viewer_render_engine');
+    if (renderingEngine) {
+        renderingEngine.resize(true, true);
+    }
+});
+
 function ViewStackPanel({ volumeName, files, iec }) {
     const context = useContext(Context);
 
@@ -107,6 +114,7 @@ function ViewStackPanel({ volumeName, files, iec }) {
         panel.style.overflow = 'hidden';
         panel.style.backgroundColor = 'black';
         panel.oncontextmenu = e => e.preventDefault();
+        resizeObserver.observe(panel);
 
         panelWrapper.appendChild(panel);
         container.appendChild(panelWrapper);
