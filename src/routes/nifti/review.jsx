@@ -9,6 +9,7 @@ import { TASK_CONFIGS } from '../../config/config';
 export async function loader({ params }) {
 
     const details = await getNiftiDetails(params.fileId);
+
     const files = [params.fileId];
     return { details, files };
 }

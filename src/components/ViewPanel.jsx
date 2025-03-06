@@ -4,7 +4,7 @@ import { Context } from './Context.js';
 import ViewStackPanel from './ViewStackPanel';
 import ViewVolumePanel from './ViewVolumePanel';
 
-function ViewPanel({ files, volumeName, iec }) {
+function ViewPanel({ details, files, volumeName, iec }) {
 
     const { viewport_layout } = useContext(Context);
 
@@ -22,6 +22,7 @@ function ViewPanel({ files, volumeName, iec }) {
                     files={files}
                     volumeName={volumeName}
                     iec={iec}
+                    details={details}
                 />
             }
         </div>

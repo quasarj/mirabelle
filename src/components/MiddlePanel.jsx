@@ -4,7 +4,7 @@ import MiddleTopPanel from './MiddleTopPanel.jsx';
 import ViewPanel from './ViewPanel.jsx';
 import { getFiles, getIECInfo } from '../utilities.js';
 
-function MiddlePanel({ files, iecs, iec }) {
+function MiddlePanel({ details, files, iecs, iec }) {
 
     const { leftPanelVisible, setLeftPanelVisible, rightPanelVisible, setRightPanelVisible } = useContext(Context);
 
@@ -34,7 +34,7 @@ function MiddlePanel({ files, iecs, iec }) {
         <div id="middlePanel" className="relative w-full rounded-lg border-4 border-blue-500 p-2 flex flex-col gap-2">
 
             {/*<MiddleTopPanel iecs={iecs} onIecChange={setIecOffset}/>*/}
-            <ViewPanel files={realFiles} volumeName={volumeName} iec={iec} />
+            <ViewPanel details={details} files={realFiles} volumeName={volumeName} iec={iec} />
 
         </div>
     );

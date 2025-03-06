@@ -56,7 +56,7 @@ function getOrCreateToolgroup(toolgroup_name) {
     return group;
 }
 
-function ViewVolumePanel({ volumeName, files, iec }) {
+function ViewVolumePanel({ details, volumeName, files, iec }) {
 
     const context = useContext(Context);
 
@@ -84,7 +84,18 @@ function ViewVolumePanel({ volumeName, files, iec }) {
     if (context.nifti) {
         // niftiURL = 'https://ohif-assets.s3.us-east-2.amazonaws.com/nifti/CTACardio.nii.gz';
         // niftiURL = `nifti:/papi/v1/files/${files[0]}/data`;
-        niftiURL = `http://144.30.108.205:8080/data.gz`;
+        let here = new URL(window.location);
+
+        if (details.is_zipped) {
+            niftiURL = `${here.origin}/papi/v1/files/${files[0]}/data.gz`;
+        } else {
+            niftiURL = `${here.origin}/papi/v1/files/${files[0]}/data`;
+        }
+
+
+
+        // niftiURL = `http://144.30.108.205:8080/data.gz`;
+        // check if a file is compressed or not
         const volumeLoaderScheme = 'cornerstoneStreamingImageVolume';
         volumeId = `${volumeLoaderScheme}:${niftiURL}`;
     } else {
