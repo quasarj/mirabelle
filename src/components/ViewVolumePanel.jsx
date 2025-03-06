@@ -79,9 +79,12 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
     let coords;
     let volumeId;
+    let niftiURL;
 
     if (context.nifti) {
-        volumeId = `nifti:/papi/v1/files/${files[0]}/data`;
+        niftiURL = `nifti:/papi/v1/files/${files[0]}/data`;
+        const volumeLoaderScheme = 'cornerstoneStreamingImageVolume';
+        volumeId = `${volumeLoaderScheme}:${niftiURL}`;
     } else {
         volumeId = 'cornerstoneStreamingImageVolume: newVolume' + volumeName;
     }
@@ -953,15 +956,17 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         async function getFileData() {
 
             if (context.nifti) {
-                // console.log("volumeId:", volumeId);
+
                 console.log("Proceeding in Nifti context!");
-                // volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { type: 'image' });
-                // get the viewport id
-                const viewportId = renderingEngine.getViewportId('dicom_stack');
+
                 imageLoader.registerImageLoader('nifti', cornerstoneNiftiImageLoader);
                 const imageIds = await createNiftiImageIdsAndCacheMetadata({ url: niftiURL });
-                // get rendering engine id
-                const renderingEngineId = renderingEngine.getRenderingEngineId();
+
+                volume = await volumeLoader.createAndCacheVolume(volumeId, {
+                    imageIds,
+                });
+
+
             } else {
                 // volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds: files });
 
