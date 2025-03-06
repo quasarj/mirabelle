@@ -82,7 +82,9 @@ function ViewVolumePanel({ volumeName, files, iec }) {
     let niftiURL;
 
     if (context.nifti) {
-        niftiURL = 'https://ohif-assets.s3.us-east-2.amazonaws.com/nifti/CTACardio.nii.gz';
+        // niftiURL = 'https://ohif-assets.s3.us-east-2.amazonaws.com/nifti/CTACardio.nii.gz';
+        // niftiURL = `nifti:/papi/v1/files/${files[0]}/data`;
+        niftiURL = `http://144.30.108.205:8080/data.gz`;
         const volumeLoaderScheme = 'cornerstoneStreamingImageVolume';
         volumeId = `${volumeLoaderScheme}:${niftiURL}`;
     } else {
@@ -961,6 +963,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
                 imageLoader.registerImageLoader('nifti', cornerstoneNiftiImageLoader);
                 const imageIds = await createNiftiImageIdsAndCacheMetadata({ url: niftiURL });
+                console.log(imageIds);
 
                 volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, {
                     imageIds,
