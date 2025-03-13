@@ -76,6 +76,7 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
     const renderingEngineId = 'viewer_render_engine';
     const renderingEngineRef = useRef(null);
     const containerRef = useRef(null);
+    const defaultPresetRef = useRef(context.presetToolValue);
 
 
     let coords;
@@ -1510,7 +1511,7 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
 
             // Reset Preset
             if (context.presetToolVisible) {
-                context.setPresetToolValue(context.presetToolValue);
+                context.setPresetToolValue(defaultPresetRef.current);
             }
 
             // reset cameras for all the viewports that its wrapper is visible
@@ -1678,7 +1679,7 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
                 // Iterate through each viewport and reset window level
                 viewports.forEach((viewport) => {
                     // Only reset visible viewports
-                    const viewportElement = document.getElementById(viewport.id);
+                    // const viewportElement = document.getElementById(viewport.id);
                     if (viewport.id.startsWith('vol_')) {
                         try {
                             // For volume viewports, reset VOI
@@ -1708,6 +1709,10 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
                 ],
                 ['mip_axial', 'mip_sagittal', 'mip_coronal']
             );
+
+            // Set context.opacityToolValue to 0.3
+            context.setOpacityToolValue(0.3);
+
         }
         context.setResetViewportsValue(false);
 
