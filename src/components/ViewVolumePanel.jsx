@@ -63,6 +63,7 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
     const [loading, setLoading] = useState(true);
     const [filesLoaded, setFilesLoaded] = useState(false);
     const [firstPass, setFirstPass] = useState(true);
+    const [volSlabGlobal, setVolSlabGlobal] = useState(0);
 
     // set a state variable that will save each viewport's normal/expanded/minimized state
     const [expandedViewports, setExpandedViewports] = useState([
@@ -84,12 +85,12 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
     if (context.nifti) {
         // niftiURL = 'https://ohif-assets.s3.us-east-2.amazonaws.com/nifti/CTACardio.nii.gz';
         // niftiURL = `nifti:/papi/v1/files/${files[0]}/data`;
-        let here = new URL(window.location);
+        let windowLocation = new URL(window.location);
 
         if (details.is_zipped) {
-            niftiURL = `${here.origin}/papi/v1/files/${files[0]}/data.gz`;
+            niftiURL = `${windowLocation.origin}/papi/v1/files/${files[0]}/data.gz`;
         } else {
-            niftiURL = `${here.origin}/papi/v1/files/${files[0]}/data`;
+            niftiURL = `${windowLocation.origin}/papi/v1/files/${files[0]}/data`;
         }
 
 
@@ -974,7 +975,7 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
 
                 imageLoader.registerImageLoader('nifti', cornerstoneNiftiImageLoader);
                 const imageIds = await createNiftiImageIdsAndCacheMetadata({ url: niftiURL });
-                console.log(imageIds);
+                // console.log(imageIds);
 
                 volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, {
                     imageIds,
@@ -1060,6 +1061,8 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
                     volDimensions[2] * volDimensions[2]
                 );
 
+                setVolSlabGlobal(volSlab);
+
                 // Add volumes to MIP viewports
                 await cornerstone.setVolumesForViewports(
                     renderingEngine,
@@ -1086,6 +1089,11 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
                 // Segmentation v2
                 await cornerstone.volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
                     volumeId: segId,
+                    options: {
+                        // Specify Uint8Array as the segmentation datatype to avoid Int16Array warnings
+                        scalarData: new Uint8Array(),
+                        dataType: 'Uint8Array'
+                    }
                 });
 
                 // Add the segmentation to the segmentation state.
@@ -1521,6 +1529,7 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
                 // Apply the updated camera and re-render.
                 viewport.setCamera(camera);
                 viewport.resetCamera(true, true, true, true);
+
                 viewport.render();
                 //}
             });
@@ -1657,6 +1666,48 @@ function ViewVolumePanel({ details, volumeName, files, iec }) {
                     crosshairsToolInstance.resetCrosshairs();
                 }
             }, 0);
+
+            // Reset window level for vol viewports to their default values
+            if (context.leftClickToolWindowLevelVisible) {
+                // Reset window level for all viewports to their default values
+                const renderingEngine = renderingEngineRef.current;
+
+                // Get all viewports
+                const viewports = renderingEngine.getViewports();
+
+                // Iterate through each viewport and reset window level
+                viewports.forEach((viewport) => {
+                    // Only reset visible viewports
+                    const viewportElement = document.getElementById(viewport.id);
+                    if (viewport.id.startsWith('vol_')) {
+                        try {
+                            // For volume viewports, reset VOI
+                            if (viewport.type === cornerstone.Enums.ViewportType.ORTHOGRAPHIC) {
+
+                                // Reset to default window level
+                                viewport.resetProperties();
+                                // viewport.resetVOI();
+                            }
+                        } catch (error) {
+                            console.log('Error resetting window level for viewport:', viewport.id, error);
+                        }
+                    }
+                });
+            }
+
+            // Reset window level for mip viewports
+            cornerstone.setVolumesForViewports(
+                renderingEngine,
+                [
+                    //https://www.cornerstonejs.org/api/core/namespace/Types#IVolumeInput
+                    {
+                        volumeId: volumeId,
+                        blendMode: cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND,
+                        slabThickness: volSlabGlobal,
+                    },
+                ],
+                ['mip_axial', 'mip_sagittal', 'mip_coronal']
+            );
         }
         context.setResetViewportsValue(false);
 
