@@ -1,11 +1,12 @@
 import React from 'react';
 
 import { useState, useContext } from 'react';
+import "./OperationsPanel.css";
 
 function OperationsPanel({ onExpand, onClear, onAccept }) {
 
   return (
-    <>
+    <div id="OperationsPanel">
       <ol>
         <button onClick={onExpand}>
           Expand Selection
@@ -17,7 +18,7 @@ function OperationsPanel({ onExpand, onClear, onAccept }) {
           Accept Selection
         </button>
       </ol>
-    </>
+    </div>
   )
 }
 

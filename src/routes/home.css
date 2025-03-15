@@ -1,0 +1,24 @@
+#RouteHome ul, #RouteHome li {
+	display: block;
+	padding-bottom: 0;
+	@apply
+		pl-3;
+}
+#RouteHome li a {
+	@apply
+		pl-5;
+}
+#RouteHome {
+	@apply
+		p-3;
+}
+#RouteHome h2 {
+	@apply
+		text-xl
+		mt-3
+}
+#RouteHome hr {
+	@apply
+		mt-10
+		mb-10
+}

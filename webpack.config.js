@@ -26,6 +26,10 @@ module.exports = {
         "stream": false,
         "crypto": false,
     },
+    // Allow "absolute" imports beginning with @
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    }
   },
   experiments: {
       asyncWebAssembly: true,

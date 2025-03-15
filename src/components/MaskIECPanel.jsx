@@ -3,6 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
 import { volumeLoader } from "@cornerstonejs/core";
+import * as cornerstone from "@cornerstonejs/core";
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { 
 	expandSegTo3D,
@@ -28,18 +29,33 @@ function MaskIECPanel({ details, files, iec }) {
   const segmentationId = `vol-${iec}-seg`;
 
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isErrored, setIsErrored] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
+
   let coords; // coordinates of drawn mask
 
   // Load the volume into the cache
   useEffect(() => {
     const initialize = async () => {
-      await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId);
+      setIsInitialized(false);
+      setIsErrored(false);
+      // cornerstone.cache.purgeCache();
+
+      try {
+        await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId);
+      } catch (error) {
+        console.log(error);
+        // TODO: set an isError status here and display an error message?
+        setErrorMessage(error);
+        setIsErrored(true);
+        return;
+      }
 
       setIsInitialized(true);
     };
 
     initialize();
-  }, []); // passing no value causes this to run ONLY ONCE during mount
+  }, [iec]); // passing no value causes this to run ONLY ONCE during mount
 
   async function handleExpand() {
     coords = expandSegTo3D(segmentationId);
@@ -77,6 +93,14 @@ function MaskIECPanel({ details, files, iec }) {
 
 
   // short-circuit if not loaded yet
+  if (isErrored) {
+    return (
+      <>
+        <div>There was an error loading this IEC :(</div>
+        <p>{errorMessage.message}</p>
+      </>
+    );
+  }
   if (!isInitialized) {
     return <div>Loading...</div>;
   }

@@ -1,14 +1,14 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import MaskIECPanel from '../../components/MaskIECPanel';
-import EnableCornerstone from '../../components/EnableCornerstone';
-import Header from '../../components/Header';
+import MaskIECPanel from '@/components/MaskIECPanel';
+import EnableCornerstone from '@/components/EnableCornerstone';
+import Header from '@/components/Header';
 
-import { Context } from '../../components/Context';
-import useConfigState from '../../hooks/useConfigState';
-import { getDetails } from '../../masking.js';
-import { getFiles, getIECInfo } from '../../utilities';
-import { TASK_CONFIGS } from '../../config/config';
+import { Context } from '@/components/Context';
+import useConfigState from '@/hooks/useConfigState';
+import { getDetails } from '@/masking.js';
+import { getFiles, getIECInfo } from '@/utilities';
+import { TASK_CONFIGS } from '@/config/config';
 
 
 // function to load data for this component
@@ -21,25 +21,14 @@ export async function loader({ params }) {
     return { details, fileInfo, iec: params.iec };
 }
 
-export default function MaskIEC() {
-    const { details, fileInfo, iec } = useLoaderData();
+export default function RouteMaskIEC() {
+    const { iec } = useLoaderData();
 
-    let configState;
-
-    // Use specific config for this route, fallback to 'default' if not found
-    if (fileInfo.volumetric) {
-        configState = useConfigState(TASK_CONFIGS.masker_volume || TASK_CONFIGS.default);
-    } else {
-        configState = useConfigState(TASK_CONFIGS.masker_stack || TASK_CONFIGS.default);
-    }
-
-	// TODO: probably files needs to be removed!
-    // Here we just assemble the various panels that we need for this mode
     return (
-        <Context.Provider value={{ ...configState }}>
+        <Context.Provider value={{ title: "Mask IEC" }}>
 			<EnableCornerstone>
 				<Header />
-				<MaskIECPanel details={details} files={fileInfo.frames} iec={iec} />
+				<MaskIECPanel iec={iec} />
 			</EnableCornerstone>
         </Context.Provider>
     );

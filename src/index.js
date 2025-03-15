@@ -16,28 +16,31 @@ import {
 import ErrorPage from './error-page';
 import './index.css'
 
-
 import Home from './routes/home';
 
-import MaskIEC, {
-	loader as iecLoader,
-} from './routes/mask/iec';
+import RouteMaskIEC, { loader as routeMaskIECLoader, } 
+from './routes/mask/iec';
 
-// import ReviewIEC, {
-//   loader as iecReviewLoader,
-// } from './routes/mask/review';
+import RouteMaskReviewIEC, { loader as routeMaskReviewIECLoader, } 
+from './routes/mask-review/iec';
 
-// import ReviewNIFTI, {
-//   loader as niftiReviewLoader,
-// } from './routes/nifti/review';
+import RouteMaskReviewVR, { loader as routeMaskerReviewVRLoader }
+from './routes/mask-review/vr';
 
-// import MaskVR, {
-// 	loader as vrLoader,
-// } from './routes/mask/vr';
+import RouteDicomReviewVR, { loader as routeDicomReviewVRLoader }
+from './routes/dicom/vr';
 
-// import ReviewDICOM, {
-// 	loader as dicomReviewLoader,
-// } from './routes/dicom/review';
+import RouteDicomReviewIEC, { loader as routeDicomReviewIECLoader }
+from './routes/dicom/iec';
+
+import RouteMaskVR, { loader as routeMaskVRLoader }
+from './routes/mask/vr';
+
+import RouteNiftiReviewFile, { loader as routeNiftiReviewFileLoader }
+from './routes/nifti/file';
+
+import RouteNiftiReviewVR, { loader as routeNiftiReviewVRLoader }
+from './routes/nifti/vr';
 
 const router = createBrowserRouter([
 	{
@@ -47,42 +50,51 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "mask/iec/:iec",
-		element: <MaskIEC />,
-		loader: iecLoader,
+		element: <RouteMaskIEC />,
+		loader: routeMaskIECLoader,
 	},
-	// {
-	// 	path: "mask/vr/:visual_review_instance_id",
-	// 	element: <MaskVR />,
-	// 	loader: vrLoader,
-	// },
-	// {
-	// 	path: "review/mask/iec/:iec",
-	// 	element: <ReviewIEC />,
-	// 	loader: iecReviewLoader,
-	// },
-	// {
-	// 	path: "review/nifti/fileId/:fileId",
-	// 	element: <ReviewNIFTI />,
-	// 	loader: niftiReviewLoader,
-	// },
-	// {
-	// 	path: "review/dicom/iec/:iec",
-	// 	element: <ReviewDICOM />,
-	// 	loader: dicomReviewLoader,
-	// },
+	{
+		path: "mask/vr/:visual_review_instance_id",
+		element: <RouteMaskVR />,
+		loader: routeMaskVRLoader,
+		errorElement: <ErrorPage />,
+	},
+	{
+		path: "mask/review/iec/:iec",
+		element: <RouteMaskReviewIEC />,
+		loader: routeMaskReviewIECLoader,
+	},
+	{
+		path: "mask/review/vr/:vr",
+		element: <RouteMaskReviewVR />,
+		loader: routeMaskerReviewVRLoader,
+	},
+	{
+		path: "review/nifti/file/:fileId",
+		element: <RouteNiftiReviewFile />,
+		loader: routeNiftiReviewFileLoader,
+	},
+	{
+		path: "review/nifti/vr/:vr",
+		element: <RouteNiftiReviewVR />,
+		loader: routeNiftiReviewVRLoader,
+	},
+	{
+		path: "review/dicom/iec/:iec",
+		element: <RouteDicomReviewIEC />,
+		loader: routeDicomReviewIECLoader,
+	},
+	{
+		path: "review/dicom/vr/:vr",
+		element: <RouteDicomReviewVR />,
+		loader: routeDicomReviewVRLoader,
+	},
 ], {
 	basename: "/mira",
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-// Not currently working in StrictMode for some reason, investigate?
-// root.render(
-// 	<React.StrictMode>
-// 		<RouterProvider router={router} />
-// 	</React.StrictMode>
-// );
-//
 root.render(
 	<Provider store={store}>
 		<RouterProvider router={router} />
