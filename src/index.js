@@ -2,6 +2,7 @@
  * This is the true entrypoint of the program
  */
 
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 

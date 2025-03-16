@@ -1,10 +1,12 @@
+@import "tailwindcss";
+
 ul {
-  @apply h-full pb-4;
+  @apply h-full pb-8;
   display: flex;
 }
 
 li {
-  @apply pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2;
+  @apply pt-1 pb-8 rounded-lg flex space-x-2;
 }
 
 .active {
@@ -12,5 +14,5 @@ li {
 }
 
 .inactive {
-  @apply w-full bg-white dark:bg-slate-900;
+  @apply w-full bg-white bg-slate-900;
 }

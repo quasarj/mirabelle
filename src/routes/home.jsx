@@ -4,6 +4,14 @@ import { Link } from 'react-router-dom';
 import { Context } from '@/components/Context';
 import Header from '@/components/Header';
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
+
 import './home.css';
 
 export default function Home() {
@@ -108,8 +116,11 @@ export default function Home() {
 				</li>
 
 			</ul>
-
-			<hr />
+      <Accordion type="single" collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Old example links</AccordionTrigger>
+          <AccordionContent>
+        
 			<h2>All examples below this point are Masking</h2>
             <h2>Examples (all direct IECs)</h2>
             <ul>
@@ -138,6 +149,9 @@ export default function Home() {
                     </li>
                 ))}
             </ul>
+        </AccordionContent>
+        </AccordionItem>
+        </Accordion>
 
         </div>
 		</Context.Provider>

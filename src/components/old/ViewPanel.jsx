@@ -9,7 +9,7 @@ function ViewPanel({ files, volumeName, iec }) {
     const { viewport_layout } = useContext(Context);
 
     return (
-        <div id="viewPanel" className="grid grid-rows-[1fr,auto] text-center gap-2 overflow- h-full">
+        <div id="viewPanel" className="grid grid-rows-[1fr_auto] text-center gap-2 overflow- h-full">
             {viewport_layout == 'stack' && files && files.length > 0 &&
                 <ViewStackPanel
                     files={files}

@@ -14,7 +14,7 @@ module.exports = {
     filename: 'bundle.js'
   },
   resolve: {
-    extensions: ['.jsx', '...'],
+    extensions: ['.jsx', '...', '.ts', '.tsx'],
     fallback: {
         "fs": false,
         "tls": false,
@@ -29,6 +29,7 @@ module.exports = {
     // Allow "absolute" imports beginning with @
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      'S': path.resolve(__dirname, '.'),
     }
   },
   experiments: {
@@ -43,6 +44,11 @@ module.exports = {
         use: {
           loader: 'babel-loader'
         }
+      },
+      {
+		  test: /\.tsx?$/,
+		  use: 'ts-loader',
+		  exclude: /node_modules/,
       },
       {
         test: /\.css$/,

@@ -1,12 +1,37 @@
 import React from 'react';
 
 import NiftiReviewFile from './NiftiReviewFile';
+import "@/index.css";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+
 
 export default function NiftiReviewVR({ vr }) {
   return (
     <div id="NiftiReviewVR">
       <p>NiftiReviewVR: ({vr})</p>
       <NiftiReviewFile file={22} />
+<Dialog>
+  <DialogTrigger>Open</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Are you absolutely sure?</DialogTitle>
+      <DialogDescription>
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers.
+      </DialogDescription>
+    </DialogHeader>
+  </DialogContent>
+</Dialog>
+
 
     </div>
   );
