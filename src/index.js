@@ -97,6 +97,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
 	<Provider store={store}>
-		<RouterProvider router={router} />
+    <div id="content">
+      <RouterProvider router={router} />
+    </div>
 	</Provider>
 );

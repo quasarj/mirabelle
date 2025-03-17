@@ -112,3 +112,8 @@ button:focus-visible {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+#content {
+  @apply
+    p-2
+}

@@ -185,3 +185,13 @@ export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId
 
   return volume;
 }
+
+export function toAbsoluteURL(relative_url) {
+  // There are a few functions in Cornerstone that expect an absolute URL
+  // even when they really sould be able to accept a relative one.
+  // This is a hacky way to generate an absolute URL from a relative
+
+  let url = new URL(window.location);
+
+  return url.origin + relative_url;
+}

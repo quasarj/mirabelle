@@ -8,10 +8,10 @@
 	@apply
 		pl-5;
 }
-#RouteHome {
-	@apply
-		p-3;
-}
+/* #RouteHome { */
+/* 	@apply */
+/* 		p-3; */
+/* } */
 #RouteHome h2 {
 	@apply
 		text-xl
