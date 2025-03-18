@@ -25,10 +25,10 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@cornerstonejs/core": "^2.18.7",
-    "@cornerstonejs/dicom-image-loader": "^2.18.7",
-    "@cornerstonejs/nifti-volume-loader": "^2.18.7",
-    "@cornerstonejs/tools": "^2.18.7",
+    "@cornerstonejs/core": "^3.7.1",
+    "@cornerstonejs/dicom-image-loader": "^3.7.1",
+    "@cornerstonejs/nifti-volume-loader": "^3.7.1",
+    "@cornerstonejs/tools": "^3.7.1",
     "@icr/polyseg-wasm": "^0.4.0",
     "@itk-wasm/morphological-contour-interpolation": "^1.1.0",
     "@reduxjs/toolkit": "^2.5.1",
