@@ -1,0 +1,7 @@
+#NiftiReviewVR {
+  background-color: #c9ffca;
+}
+#NiftiReviewVR section {
+  @apply
+    p-5
+}

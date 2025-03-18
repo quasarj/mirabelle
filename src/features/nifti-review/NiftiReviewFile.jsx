@@ -42,8 +42,8 @@ export default function NiftiReviewFile({ file }) {
       // try to keep most of it in an external file
       // when it's done, call setLoaded(true) and
       // also setVolumeId(new_volume_id)
+
       const details = await getNiftiDetails(file);
-      console.log(details);
 
       if (details.download_path === undefined) {
         setError(true);
@@ -65,13 +65,13 @@ export default function NiftiReviewFile({ file }) {
       });
       await volume.load();
 
-      console.log(url, imageIds, volumeId, volume);
 
+      // set the component state
       setVolumeId(volumeId);
       setLoaded(true);
-
     })()
   }, [file]);
+
 
   if (error === true) {
     return (
@@ -93,7 +93,10 @@ export default function NiftiReviewFile({ file }) {
   return (
     <div id="NiftiReviewFile">
       <p>NiftiReviewFile: ({file})</p>
-      <VolumeView volumeId={volumeId}/>
+      <VolumeView 
+        volumeId={volumeId}
+        defaultPreset3d="MR-Default" 
+      />
       <LabelingPanel 
         onLabel={alert}
 	  	config={labelPanelConfig}
@@ -101,3 +104,6 @@ export default function NiftiReviewFile({ file }) {
     </div>
   );
 }
+
+
+

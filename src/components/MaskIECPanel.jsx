@@ -107,7 +107,11 @@ function MaskIECPanel({ details, files, iec }) {
 
     return (
       <>
-        <VolumeView volumeId={volumeId} segmentationId={segmentationId} />
+        <VolumeView 
+          volumeId={volumeId} 
+          segmentationId={segmentationId} 
+          defaultPreset3d="CT-MIP" 
+        />
         <OperationsPanel 
           onExpand={handleExpand}
           onClear={handleClear}

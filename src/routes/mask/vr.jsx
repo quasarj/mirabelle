@@ -3,7 +3,6 @@ import { useLoaderData, Link } from 'react-router-dom';
 
 import Header from '@/components/Header';
 import MaskIECMultiPanel from '@/components/MaskIECMultiPanel';
-import EnableCornerstone from '@/components/EnableCornerstone';
 
 
 import { getDetails } from '@/masking';
@@ -25,14 +24,12 @@ export default function RouteMaskVR() {
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ title: "Route Mask VR" }}>
-		<EnableCornerstone>
             <Header />
 			<p>Route: Mask VR ({vr})</p>
 			<MaskIECMultiPanel 
 				vr={vr}
 				iecs={iecs}
 			/>
-		</EnableCornerstone>
         </Context.Provider>
     );
 }

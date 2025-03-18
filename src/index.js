@@ -8,6 +8,8 @@ import ReactDOM from 'react-dom/client'
 import store from './store';
 import { Provider } from 'react-redux';
 
+import EnableCornerstone from '@/components/EnableCornerstone';
+
 import {
 	createBrowserRouter,
 	RouterProvider,
@@ -98,7 +100,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<Provider store={store}>
     <div id="content">
-      <RouterProvider router={router} />
+      <EnableCornerstone>
+        <RouterProvider router={router} />
+      </EnableCornerstone>
     </div>
 	</Provider>
 );

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
 import MaskIECPanel from '@/components/MaskIECPanel';
-import EnableCornerstone from '@/components/EnableCornerstone';
 import Header from '@/components/Header';
 
 import { Context } from '@/components/Context';
@@ -26,10 +25,8 @@ export default function RouteMaskIEC() {
 
     return (
         <Context.Provider value={{ title: "Mask IEC" }}>
-			<EnableCornerstone>
-				<Header />
-				<MaskIECPanel iec={iec} />
-			</EnableCornerstone>
+          <Header />
+          <MaskIECPanel iec={iec} />
         </Context.Provider>
     );
 }

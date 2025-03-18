@@ -24,10 +24,11 @@ const { MouseBindings } = csToolsEnums;
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
 
-function VolumeView({ volumeId, segmentationId }) {
+function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   const [renderingEngine, setRenderingEngine] = useState();
   const [toolGroup, setToolGroup] = useState();
   const [toolGroup3d, setToolGroup3d] = useState();
+  const [preset3d, setPreset3d] = useState(defaultPreset3d);
 
   useEffect(() => {
     cornerstoneTools.addTool(TrackballRotateTool);
@@ -87,7 +88,10 @@ function VolumeView({ volumeId, segmentationId }) {
     <div id="VolumeView">
 	  <div id="main">
 	  	<div id="leftPanel">
-			<ToolsPanel toolGroup={toolGroup}/>
+			<ToolsPanel 
+        toolGroup={toolGroup} 
+        onPresetChange={(val) => setPreset3d(val)}
+      />
 	  	</div>
 	  </div>
 		<table>
@@ -101,6 +105,7 @@ function VolumeView({ volumeId, segmentationId }) {
 			toolGroup={toolGroup3d}
 			segmentationId={segmentationId}
 			orientation="CORONAL"
+	  		preset3d={preset3d}
 			/>
 			</td>
 			<td>

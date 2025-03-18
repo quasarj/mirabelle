@@ -27,7 +27,7 @@ const { segmentation: segmentationUtils } = cstUtils;
 
 const { ViewportType } = Enums;
 
-function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, orientation }) {
+function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, orientation, preset3d }) {
   const elementRef = useRef(null);
   // This came from an example, I am not sure why it's using
   // a ref and not a State?? Maybe to avoid a redraw?
@@ -78,7 +78,10 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
         [viewportId]
       ).then(() => {
         viewport.setProperties({
-          preset: 'CT-MIP',
+          // preset: 'CT-MIP',
+          // preset: 'MR-T2-Brain',
+          // preset: 'MR-Default',
+          preset: preset3d,
         });
         viewport.render();
       });
@@ -91,6 +94,15 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
 
     setup()
   }, [elementRef, running])
+
+  useEffect(() => {
+    const viewport = renderingEngine.getViewport(viewportId);
+    viewport.setProperties({
+      preset: preset3d,
+    });
+    viewport.render();
+  }, [preset3d]);
+
 
   return (
 	  <>

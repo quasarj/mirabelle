@@ -18,9 +18,22 @@ const {
 
 const { MouseBindings } = csToolsEnums;
 
-function ToolsPanel({ toolGroup }) {
+function ToolsPanel({ toolGroup, onPresetChange }) {
   let currentLeftClickTool;
   let currentRightClickTool;
+
+    const presetGroupButtonConfig = [
+		{
+			name: "MR-Default",
+			icon: "domino_mask",
+			action: () => onPresetChange("MR-Default"),
+		},
+		{
+			name: "CT-MIP",
+			icon: "domino_mask",
+			action: () => onPresetChange("CT-MIP"),
+		},
+    ]
 
     // --------------------------------------------------------------------- //
     //  Function group button config and handlers
@@ -170,6 +183,7 @@ function ToolsPanel({ toolGroup }) {
       <MaterialButtonSet buttonConfig={functionGroupButtonConfig} initialActiveButton="Mask" />
       <MaterialButtonSet buttonConfig={leftClickGroupButtonConfig} initialActiveButton="Selection" />
       <MaterialButtonSet buttonConfig={rightClickGroupButtonConfig} initialActiveButton="Pan" />
+      <MaterialButtonSet buttonConfig={presetGroupButtonConfig} initialActiveButton="MR-Default" />
     </div>
   );
 }
