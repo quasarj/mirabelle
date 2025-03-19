@@ -28,6 +28,7 @@
     "@cornerstonejs/core": "^3.7.1",
     "@cornerstonejs/dicom-image-loader": "^3.7.1",
     "@cornerstonejs/nifti-volume-loader": "^3.7.1",
+    "@cornerstonejs/polymorphic-segmentation": "^3.7.1",
     "@cornerstonejs/tools": "^3.7.1",
     "@icr/polyseg-wasm": "^0.4.0",
     "@itk-wasm/morphological-contour-interpolation": "^1.1.0",

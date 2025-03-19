@@ -66,13 +66,19 @@ function MaskIECPanel({ details, files, iec }) {
         .triggerSegmentationDataModified(segmentationId);
 
     await segmentation.addSegmentationRepresentations(
-      'coronal3d', [
+      'coronal3d_vol-1117950', [
         {
           segmentationId,
           type: csToolsEnums.SegmentationRepresentations.Surface,
         }
       ],
     );
+    await segmentationVolume.addSurfaceRepresentationToViewport(
+      'coronal3d_vol-1117950', [
+        {
+          segmentationId,
+        }
+    ]);
   }
   function handleClear() {
     const segmentationVolume = cornerstone.cache.getVolume(segmentationId);

@@ -11,7 +11,8 @@ import { init as csToolsInit } from "@cornerstonejs/tools"
 import * as cornerstoneTools from '@cornerstonejs/tools'
 import { init as dicomImageLoaderInit } from "@cornerstonejs/dicom-image-loader"
 import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader'
-import { expandSegTo3D } from '@/utilities';
+import * as polyseg from '@cornerstonejs/polymorphic-segmentation'
+
 
 volumeLoader.registerUnknownVolumeLoader(
   cornerstoneStreamingImageVolumeLoader 
@@ -25,7 +26,11 @@ function EnableCornerstone({ children }) {
     const initialize = async () => {
       // new 2.0 init routines
       await csRenderInit()
-      await csToolsInit()
+      await csToolsInit({
+        addons: {
+          polyseg,
+        },
+      })
       dicomImageLoaderInit({
         maxWebWorkers: 5,
         startWebWorkersOnDemand: true,
@@ -35,7 +40,6 @@ function EnableCornerstone({ children }) {
 
       window.cornerstoneTools = cornerstoneTools;
       window.cornerstone = cornerstone;
-      window.expandSegTo3D = expandSegTo3D;
 
       setIsInitialized(true);
     };
