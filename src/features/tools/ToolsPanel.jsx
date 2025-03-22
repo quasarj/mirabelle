@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { useSelector } from 'react-redux';
-import MaterialButtonSet from './MaterialButtonSet';
+import MaterialButtonSet from '@/components/MaterialButtonSet';
 import './ToolsPanel.css';
 
 const {

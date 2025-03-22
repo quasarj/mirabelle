@@ -6,7 +6,7 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import VolumeViewport from './VolumeViewport';
 import VolumeViewport3d from './VolumeViewport3d';
-import ToolsPanel from './ToolsPanel';
+import ToolsPanel from '@/features/tools/ToolsPanel';
 
 import './VolumeView.css';
 
@@ -88,67 +88,66 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
 
   return (
     <div id="VolumeView">
-	  <div id="main">
-	  	<div id="leftPanel">
-			<ToolsPanel 
-        toolGroup={toolGroup} 
-	    defaultPreset={defaultPreset3d}
-        onPresetChange={(val) => setPreset3d(val)}
-      />
-	  	</div>
-	  </div>
-		<table>
-		<tbody>
-		<tr>
-			<td>
-			<VolumeViewport3d
-			viewportId={coronal3d_viewport_id}
-			volumeId={volumeId}
-			renderingEngine={renderingEngine}
-			toolGroup={toolGroup3d}
-			segmentationId={segmentationId}
-			orientation="CORONAL"
-	  		preset3d={preset3d}
-			/>
-			</td>
-			<td>
-			<VolumeViewport 
-				viewportId={axial2d_viewport_id}
-				volumeId={volumeId}
-				renderingEngine={renderingEngine}
-				toolGroup={toolGroup}
-				segmentationId={segmentationId}
-				orientation="AXIAL"
-			/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<VolumeViewport 
-				viewportId={sagittal2d_viewport_id}
-				volumeId={volumeId}
-				renderingEngine={renderingEngine}
-				toolGroup={toolGroup}
-				segmentationId={segmentationId}
-				orientation="SAGITTAL"
-			/>
-			</td>
-			<td>
-			<VolumeViewport 
-				viewportId={coronal2d_viewport_id}
-				volumeId={volumeId}
-				renderingEngine={renderingEngine}
-				toolGroup={toolGroup}
-				segmentationId={segmentationId}
-				orientation="CORONAL"
-			/>
-			</td>
-		</tr>
-		</tbody>
-		</table>
+      <div id="main">
+        <div id="leftPanel">
+          <ToolsPanel 
+            toolGroup={toolGroup} 
+            defaultPreset={defaultPreset3d}
+            onPresetChange={(val) => setPreset3d(val)}
+          />
+        </div>
+      </div>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <VolumeViewport3d
+                viewportId={coronal3d_viewport_id}
+                volumeId={volumeId}
+                renderingEngine={renderingEngine}
+                toolGroup={toolGroup3d}
+                segmentationId={segmentationId}
+                orientation="CORONAL"
+                preset3d={preset3d}
+              />
+            </td>
+            <td>
+              <VolumeViewport 
+                viewportId={axial2d_viewport_id}
+                volumeId={volumeId}
+                renderingEngine={renderingEngine}
+                toolGroup={toolGroup}
+                segmentationId={segmentationId}
+                orientation="AXIAL"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <VolumeViewport 
+                viewportId={sagittal2d_viewport_id}
+                volumeId={volumeId}
+                renderingEngine={renderingEngine}
+                toolGroup={toolGroup}
+                segmentationId={segmentationId}
+                orientation="SAGITTAL"
+              />
+            </td>
+            <td>
+              <VolumeViewport 
+                viewportId={coronal2d_viewport_id}
+                volumeId={volumeId}
+                renderingEngine={renderingEngine}
+                toolGroup={toolGroup}
+                segmentationId={segmentationId}
+                orientation="CORONAL"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
-
 }
 
 export default VolumeView;
