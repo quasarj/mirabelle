@@ -92,6 +92,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
 	  	<div id="leftPanel">
 			<ToolsPanel 
         toolGroup={toolGroup} 
+	    defaultPreset={defaultPreset3d}
         onPresetChange={(val) => setPreset3d(val)}
       />
 	  	</div>

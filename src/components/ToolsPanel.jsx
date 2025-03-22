@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import * as cornerstoneTools from '@cornerstonejs/tools';
+import { useSelector } from 'react-redux';
 import MaterialButtonSet from './MaterialButtonSet';
 import './ToolsPanel.css';
 
@@ -18,9 +19,18 @@ const {
 
 const { MouseBindings } = csToolsEnums;
 
-function ToolsPanel({ toolGroup, onPresetChange }) {
+function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
+  const presets = useSelector(state => state.presentation.presets);
+  const [selectedPreset, setSelectedPreset] = useState(defaultPreset);
+
   let currentLeftClickTool;
   let currentRightClickTool;
+
+  const handlePresetChange = (event) => {
+    const newPreset = event.target.value;
+    setSelectedPreset(newPreset);
+    onPresetChange(newPreset);
+  };
 
     const presetGroupButtonConfig = [
 		{
@@ -183,7 +193,21 @@ function ToolsPanel({ toolGroup, onPresetChange }) {
       <MaterialButtonSet buttonConfig={functionGroupButtonConfig} initialActiveButton="Mask" />
       <MaterialButtonSet buttonConfig={leftClickGroupButtonConfig} initialActiveButton="Selection" />
       <MaterialButtonSet buttonConfig={rightClickGroupButtonConfig} initialActiveButton="Pan" />
-      <MaterialButtonSet buttonConfig={presetGroupButtonConfig} initialActiveButton="MR-Default" />
+      <div className="preset-dropdown-container">
+        <label htmlFor="preset-select">Preset:</label>
+        <select
+          id="preset-select"
+          value={selectedPreset}
+          onChange={handlePresetChange}
+          className="preset-select"
+        >
+          {presets.map(preset => (
+            <option key={preset} value={preset}>
+              {preset}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
