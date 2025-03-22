@@ -13,7 +13,7 @@ import { finalCalc } from '../masking';
 
 import Header from './Header';
 import OperationsPanel from './OperationsPanel';
-import VolumeView from './VolumeView';
+import { VolumeView } from '@/features/volume-view';
 
 import { Context } from './Context.js';
 

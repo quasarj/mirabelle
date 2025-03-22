@@ -9,7 +9,7 @@ import { volumeLoader } from '@cornerstonejs/core';
 
 import { toAbsoluteURL } from '@/utilities';
 
-import VolumeView from '@/components/VolumeView';
+import { VolumeView } from '@/features/volume-view';
 import LabelingPanel from '@/components/LabelingPanel';
 import './NiftiReviewFile.css'
 

@@ -4,8 +4,8 @@ import { RenderingEngine } from "@cornerstonejs/core"
 import * as cornerstone from "@cornerstonejs/core"
 import * as cornerstoneTools from '@cornerstonejs/tools';
 
-import VolumeViewport from './VolumeViewport';
-import VolumeViewport3d from './VolumeViewport3d';
+import VolumeViewport from '@/components/VolumeViewport';
+import VolumeViewport3d from '@/components/VolumeViewport3d';
 import ToolsPanel from '@/features/tools/ToolsPanel';
 
 import './VolumeView.css';
