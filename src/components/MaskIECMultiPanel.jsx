@@ -16,11 +16,21 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 		setOffset(currentOffset);
 	};
 
+	const handlePrevious = () => {
+		let currentOffset = 0;
+		if (offset != null) {
+			currentOffset = offset - 1;	
+		}
+		console.log("setting to", currentOffset);
+		setIec(iecs[currentOffset]);
+		setOffset(currentOffset);
+	};
+
     const navigationButtonConfig = [
 		{
 			name: "Previous",
 			icon: "arrow_back",
-			action: () => console.log("back"),
+			action: () => handlePrevious(),
 		},
 		{
 			name: "Next",

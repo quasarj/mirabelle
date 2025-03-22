@@ -155,9 +155,21 @@ export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId
     wadoRsRoot: "/papi/v1/wadors",
   })
 
-  const volume = await volumeLoader.createAndCacheVolume(volumeId, {
-    imageIds,
-  })
+
+  let volume = cornerstone.cache.getVolume(volumeId);
+  if (!volume) {
+    console.log("Volume didn't already exist, creating it");
+    volume = await volumeLoader.createAndCacheVolume(volumeId, {
+      imageIds,
+    })
+  } else {
+    console.log("Volume already existed, not creating it");
+    cornerstone.cache.removeVolumeLoadObject(segmentationId);
+  }
+
+  cornerstoneTools.segmentation.removeAllSegmentations();
+  cornerstoneTools.segmentation.removeAllSegmentationRepresentations();
+
 
   // Create a segmentation of the same resolution as the source data for the CT volume
   volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {

@@ -8,6 +8,7 @@ import { getFiles, getIECInfo } from '@/utilities';
 import { TASK_CONFIGS } from '@/config/config';
 
 import Header from '@/components/Header';
+import Counter from '@/components/Counter';
 
 export async function loader({ params }) {
 
@@ -27,6 +28,7 @@ export default function RouteMaskReviewIEC() {
         <p>
           Route: Mask Review: IEC ({iec})
         </p>
+		<Counter />
       </Context.Provider>
     </div>
 	);

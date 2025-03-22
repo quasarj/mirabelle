@@ -31,6 +31,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   const [preset3d, setPreset3d] = useState(defaultPreset3d);
 
   useEffect(() => {
+    console.log("### VolumeView is mounting");
     cornerstoneTools.addTool(TrackballRotateTool);
     cornerstoneTools.addTool(BrushTool);
     cornerstoneTools.addTool(RectangleScissorsTool);
@@ -83,6 +84,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   let axial2d_viewport_id = `axial2d_${volumeId}`;
   let sagittal2d_viewport_id = `sagittal2d_${volumeId}`;
   let coronal2d_viewport_id = `coronal2d_${volumeId}`;
+  console.log(volumeId, coronal3d_viewport_id, axial2d_viewport_id);
 
   return (
     <div id="VolumeView">

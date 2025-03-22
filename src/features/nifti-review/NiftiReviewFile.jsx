@@ -60,10 +60,16 @@ export default function NiftiReviewFile({ file }) {
       const url = toAbsoluteURL(rel_url);
       const imageIds = await createNiftiImageIdsAndCacheMetadata({ url });
       const volumeId = `cornerstoneStreamingImageVolume: ${rel_url}`;
-      const volume = await volumeLoader.createAndCacheVolume(volumeId, {
-        imageIds,
-      });
+      // check if it's already in the cache
+      let volume = cornerstone.cache.getVolume(volumeId);
+      if (!volume) {
+        volume = await volumeLoader.createAndCacheVolume(volumeId, {
+          imageIds,
+        });
+      }
       await volume.load();
+
+      console.log(url, imageIds, volumeId, volume);
 
 
       // set the component state

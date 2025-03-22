@@ -47,7 +47,8 @@ from './routes/nifti/vr';
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <Home />,
+		// element: <Home />,
+    Component: Home,
 		errorElement: <ErrorPage />,
 	},
 	{

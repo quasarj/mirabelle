@@ -65,20 +65,25 @@ function MaskIECPanel({ details, files, iec }) {
         .triggerSegmentationEvents
         .triggerSegmentationDataModified(segmentationId);
 
-    await segmentation.addSegmentationRepresentations(
-      'coronal3d_vol-1117950', [
-        {
-          segmentationId,
-          type: csToolsEnums.SegmentationRepresentations.Surface,
-        }
-      ],
-    );
-    await segmentationVolume.addSurfaceRepresentationToViewport(
-      'coronal3d_vol-1117950', [
-        {
-          segmentationId,
-        }
-    ]);
+
+    // TODO I don't like this being here, perhaps put it inside VolumeView
+    // and expose a callback that can be called from here? 
+    const renderingEngine = cornerstone.getRenderingEngines()[0];
+    const viewports = renderingEngine.getViewports();
+    viewports.forEach(async (item) => {
+      let viewportId = item.id;
+      if (viewportId.startsWith("coronal3d")) {
+        await segmentation.addSegmentationRepresentations(
+          viewportId, [
+            {
+              segmentationId,
+              type: csToolsEnums.SegmentationRepresentations.Surface,
+            }
+          ],
+        );
+      }
+    });
+
   }
   function handleClear() {
     const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
