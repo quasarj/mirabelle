@@ -6,7 +6,7 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import VolumeViewport from './VolumeViewport';
 import VolumeViewport3d from './VolumeViewport3d';
-import ToolsPanel from './ToolsPanel2';
+import ToolsPanel from './ToolsPanel';
 
 import './VolumeView.css';
 
