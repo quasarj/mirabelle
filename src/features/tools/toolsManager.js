@@ -48,7 +48,7 @@ export default function useToolsManager({ toolGroup }) {
       console.log(">>>>>>>", toolGroup);
     },
     switchRightClickMode: (new_mode) => {
-      console.log("Switching right click to: ", new_mode);
+      // console.log("Switching right click to: ", new_mode);
 
       // Always make sure we setToolPassive on the current
       // tool, otherwise it will still be trying to work
@@ -67,7 +67,7 @@ export default function useToolsManager({ toolGroup }) {
           break;
       }
 
-      console.log("new tool:", newTool);
+      // console.log("new tool:", newTool);
       toolGroup.setToolActive(newTool.toolName, {
         bindings: [
           { mouseButton: csToolsEnums.MouseBindings.Secondary },
@@ -106,7 +106,7 @@ export default function useToolsManager({ toolGroup }) {
     },
     switchFunctionMode: (mode) => {
       // TODO this might be a good choice to store in the Redux store
-        console.log("switch to function mode: ", mode);
+        console.log("switch to function mode (not implemented yet): ", mode);
     }
   }
 }

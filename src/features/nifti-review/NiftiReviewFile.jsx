@@ -69,7 +69,7 @@ export default function NiftiReviewFile({ file }) {
       }
       await volume.load();
 
-      console.log(url, imageIds, volumeId, volume);
+      // console.log(url, imageIds, volumeId, volume);
 
 
       // set the component state
