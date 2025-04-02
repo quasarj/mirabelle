@@ -1,0 +1,30 @@
+#VolumeView2 {
+  @apply
+    relative 
+    grid 
+    grid-rows-[auto,1fr] 
+    gap-2 
+    w-screen 
+    min-w-[1300px] 
+    h-screen 
+    p-2;
+}
+#main {
+  @apply
+    h-full
+    w-full
+    grid
+    grid-cols-[18rem,1fr,0rem]
+    rounded-lg
+    gap-2
+    transition-all
+    duration-200
+    overflow-hidden;
+}
+#leftPanel {
+  @apply
+    w-full
+    h-full
+    rounded-lg
+    overflow-hidden;
+}

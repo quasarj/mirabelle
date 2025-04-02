@@ -24,9 +24,11 @@ const { segmentation: segmentationUtils } = cstUtils;
 
 const { ViewportType } = Enums;
 
-function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
+function VolumeViewport({ mip, viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
   console.log("[VolumeViewport] rendering, volumeId=", volumeId)
   const elementRef = useRef(null);
+
+  window.re = renderingEngine;
 
   let realOrientation = Enums.OrientationAxis.ACQUISITION;
   if (orientation == 'SAGITTAL') {
@@ -78,6 +80,31 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
 
     setup()
   }, [elementRef, volumeId])
+
+  useEffect(() => {
+    const viewport = renderingEngine.getViewport(viewportId);
+    const volume = cornerstone.cache.getVolume(volumeId);
+    const volDimensions = volume.dimensions;
+
+    if (mip === false) {
+      viewport.setBlendMode(cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND);
+      viewport.setSlabThickness(volSlab);
+
+      viewport.render();
+      return
+    }
+
+    const volSlab = Math.sqrt(
+      volDimensions[0] * volDimensions[0] +
+      volDimensions[1] * volDimensions[1] +
+      volDimensions[2] * volDimensions[2]
+    );
+
+    viewport.setBlendMode(cornerstone.Enums.BlendModes.MAXIMUM_INTENSITY_BLEND);
+    viewport.setSlabThickness(volSlab);
+
+    viewport.render();
+  }, [mip]);
 
   return (
 	  <>

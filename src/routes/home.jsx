@@ -93,7 +93,7 @@ export default function Home() {
 
         <li>DICOM Visual Review</li>
         <li>
-          <Link to="/review/dicom/iec/1">DICOM Review IEC</Link>
+          <Link to="/review/dicom/iec/1117950">DICOM Review IEC</Link>
         </li>
         <li>
           <Link to="/review/dicom/vr/1">DICOM Review VR</Link>

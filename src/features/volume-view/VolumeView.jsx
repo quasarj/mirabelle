@@ -31,6 +31,8 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   const [toolGroup3d, setToolGroup3d] = useState();
   const [preset3d, setPreset3d] = useState(defaultPreset3d);
 
+  const [mip, setMip] = useState(false);
+
   useEffect(() => {
     cornerstoneTools.addTool(TrackballRotateTool);
     cornerstoneTools.addTool(BrushTool);
@@ -82,6 +84,8 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
     <div id="VolumeView">
       <div id="main">
         <div id="leftPanel">
+          <button onClick={() => setMip(true)}>Make it so</button>
+          <button onClick={() => setMip(false)}>Make it un-so</button>
           <ToolsPanel 
             toolGroup={toolGroup} 
             defaultPreset={defaultPreset3d}
@@ -111,6 +115,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 toolGroup={toolGroup}
                 segmentationId={segmentationId}
                 orientation="AXIAL"
+                mip={mip}
               />
             </td>
           </tr>
@@ -123,6 +128,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 toolGroup={toolGroup}
                 segmentationId={segmentationId}
                 orientation="SAGITTAL"
+                mip={mip}
               />
             </td>
             <td>
@@ -133,6 +139,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 toolGroup={toolGroup}
                 segmentationId={segmentationId}
                 orientation="CORONAL"
+                mip={mip}
               />
             </td>
           </tr>

@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from 'react';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { useSelector, useDispatch } from 'react-redux'
 import { setFunction, setForm } from '@/features/maskingSlice'
@@ -36,17 +37,19 @@ export default function useToolsManager({ toolGroup }) {
     toolsLoaded = true;
   }
 
-  // add tools and setup default toolGroup actions
-  toolGroup.addTool(RectangleScissorsTool.toolName);
-  toolGroup.addTool(StackScrollTool.toolName);
-  toolGroup.addTool(WindowLevelTool.toolName);
-  toolGroup.addTool(CrosshairsTool.toolName);
-  toolGroup.addTool(PanTool.toolName);
-  toolGroup.addTool(ZoomTool.toolName);
+  useEffect(() => {
+    // add tools and setup default toolGroup actions
+    toolGroup.addTool(RectangleScissorsTool.toolName);
+    toolGroup.addTool(StackScrollTool.toolName);
+    toolGroup.addTool(WindowLevelTool.toolName);
+    toolGroup.addTool(CrosshairsTool.toolName);
+    toolGroup.addTool(PanTool.toolName);
+    toolGroup.addTool(ZoomTool.toolName);
 
-  toolGroup.setToolActive(StackScrollTool.toolName, {
-    bindings: [{ mouseButton: csToolsEnums.MouseBindings.Wheel }],
-  });
+    toolGroup.setToolActive(StackScrollTool.toolName, {
+      bindings: [{ mouseButton: csToolsEnums.MouseBindings.Wheel }],
+    });
+  }, [toolGroup]);
 
   return {
     testFunc: () => {
