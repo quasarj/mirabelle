@@ -1,4 +1,6 @@
 import * as cornerstoneTools from '@cornerstonejs/tools';
+import { useSelector, useDispatch } from 'react-redux'
+import { setFunction, setForm } from '@/features/maskingSlice'
 
 // Use this global to track when the tools have been added globally
 let toolsLoaded = false;
@@ -19,6 +21,9 @@ const {
 const { MouseBindings } = csToolsEnums;
 
 export default function useToolsManager({ toolGroup }) {
+  const _maskingOperation = useSelector((state) => state.masking.operation)
+  const dispatch = useDispatch()
+
   let currentLeftClickTool;
   let currentRightClickTool;
 
@@ -105,8 +110,10 @@ export default function useToolsManager({ toolGroup }) {
       currentLeftClickTool = newTool;
     },
     switchFunctionMode: (mode) => {
-      // TODO this might be a good choice to store in the Redux store
-        console.log("switch to function mode (not implemented yet): ", mode);
+      dispatch(setFunction(mode))
+    },
+    switchFormMode: (mode) => {
+      dispatch(setForm(mode))
     }
   }
 }

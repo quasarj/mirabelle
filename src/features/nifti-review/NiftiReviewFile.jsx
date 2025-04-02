@@ -43,6 +43,7 @@ export default function NiftiReviewFile({ file }) {
       // when it's done, call setLoaded(true) and
       // also setVolumeId(new_volume_id)
 
+      // await cornerstone.cache.purgeVolumeCache();
       const details = await getNiftiDetails(file);
 
       if (details.download_path === undefined) {
@@ -67,15 +68,29 @@ export default function NiftiReviewFile({ file }) {
           imageIds,
         });
       }
-      await volume.load();
+      try {
+        await volume.load();
+      } catch (error) {
+        console.log(error);
+        return;
+      }
 
       // console.log(url, imageIds, volumeId, volume);
+
+      // remove everything else from the cache. There is a purgeCache
+      // function but it deletes too much and breaks the world
+      cornerstone.cache.getVolumes().forEach((v) => { 
+        if (v.volumeId != volumeId) { 
+          cornerstone.cache.removeVolumeLoadObject(v.volumeId);
+        }
+      });
 
 
       // set the component state
       setVolumeId(volumeId);
       setLoaded(true);
-    })()
+
+    })();
   }, [file]);
 
 

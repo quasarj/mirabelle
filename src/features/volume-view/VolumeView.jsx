@@ -6,7 +6,8 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import VolumeViewport from '@/components/VolumeViewport';
 import VolumeViewport3d from '@/components/VolumeViewport3d';
-import ToolsPanel from '@/features/tools/ToolsPanel';
+// import ToolsPanel from '@/features/tools/ToolsPanel';
+import { ToolsPanel } from '@/features/tools';
 
 import './VolumeView.css';
 
@@ -31,33 +32,19 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   const [preset3d, setPreset3d] = useState(defaultPreset3d);
 
   useEffect(() => {
-    // console.log("### VolumeView is mounting");
     cornerstoneTools.addTool(TrackballRotateTool);
     cornerstoneTools.addTool(BrushTool);
     cornerstoneTools.addTool(RectangleScissorsTool);
     cornerstoneTools.addTool(StackScrollTool);
 
-    // Create a renderingEngine for each volume expected to be on the screen
-    // at the same time; so here, only one.
-
-    // if a renderingEngine already exsits, destroy it and make another
-    if (renderingEngine != null) {
-      renderingEngine.destroy()
+    // Only create a new rendering engine if one doesn't already exist
+    let renderingEngine = cornerstone.getRenderingEngine("re1");
+    if (renderingEngine === undefined) {
+      renderingEngine = new RenderingEngine("re1");
     }
-    let renderingEngine = new RenderingEngine("re1");
     
-    // Create a toolGroup for each disticnt set of groups expected to be used.
-    // Probably need two for 2d + 3d
-    if (toolGroup == null) {
-      ToolGroupManager.destroyToolGroup("toolGroup2d")
-    }
     let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
-
-    if (toolGroup3d == null) {
-      ToolGroupManager.destroyToolGroup("toolGroup3d")
-    }
     let toolGroup3d = ToolGroupManager.createToolGroup("toolGroup3d");
-
 
     toolGroup3d.addTool(TrackballRotateTool.toolName);
 
@@ -69,22 +56,27 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
       ],
     });
 
+    // TODO: this is for debu use only
     window.ToolGroupManager = ToolGroupManager;
     window.renderingEngine = renderingEngine;
+    window.toolGroup2d = toolGroup;
+
     setRenderingEngine(renderingEngine);
     setToolGroup(toolGroup);
     setToolGroup3d(toolGroup3d);
+
+    // Teardown function
+    return () => {
+      ToolGroupManager.destroyToolGroup("toolGroup2d")
+      ToolGroupManager.destroyToolGroup("toolGroup3d")
+      // Do not delete the RenderingEngine here, it needs
+      // to stay, for now
+    };
   }, []);
 
   if (renderingEngine == null) {
     return <div>Loading...</div>;
   }
-
-  let coronal3d_viewport_id = `coronal3d_${volumeId}`;
-  let axial2d_viewport_id = `axial2d_${volumeId}`;
-  let sagittal2d_viewport_id = `sagittal2d_${volumeId}`;
-  let coronal2d_viewport_id = `coronal2d_${volumeId}`;
-  // console.log(volumeId, coronal3d_viewport_id, axial2d_viewport_id);
 
   return (
     <div id="VolumeView">
@@ -102,7 +94,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
           <tr>
             <td>
               <VolumeViewport3d
-                viewportId={coronal3d_viewport_id}
+                viewportId="coronal3d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}
                 toolGroup={toolGroup3d}
@@ -113,7 +105,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
             </td>
             <td>
               <VolumeViewport 
-                viewportId={axial2d_viewport_id}
+                viewportId="axial2d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}
                 toolGroup={toolGroup}
@@ -125,7 +117,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
           <tr>
             <td>
               <VolumeViewport 
-                viewportId={sagittal2d_viewport_id}
+                viewportId="sagittal2d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}
                 toolGroup={toolGroup}
@@ -135,7 +127,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
             </td>
             <td>
               <VolumeViewport 
-                viewportId={coronal2d_viewport_id}
+                viewportId="coronal2d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}
                 toolGroup={toolGroup}

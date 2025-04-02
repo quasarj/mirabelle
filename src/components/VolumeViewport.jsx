@@ -25,10 +25,8 @@ const { segmentation: segmentationUtils } = cstUtils;
 const { ViewportType } = Enums;
 
 function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
+  console.log("[VolumeViewport] rendering, volumeId=", volumeId)
   const elementRef = useRef(null);
-  // This came from an example, I am not sure why it's using
-  // a ref and not a State?? Maybe to avoid a redraw?
-  const running = useRef(false);
 
   let realOrientation = Enums.OrientationAxis.ACQUISITION;
   if (orientation == 'SAGITTAL') {
@@ -44,10 +42,7 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
 
   useEffect(() => {
     const setup = async () => {
-      if (running.current) {
-        return
-      }
-      running.current = true
+      console.log("[VolumeViewport] setup running");
 
       const viewportInput = {
         viewportId,
@@ -82,7 +77,7 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
     }
 
     setup()
-  }, [elementRef, running])
+  }, [elementRef, volumeId])
 
   return (
 	  <>

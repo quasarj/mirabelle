@@ -13,6 +13,7 @@ import { finalCalc } from '../masking';
 
 import Header from './Header';
 import OperationsPanel from './OperationsPanel';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { VolumeView } from '@/features/volume-view';
 
 import { Context } from './Context.js';
@@ -24,9 +25,11 @@ const {
   segmentation
 } = cornerstoneTools;
 
-function MaskIECPanel({ details, files, iec }) {
-  const volumeId = `vol-${iec}`;
-  const segmentationId = `vol-${iec}-seg`;
+function MaskIECPanel({ iec }) {
+  console.log(">>>>", iec);
+
+  const [volumeId, setVolumeId] = useState()
+  const [segmentationId, setSegmentationId] = useState();
 
   const [isInitialized, setIsInitialized] = useState(false);
   const [isErrored, setIsErrored] = useState(false);
@@ -36,10 +39,13 @@ function MaskIECPanel({ details, files, iec }) {
 
   // Load the volume into the cache
   useEffect(() => {
+    console.log("MaskIECPanel useEffect[iec]:", iec);
     const initialize = async () => {
-      setIsInitialized(false);
+      // setIsInitialized(false);
       setIsErrored(false);
       // cornerstone.cache.purgeCache();
+      let volumeId = `vol-${iec}`;
+      let segmentationId = `vol-${iec}-seg`;
 
       try {
         await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId);
@@ -52,6 +58,8 @@ function MaskIECPanel({ details, files, iec }) {
       }
 
       setIsInitialized(true);
+      setVolumeId(volumeId);
+      setSegmentationId(segmentationId);
     };
 
     initialize();
@@ -99,6 +107,7 @@ function MaskIECPanel({ details, files, iec }) {
       .triggerSegmentationDataModified(segmentationId);
   }
   async function handleAccept() {
+    console.log(coords, volumeId, iec);
     await finalCalc(coords, volumeId, iec, "cuboid", "mask");
   }
 
@@ -113,23 +122,24 @@ function MaskIECPanel({ details, files, iec }) {
     );
   }
   if (!isInitialized) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />
   }
 
-    return (
-      <>
-        <VolumeView 
-          volumeId={volumeId} 
-          segmentationId={segmentationId} 
-          defaultPreset3d="CT-MIP" 
-        />
-        <OperationsPanel 
-          onExpand={handleExpand}
-          onClear={handleClear}
-          onAccept={handleAccept}
-        />
-      </>
-    )
+  console.log(">>>>> about to pass volumeId=", volumeId);
+  return (
+    <>
+      <VolumeView 
+        volumeId={volumeId} 
+        segmentationId={segmentationId} 
+        defaultPreset3d="CT-MIP" 
+      />
+      <OperationsPanel 
+        onExpand={handleExpand}
+        onClear={handleClear}
+        onAccept={handleAccept}
+      />
+    </>
+  )
 }
 
 export default MaskIECPanel

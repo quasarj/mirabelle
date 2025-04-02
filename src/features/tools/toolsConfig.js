@@ -17,6 +17,19 @@ export default function useToolsConfigs({ manager }) {
     },
   ];
 
+  const formGroupButtonConfig = [
+    {
+      name: "Cylinder",
+      icon: "circle",
+      action: () => manager.switchFormMode("cylinder"),
+    },
+    {
+      name: "Cuboid",
+      icon: "square",
+      action: () => manager.switchFormMode("cuboid"),
+    },
+  ];
+
   const leftClickGroupButtonConfig = [
     {
       name: "Window Level",
@@ -50,6 +63,7 @@ export default function useToolsConfigs({ manager }) {
 
   return {
     functionGroupButtonConfig,
+    formGroupButtonConfig,
     leftClickGroupButtonConfig,
     rightClickGroupButtonConfig,
   };

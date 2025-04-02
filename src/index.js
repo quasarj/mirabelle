@@ -18,6 +18,7 @@ import {
 import ErrorPage from './error-page';
 import './index.css'
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import Home from './routes/home';
 
 import RouteMaskIEC, { loader as routeMaskIECLoader, } 
@@ -49,47 +50,56 @@ const router = createBrowserRouter([
 		path: "/",
 		// element: <Home />,
     Component: Home,
+    HydrateFallback: LoadingSpinner,
 		errorElement: <ErrorPage />,
 	},
 	{
 		path: "mask/iec/:iec",
 		element: <RouteMaskIEC />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeMaskIECLoader,
 	},
 	{
 		path: "mask/vr/:visual_review_instance_id",
 		element: <RouteMaskVR />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeMaskVRLoader,
 		errorElement: <ErrorPage />,
 	},
 	{
 		path: "mask/review/iec/:iec",
 		element: <RouteMaskReviewIEC />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeMaskReviewIECLoader,
 	},
 	{
 		path: "mask/review/vr/:vr",
 		element: <RouteMaskReviewVR />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeMaskerReviewVRLoader,
 	},
 	{
 		path: "review/nifti/file/:fileId",
 		element: <RouteNiftiReviewFile />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeNiftiReviewFileLoader,
 	},
 	{
 		path: "review/nifti/vr/:vr",
 		element: <RouteNiftiReviewVR />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeNiftiReviewVRLoader,
 	},
 	{
 		path: "review/dicom/iec/:iec",
 		element: <RouteDicomReviewIEC />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeDicomReviewIECLoader,
 	},
 	{
 		path: "review/dicom/vr/:vr",
 		element: <RouteDicomReviewVR />,
+    HydrateFallback: LoadingSpinner,
 		loader: routeDicomReviewVRLoader,
 	},
 ], {

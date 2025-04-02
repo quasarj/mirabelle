@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 
 import NiftiReviewFile from './NiftiReviewFile';
+import Slider from '@/components/Slider';
 
 import './NiftiReviewVR.css';
 
 
 export default function NiftiReviewVR({ vr }) {
-  const [offset, setOffset] = useState(13);
+  const good = 13;
+  const bad = 17;
+  const [offset, setOffset] = useState(good);
 
   const fakeVRFiles = [
      151939350,
@@ -37,8 +40,13 @@ export default function NiftiReviewVR({ vr }) {
   return (
     <div id="NiftiReviewVR">
       <p>NiftiReviewVR: ({vr})</p>
+      <Slider 
+        max={fakeVRFiles.length} 
+        initial={offset}
+        onChange={setOffset} 
+      />
       <section>
-        Current: {fakeVRFiles[offset]}
+        Current: {fakeVRFiles[offset]} / {offset}
         <button onClick={() => setOffset(offset - 1)}>Previous</button>
         <button onClick={() => setOffset(offset + 1)}>Next</button>
       </section>

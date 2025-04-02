@@ -29,9 +29,6 @@ const { ViewportType } = Enums;
 
 function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, orientation, preset3d }) {
   const elementRef = useRef(null);
-  // This came from an example, I am not sure why it's using
-  // a ref and not a State?? Maybe to avoid a redraw?
-  const running = useRef(false);
 
   let realOrientation = Enums.OrientationAxis.ACQUISITION;
   if (orientation == 'SAGITTAL') {
@@ -47,10 +44,6 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
 
   useEffect(() => {
     const setup = async () => {
-      if (running.current) {
-        return
-      }
-      running.current = true
 
       const viewportInputArray = [{
         viewportId,
@@ -93,7 +86,7 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
     }
 
     setup()
-  }, [elementRef, running])
+  }, [elementRef, volumeId])
 
   useEffect(() => {
     const viewport = renderingEngine.getViewport(viewportId);
