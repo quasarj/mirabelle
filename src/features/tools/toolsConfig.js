@@ -1,4 +1,23 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { setMip } from '@/features/presentationSlice'
+
 export default function useToolsConfigs({ manager }) {
+  const dispatch = useDispatch();
+
+  const viewGroupButtonConfig = [
+    {
+      name: "Volume",
+      icon: "deployed_code",
+      action: () => dispatch(setMip(false)),
+    },
+    {
+      name: "Maximum Intensity Projection",
+      icon: "light_mode",
+      action: () => dispatch(setMip(true)),
+    },
+  ];
+
+
   const functionGroupButtonConfig = [
     {
       name: "Mask",
@@ -66,5 +85,6 @@ export default function useToolsConfigs({ manager }) {
     formGroupButtonConfig,
     leftClickGroupButtonConfig,
     rightClickGroupButtonConfig,
+    viewGroupButtonConfig,
   };
 }

@@ -20,6 +20,10 @@ function toTitleCase(some_string) {
 
 function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
   const presets = useSelector(state => state.presentation.presets);
+  // const toolsConfig = useSelector(state => state.presentation.presets);
+  //
+  const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
+
   const maskingFunction = useSelector(state => state.masking.function);
   const maskingForm = useSelector(state => state.masking.form);
 
@@ -40,6 +44,13 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   return (
     <div id="tools-panel">
+      { 
+        globalToolsConfig.viewToolGroup.visible && 
+        <MaterialButtonSet
+          buttonConfig={toolsConfigs.viewGroupButtonConfig}
+          initialActiveButton={toTitleCase("volume")}
+        />
+      }
       <MaterialButtonSet
         buttonConfig={toolsConfigs.functionGroupButtonConfig}
         initialActiveButton={toTitleCase(maskingFunction)}

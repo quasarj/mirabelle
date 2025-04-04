@@ -30,6 +30,8 @@ export default function useToolsManager({ toolGroup }) {
 
   if (!toolsLoaded) {
     // add tools globally to cornerstone, but only once ever
+    cornerstoneTools.addTool(RectangleScissorsTool);
+    cornerstoneTools.addTool(StackScrollTool);
     cornerstoneTools.addTool(WindowLevelTool);
     cornerstoneTools.addTool(CrosshairsTool);
     cornerstoneTools.addTool(PanTool);

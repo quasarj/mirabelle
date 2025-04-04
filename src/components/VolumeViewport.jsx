@@ -3,6 +3,7 @@
  * been created and loaded into the cache. Accepts volumeId as a prop
  **/
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
@@ -24,7 +25,9 @@ const { segmentation: segmentationUtils } = cstUtils;
 
 const { ViewportType } = Enums;
 
-function VolumeViewport({ mip, viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
+function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
+  const mip = useSelector(state => state.presentation.maximumIntensityProjection);
+
   console.log("[VolumeViewport] rendering, volumeId=", volumeId)
   const elementRef = useRef(null);
 

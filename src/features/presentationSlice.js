@@ -3,6 +3,18 @@ import { createSlice } from '@reduxjs/toolkit'
 const presentationSlice = createSlice({
   name: 'presentation',
   initialState: {
+    toolsConfig: {
+      viewToolGroup: {
+        visible: false,
+        value: 'volume',
+        volumeVisible: false,
+        projectionVisible: false,
+        stackVisible: false,
+      },
+    },
+
+    maximumIntensityProjection: false,
+
     presets: [
         "CT-AAA",
         "CT-AAA2",
@@ -33,6 +45,13 @@ const presentationSlice = createSlice({
     ] // Initial presets matching those in ToolsPanel
   },
   reducers: {
+    setMip: (state, action) => {
+      state.maximumIntensityProjection = action.payload
+    },
+    // Set the entire toolsConfig
+    setToolsConfig: (state, action) => {
+      state.toolsConfig = { ...state.toolsConfig, ...action.payload }
+    },
     setPresets: (state, action) => {
       state.presets = action.payload
     },
@@ -47,6 +66,6 @@ const presentationSlice = createSlice({
   }
 })
 
-export const { setPresets, addPreset, removePreset } = presentationSlice.actions
+export const { setPresets, addPreset, removePreset, setToolsConfig, setMip } = presentationSlice.actions
 
 export default presentationSlice.reducer 

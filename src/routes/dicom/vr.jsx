@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
+import { setToolsConfig } from '@/features/presentationSlice';
 
 import { Context } from '@/components/Context';
 
@@ -19,6 +21,22 @@ export async function loader({ params }) {
 export default function RouteDicomReviewVR() {
   const { vr } = useLoaderData();
   const [imageIds, setImageIds] = useState();
+  const dispatch = useDispatch()
+
+  dispatch(setToolsConfig({
+      viewToolGroup: {
+        visible: true,
+        value: 'volume',
+        volumeVisible: false,
+        projectionVisible: false,
+        stackVisible: false,
+      }
+  }));
+
+  // dispatch(setToolsConfig(
+  //   {viewToolGroup: {visible: true}}
+  // ));
+
 
   // const iec = 1167702;
   const iec = 1167698;
