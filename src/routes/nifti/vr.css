@@ -1,0 +1,8 @@
+#RouteNiftiReviewVR {
+  background-color: #e3fce4;
+}
+#RouteNiftiReviewVR section {
+  @apply
+    p-5
+}
+
