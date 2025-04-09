@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
 import MaskIECPanel from '@/components/MaskIECPanel';
 import Header from '@/components/Header';
 
@@ -8,6 +9,8 @@ import useConfigState from '@/hooks/useConfigState';
 import { getDetails } from '@/masking.js';
 import { getFiles, getIECInfo } from '@/utilities';
 import { TASK_CONFIGS } from '@/config/config';
+
+import { setMaskerConfig } from '@/features/presentationSlice'
 
 
 // function to load data for this component
@@ -21,7 +24,11 @@ export async function loader({ params }) {
 }
 
 export default function RouteMaskIEC() {
+  const dispatch = useDispatch();
+
     const { iec } = useLoaderData();
+
+  dispatch(setMaskerConfig());
 
     return (
         <Context.Provider value={{ title: "Mask IEC" }}>

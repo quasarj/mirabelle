@@ -3,15 +3,82 @@ import { createSlice } from '@reduxjs/toolkit'
 const presentationSlice = createSlice({
   name: 'presentation',
   initialState: {
+
+    panelConfig: {
+      visibility: {
+        left: false,
+        right: false,
+        top: false,
+        bottom: false,
+        tools: false,
+        files: false,
+        description: false,
+        navigation: false,
+        search: false,
+      },
+      open: {
+        left: false,
+        right: false,
+      },
+    },
     toolsConfig: {
       viewToolGroup: {
         visible: false,
-        value: 'volume',
-        volumeVisible: false,
-        projectionVisible: false,
-        stackVisible: false,
+        defaultValue: 'volume',
+        visibility: {
+          volume: false,
+          projection: false,
+          stack: false,
+        },
+      },
+      functionToolGroup: {
+        visible: false,
+        defaultValue: 'mask',
+        visibility: {
+          mask: false,
+          blackout: false,
+          sliceRemove: false,
+        },
+      },
+      formToolGroup: {
+        visible: false,
+        defaultValue: 'cylinder',
+        visibility: {
+          cuboid: false,
+          cylinder: false,
+        },
+      },
+      leftClickToolGroup: {
+        visible: false,
+        defaultValue: 'selection',
+        visibility: {
+          windowLevel: false,
+          rectangleScissors: false,
+          crossHairs: false,
+        }
+      },
+      rightClickToolGroup: {
+        visible: false,
+        defaultValue: 'zoom',
+        visibility: {
+          zoom: false,
+          pan: false,
+        }
+      },
+      opacityTool: {
+        visible: false,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        defaultValue: 0.3,
+      },
+      presetTool: {
+        visible: false,
+        defaultValue: 'CT-MIP',
       },
     },
+
+
 
     maximumIntensityProjection: false,
 
@@ -62,10 +129,19 @@ const presentationSlice = createSlice({
     },
     removePreset: (state, action) => {
       state.presets = state.presets.filter(preset => preset !== action.payload)
-    }
+    },
+    // Sets the default configuration for the Masker Route
+    setMaskerConfig: (state, action) => {
+      state.panelConfig.visibility.left = true;
+      state.panelConfig.visibility.tools = true;
+      state.panelConfig.open.left = true;
+      state.toolsConfig.functionToolGroup.visible = true;
+      return state;
+    },
+
   }
 })
 
-export const { setPresets, addPreset, removePreset, setToolsConfig, setMip } = presentationSlice.actions
+export const { setPresets, addPreset, removePreset, setToolsConfig, setMip, setMaskerConfig } = presentationSlice.actions
 
 export default presentationSlice.reducer 
