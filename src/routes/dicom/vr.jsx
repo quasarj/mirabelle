@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
-import { setToolsConfig } from '@/features/presentationSlice';
+import { setToolsConfig, setStateValue, Enums } from '@/features/presentationSlice';
 
 import { Context } from '@/components/Context';
 
@@ -32,6 +32,9 @@ export default function RouteDicomReviewVR() {
         stackVisible: false,
       }
   }));
+
+  dispatch(setStateValue({ path: "left", value: true }));
+  dispatch(setStateValue({ path: "view", value: Enums.ViewOptions.STACK }));
 
   // dispatch(setToolsConfig(
   //   {viewToolGroup: {visible: true}}

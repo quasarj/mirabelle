@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { useSelector, useDispatch } from 'react-redux'
 import { setFunction, setForm } from '@/features/maskingSlice'
+import { setStateValue, Enums } from '@/features/presentationSlice'
 
 // Use this global to track when the tools have been added globally
 let toolsLoaded = false;
@@ -115,9 +116,21 @@ export default function useToolsManager({ toolGroup }) {
       currentLeftClickTool = newTool;
     },
     switchFunctionMode: (mode) => {
+      dispatch(setStateValue(
+        {
+          path: "function",
+          value: mode,
+        }
+      ))
       dispatch(setFunction(mode))
     },
     switchFormMode: (mode) => {
+      dispatch(setStateValue(
+        {
+          path: "form",
+          value: mode,
+        }
+      ))
       dispatch(setForm(mode))
     }
   }

@@ -1,20 +1,43 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setMip } from '@/features/presentationSlice'
+import { setStateValue, Enums } from '@/features/presentationSlice'
+
+const maybe = (condition, item) => condition ? [item]: [];
 
 export default function useToolsConfigs({ manager }) {
   const dispatch = useDispatch();
+  const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
 
   const viewGroupButtonConfig = [
-    {
+    ...maybe(globalToolsConfig.viewToolGroup.visibility.volume, {
       name: "Volume",
       icon: "deployed_code",
-      action: () => dispatch(setMip(false)),
-    },
-    {
+      action: () => dispatch(setStateValue(
+        {
+          path: "view",
+          value: Enums.ViewOptions.VOLUME,
+        }
+      )),
+    }),
+    ...maybe(globalToolsConfig.viewToolGroup.visibility.projection, {
       name: "Maximum Intensity Projection",
       icon: "light_mode",
-      action: () => dispatch(setMip(true)),
-    },
+      action: () => dispatch(setStateValue(
+        {
+          path: "view",
+          value: Enums.ViewOptions.PROJECTION,
+        }
+      )),
+    }),
+    ...maybe(globalToolsConfig.viewToolGroup.visibility.stack, {
+      name: "Stack",
+      icon: "stacks",
+      action: () => dispatch(setStateValue(
+        {
+          path: "view",
+          value: Enums.ViewOptions.STACK,
+        }
+      )),
+    }),
   ];
 
 

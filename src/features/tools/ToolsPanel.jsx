@@ -23,6 +23,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
   // const toolsConfig = useSelector(state => state.presentation.presets);
   //
   const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
+  const globalStateValues = useSelector(state => state.presentation.stateValues);
 
   const maskingFunction = useSelector(state => state.masking.function);
   const maskingForm = useSelector(state => state.masking.form);
@@ -46,42 +47,60 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
     <div id="tools-panel">
       { 
         globalToolsConfig.viewToolGroup.visible && 
+        <div>
+          <p>View</p>
+          <MaterialButtonSet
+            buttonConfig={toolsConfigs.viewGroupButtonConfig}
+            initialActiveButton={toTitleCase(globalStateValues.view)}
+          />
+        </div>
+      }
+      {
+        globalToolsConfig.functionToolGroup.visible && 
         <MaterialButtonSet
-          buttonConfig={toolsConfigs.viewGroupButtonConfig}
-          initialActiveButton={toTitleCase("volume")}
+          buttonConfig={toolsConfigs.functionGroupButtonConfig}
+          initialActiveButton={toTitleCase(globalStateValues.function)}
         />
       }
-      <MaterialButtonSet
-        buttonConfig={toolsConfigs.functionGroupButtonConfig}
-        initialActiveButton={toTitleCase(maskingFunction)}
-      />
-      <MaterialButtonSet
-        buttonConfig={toolsConfigs.formGroupButtonConfig}
-        initialActiveButton={toTitleCase(maskingForm)}
-      />
-      <MaterialButtonSet
-        buttonConfig={toolsConfigs.leftClickGroupButtonConfig}
-        initialActiveButton="Selection"
-      />
-      <MaterialButtonSet
-        buttonConfig={toolsConfigs.rightClickGroupButtonConfig}
-        initialActiveButton="Zoom"
-      />
-      <div className="preset-dropdown-container">
-        <label htmlFor="preset-select">Preset:</label>
-        <select
-          id="preset-select"
-          value={selectedPreset}
-          onChange={handlePresetChange}
-          className="preset-select"
-        >
-          {presets.map(preset => (
-            <option key={preset} value={preset}>
-              {preset}
-            </option>
-          ))}
-        </select>
-      </div>
+      {
+        globalToolsConfig.formToolGroup.visible && 
+        <MaterialButtonSet
+          buttonConfig={toolsConfigs.formGroupButtonConfig}
+          initialActiveButton={toTitleCase(globalStateValues.form)}
+        />
+      }
+      {
+        globalToolsConfig.leftClickToolGroup.visible && 
+        <MaterialButtonSet
+          buttonConfig={toolsConfigs.leftClickGroupButtonConfig}
+          initialActiveButton={toTitleCase(globalStateValues.leftClick)}
+        />
+      }
+      {
+        globalToolsConfig.rightClickToolGroup.visible && 
+        <MaterialButtonSet
+          buttonConfig={toolsConfigs.rightClickGroupButtonConfig}
+          initialActiveButton={toTitleCase(globalStateValues.rightClick)}
+        />
+      }
+      {
+        globalToolsConfig.presetToolGroup.visible && 
+        <div className="preset-dropdown-container">
+          <label htmlFor="preset-select">Preset:</label>
+          <select
+            id="preset-select"
+            value={globalStateValues.preset}
+            onChange={handlePresetChange}
+            className="preset-select"
+          >
+            {presets.map(preset => (
+              <option key={preset} value={preset}>
+                {preset}
+              </option>
+            ))}
+          </select>
+        </div>
+      }
     </div>
   );
 }

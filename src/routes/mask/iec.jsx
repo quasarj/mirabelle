@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import MaskIECPanel from '@/components/MaskIECPanel';
 import Header from '@/components/Header';
 
@@ -10,7 +10,7 @@ import { getDetails } from '@/masking.js';
 import { getFiles, getIECInfo } from '@/utilities';
 import { TASK_CONFIGS } from '@/config/config';
 
-import { setMaskerConfig } from '@/features/presentationSlice'
+import { setMaskerConfig, Enums, reset } from '@/features/presentationSlice'
 
 
 // function to load data for this component
@@ -18,22 +18,30 @@ import { setMaskerConfig } from '@/features/presentationSlice'
 export async function loader({ params }) {
 
     const details = await getDetails(params.iec);
-    //const files = await getFiles(params.iec);
-    const fileInfo = await getIECInfo(params.iec);
-    return { details, fileInfo, iec: params.iec };
+    const { volumetric } = await getIECInfo(params.iec);
+    return { details, volumetric, iec: params.iec };
 }
 
 export default function RouteMaskIEC() {
   const dispatch = useDispatch();
+  const viewState = useSelector(state => state.presentation.stateValues.view);
 
-    const { iec } = useLoaderData();
+  let { iec, volumetric } = useLoaderData();
 
-  dispatch(setMaskerConfig());
+  if (viewState == Enums.ViewOptions.STACK) {
+    // force volumetric off if user wants to see stack
+    // regardless of input type
+    volumetric = false;
+  }
 
-    return (
-        <Context.Provider value={{ title: "Mask IEC" }}>
-          <Header />
-          <MaskIECPanel iec={iec} />
-        </Context.Provider>
-    );
+  useEffect(() => {
+    dispatch(setMaskerConfig());
+  }, [volumetric]);
+
+  return (
+    <Context.Provider value={{ title: "Mask IEC" }}>
+      <Header />
+      <MaskIECPanel iec={iec} volumetric={volumetric}/>
+    </Context.Provider>
+  );
 }
