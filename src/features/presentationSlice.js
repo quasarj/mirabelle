@@ -218,6 +218,15 @@ const presentationSlice = createSlice({
 
     // Sets the configuration for the Masker Route
     setMaskerConfig: (state, action) => {
+
+      const oldstate = { ...state };
+      // Reset to initialState manually
+      Object.assign(state,
+        JSON.parse(JSON.stringify(presentationSlice.getInitialState())));
+
+      // preserve the stateValues
+      state.stateValues = oldstate.stateValues;
+
       state.panelConfig.visibility.left = true;
       state.panelConfig.visibility.tools = true;
       state.panelConfig.visibility.reset = true;
@@ -306,8 +315,8 @@ const presentationSlice = createSlice({
     setStackConfig: (state, action) => {
       state.toolsConfig.viewToolGroup.visible = true;
       state.toolsConfig.viewToolGroup.defaultValue = Enums.ViewOptions.STACK;
-      state.stateValues.view = Enums.ViewOptions.STACK;
-      state.toolsConfig.viewToolGroup.vis1167702ibility.stack = true;
+      // state.stateValues.view = Enums.ViewOptions.STACK;
+      state.toolsConfig.viewToolGroup.visibility.stack = true;
 
       state.toolsConfig.functionToolGroup.defaultValue = Enums.FunctionOptions.BLACKOUT;
       state.toolsConfig.functionToolGroup.visibility.blackout = true;

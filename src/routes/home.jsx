@@ -77,7 +77,10 @@ export default function Home() {
       <ul>
         <li>Masking</li>
         <li>
-          <Link to="/mask/iec/1117950">Mask IEC</Link>
+          <Link to="/mask/iec/1117950">Mask IEC (volume)</Link>
+        </li>
+        <li>
+          <Link to="/mask/iec/1167702">Mask IEC (stack)</Link>
         </li>
         <li>
           <Link to="/mask/vr/1336">Mask VR</Link>
