@@ -16,6 +16,7 @@ import dicomParser from 'dicom-parser';
 // Utilities
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
+import { log } from 'mathjs';
 
 function getOrCreateToolgroup(toolgroup_name) {
     let group = cornerstoneTools.ToolGroupManager.getToolGroup(toolgroup_name);
@@ -165,6 +166,13 @@ function ViewStackPanel({ volumeName, files, iec }) {
                 //console.log('pan activated');
             }
 
+            // StackScrollTool
+            cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+            group.addTool(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+
+            // Activate the StackScrollTool for the middle mouse button
+            group.setToolActive(cornerstoneTools.StackScrollMouseWheelTool.toolName);
+
             // Segmentations
             cornerstoneTools.addTool(cornerstoneTools.SegmentationDisplayTool);
 
@@ -256,6 +264,7 @@ function ViewStackPanel({ volumeName, files, iec }) {
         cornerstone.cache.purgeVolumeCache();
 
         let volume = null;
+        console.log("files are", files);
         let stack = files;
         const renderingEngine = renderingEngineRef.current;
 
