@@ -32,3 +32,4 @@ nifti
 obj
 *.esproj
 *.esproj.user
+tags

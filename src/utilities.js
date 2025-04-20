@@ -186,3 +186,16 @@ export async function getIECsForVR(visual_review_id) {
 
 	return details;
 }
+
+export async function getNextIECForVR(visual_review_id) {
+  /* This gets a random IEC from the VR that needs
+   * to have Masking coordinates assigned (or undef if
+   * none remain).
+   */
+
+	const response = await fetch(
+		`/papi/v1/masking/visualreview/${visual_review_id}/next`);
+	const details = await response.json();
+
+	return details;
+}

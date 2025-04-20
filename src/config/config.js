@@ -132,6 +132,15 @@ const MASKER_CONFIG = {
     maskerPanelExpandSelectionVisible: true,
     maskerPanelClearSelectionVisible: true,
     maskerPanelAcceptSelectionVisible: true,
+
+    // temp for defacing emergency
+    // visualReviewPanelBlankVisible: true,
+    // visualReviewPanelFlagVisible: false,
+    descriptionPanelVisible: true,
+
+    maskerReviewPanelVisible: true,
+    maskerReviewPanelSkipVisible: true,
+    maskerReviewPanelNonMaskableVisible: true,
 };
 
 const MASKER_REVIEW_CONFIG = {
@@ -256,6 +265,7 @@ export const TASK_CONFIGS = {
         title: 'Volume Masker',
 
         viewToolStackVisible: false,
+        visualReviewPanelFlagVisible: false,
 
     },
 

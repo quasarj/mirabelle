@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-function NavigationPanel({ onNext, onPrevious }) {
+function NavigationPanel({ onNext, onPrevious, iec }) {
   return (
     <>
-      <label>IEC:</label>
+      <label>IEC: {iec}</label>
       <li className="pt-1 dark:bg-opacity-5 rounded-lg">
         <button onClick={onNext} className={`w-full bg-white dark:bg-slate-900`}
         title='Next'>

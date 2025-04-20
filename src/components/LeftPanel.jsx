@@ -4,13 +4,13 @@ import ToolsPanel from './ToolsPanel.jsx';
 
 import { Context } from './Context.js';
 
-function LeftPanel() {
+function LeftPanel({ iec }) {
     const { toolsPanelVisible, filesPanelVisible, layout } = useContext(Context);
 
     return (
         <div id="leftPanelWrapper" className="grid grid-rows-[1fr] h-full w-72 gap-2">
             {filesPanelVisible ? <FilesPanel /> : null}
-            {toolsPanelVisible ? <ToolsPanel /> : null}
+            {toolsPanelVisible ? <ToolsPanel iec={iec} /> : null}
         </div>
     );
 }

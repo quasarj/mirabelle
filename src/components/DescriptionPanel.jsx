@@ -90,7 +90,7 @@ function DescriptionPanel({ details }) {
                 <hr className="border-t border-gray-300 mb-4" />
 
                 <div className="w-full mb-2 font-bold">IEC:</div>
-                <div className="w-full mb-2 font-normal break-words mb-4">{details["equivalence_class_number"]}</div>
+                <div className="w-full mb-2 font-normal break-words mb-4">{details["image_equivalence_class_id"]}</div>
                 <hr className="border-t border-gray-300 mb-4" />
 
                 <div className="w-full mb-2 font-bold">Images in IEC:</div>

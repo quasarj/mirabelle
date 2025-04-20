@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Context } from './Context.js';
 import NavigationPanel from './NavigationPanel';
 
-function ToolsPanel() {
+function ToolsPanel({ iec }) {
 
     const context = useContext(Context);
     
@@ -17,7 +17,7 @@ function ToolsPanel() {
     };
 
     function handleOnNext() {
-        alert("Not yet implemented :(");
+        window.location.reload();
     }
     function handleOnPrevious() {
         alert("Not yet implemented :(");
@@ -34,6 +34,7 @@ function ToolsPanel() {
                     <NavigationPanel
                         onNext={handleOnNext}
                         onPrevious={handleOnPrevious}
+                        iec={iec}
                     />
                 }
 

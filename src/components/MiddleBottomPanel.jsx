@@ -41,12 +41,14 @@ function MiddleBottomPanel({
                     onMarkSkip={onMarkSkip}
                     onMarkNonMaskable={onMarkNonMaskable}
                 />
-                {navigationPanelVisible && (
-                    <NavigationPanel
-                        onNext={onNext}
-                        onPrevious={onPrevious}
-                    />
-                )}
+                <ReviewPanel
+                    onMarkGood={onMarkGood}
+                    onMarkBad={onMarkBad}
+                    onMarkBlank={onMarkBlank}
+                    onMarkScout={onMarkScout}
+                    onMarkOther={onMarkOther}
+                    onMarkFlag={onMarkFlag}
+                />
             </div>
         );
     }
