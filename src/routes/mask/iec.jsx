@@ -32,7 +32,9 @@ export default function MaskIEC({ forcenav }) {
       configState = useConfigState(TASK_CONFIGS.masker_stack || TASK_CONFIGS.default);
   }
 
-  configState.navigationPanelVisible = true;
+  if (forcenav) {
+    configState.navigationPanelVisible = true;
+  }
 
   // Here we just assemble the various panels that we need for this mode
   return (

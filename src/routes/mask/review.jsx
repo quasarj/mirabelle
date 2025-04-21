@@ -15,23 +15,30 @@ export async function loader({ params }) {
     return { details, fileInfo, iec: params.iec };
 }
 
-export default function ReviewIEC() {
+export default function ReviewIEC({ forcenav }) {
+  const { details, fileInfo, iec } = useLoaderData();
 
-    const { details, fileInfo, iec } = useLoaderData();
+  let configState;
 
-    let configState;
-
-    // Use specific config for this route, fallback to 'default' if not found
-    if (fileInfo.volumetric) {
-        configState = useConfigState(TASK_CONFIGS.masker_review_volume || TASK_CONFIGS.default);
-    } else {
-        configState = useConfigState(TASK_CONFIGS.masker_review_stack || TASK_CONFIGS.default);
-    }
-
-    // Here we just assemble the various panels that we need for this mode
-    return (
-        <Context.Provider value={{ ...configState }}>
-            <MainPanel details={details} files={fileInfo.frames} iec={iec} />
-        </Context.Provider>
+  // Use specific config for this route, fallback to 'default' if not found
+  if (fileInfo.volumetric) {
+    configState = useConfigState(
+      TASK_CONFIGS.masker_review_volume || TASK_CONFIGS.default,
     );
+  } else {
+    configState = useConfigState(
+      TASK_CONFIGS.masker_review_stack || TASK_CONFIGS.default,
+    );
+  }
+
+  if (forcenav) {
+    configState.navigationPanelVisible = true;
+  }
+
+  // Here we just assemble the various panels that we need for this mode
+  return (
+    <Context.Provider value={{ ...configState }}>
+      <MainPanel details={details} files={fileInfo.frames} iec={iec} />
+    </Context.Provider>
+  );
 }
