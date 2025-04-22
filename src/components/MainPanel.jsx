@@ -38,7 +38,7 @@ function MainPanel({ details, files, iec, iecs }) {
             {topPanelVisible && <TopPanel />}
             <div id="main" className={`h-full w-full grid ${gridTemplate} rounded-lg gap-2 transition-all duration-200 overflow-hidden`}>
                 <div id="leftPanel" className={`w-full h-full rounded-lg overflow-hidden`}>
-                    <LeftPanel iec={iec} />
+                    <LeftPanel iec={iec} details={details} />
                 </div>
                 <MiddlePanel
                     files={files}

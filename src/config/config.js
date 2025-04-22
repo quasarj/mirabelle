@@ -254,6 +254,7 @@ export const TASK_CONFIGS = {
         title: 'Image Masker',
 
         maskerPanelExpandSelectionVisible: false,
+        navigationPanelVisible: true,
 
     },
 
@@ -266,6 +267,7 @@ export const TASK_CONFIGS = {
 
         viewToolStackVisible: false,
         visualReviewPanelFlagVisible: false,
+        navigationPanelVisible: true,
 
     },
 
@@ -275,6 +277,7 @@ export const TASK_CONFIGS = {
         ...STACK_CONFIG,
 
         title: 'Image Masker Review',
+        navigationPanelVisible: true,
 
     },
 
@@ -284,6 +287,8 @@ export const TASK_CONFIGS = {
         ...VOLUME_CONFIG,
 
         title: 'Volume Masker Review',
+        visualReviewPanelFlagVisible: false,
+        navigationPanelVisible: true,
     },
 
     nifti_review: {

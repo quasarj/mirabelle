@@ -195,6 +195,24 @@ export async function getNextIECForVR(visual_review_id) {
 
 	const response = await fetch(
 		`/papi/v1/masking/visualreview/${visual_review_id}/next`);
+  if (!response.ok) {
+    return undefined;
+  }
+	const details = await response.json();
+
+	return details;
+}
+
+export async function getNextIECForVRReview(visual_review_id) {
+  /* This gets a random IEC from the VR that needs
+   * to have it's mask reviewed (or undef if none remain).
+   */
+
+	const response = await fetch(
+		`/papi/v1/masking/visualreview/${visual_review_id}/next-for-review`);
+  if (!response.ok) {
+    return undefined;
+  }
 	const details = await response.json();
 
 	return details;

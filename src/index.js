@@ -22,6 +22,10 @@ import ReviewIEC, {
   loader as iecReviewLoader,
 } from './routes/mask/review';
 
+import RouteMaskReviewVR, {
+  loader as vrReviewLoader,
+} from './routes/mask/reviewvr';
+
 import ReviewNIFTI, {
   loader as niftiReviewLoader,
 } from './routes/nifti/review';
@@ -54,6 +58,11 @@ const router = createBrowserRouter([
 		path: "review/mask/iec/:iec",
 		element: <ReviewIEC />,
 		loader: iecReviewLoader,
+	},
+	{
+		path: "review/mask/vr/:visual_review_instance_id",
+		element: <RouteMaskReviewVR />,
+		loader: vrReviewLoader,
 	},
 	{
 		path: "review/nifti/fileId/:fileId",

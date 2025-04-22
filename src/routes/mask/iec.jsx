@@ -4,6 +4,7 @@ import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
 import useConfigState from '../../hooks/useConfigState';
 import { getDetails } from '../../masking.js';
+import { getDicomDetails } from '../../visualreview.js';
 import { getFiles, getIECInfo } from '../../utilities';
 import { TASK_CONFIGS } from '../../config/config';
 
@@ -11,7 +12,8 @@ import { TASK_CONFIGS } from '../../config/config';
 // will be called by the Router before rendering
 export async function loader({ params }) {
 
-    const details = await getDetails(params.iec);
+    // const details = await getDetails(params.iec);
+    const details = await getDicomDetails(params.iec);
     //const files = await getFiles(params.iec);
     const fileInfo = await getIECInfo(params.iec);
     return { details, fileInfo, iec: params.iec };
