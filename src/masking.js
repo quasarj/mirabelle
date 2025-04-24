@@ -217,15 +217,28 @@ export async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
     // Reapply the target origin to the transformed corners(comment out if not applying above)
     targetPhysicalCorners = math.subtract(targetPhysicalCorners, targetOrigin)
 
-    // Detect axis flips based on direction dot product
+    // Initialize an array to store whether each target axis (X, Y, Z) should be flipped
     const flippedAxes = [false, false, false];
-    for (let i = 0; i < 3; i++) {
-      const sourceAxis = [sourceDirection[0][i], sourceDirection[1][i], sourceDirection[2][i]];
-      const targetAxis = [targetDirection[0][i], targetDirection[1][i], targetDirection[2][i]];
-      const dot = math.dot(sourceAxis, targetAxis);
-      if (dot < 0) {
-        flippedAxes[i] = true;
+
+    // Iterate over each target axis (i = 0 → X, 1 → Y, 2 → Z)
+    for (let targetAxis = 0; targetAxis < 3; targetAxis++) {
+      let bestDot = -Infinity;   // Best alignment strength so far
+      let bestFlip = false;      // Whether that best match was flipped
+
+      // Compare against all source axes to find the best match
+      for (let sourceAxis = 0; sourceAxis < 3; sourceAxis++) {
+        // Compute how aligned source and target axes are via dot product
+        const dot = math.dot(targetDirection[targetAxis], sourceDirection[sourceAxis]);
+        const absDot = Math.abs(dot);  // Ignore sign for best alignment check
+
+        // If this is the strongest alignment we've seen...
+        if (absDot > bestDot) {
+          bestDot = absDot;       // Update best match strength
+          bestFlip = (dot < 0);   // Mark if it's flipped (i.e., dot < 0)
+        }
       }
+      // Save the flip status for this target axis
+      flippedAxes[targetAxis] = bestFlip;
     }
 
     // Reflect axes that are flipped
