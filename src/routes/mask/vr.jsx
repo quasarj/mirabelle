@@ -10,6 +10,8 @@ import { getIECsForVR } from '@/utilities';
 
 import { Context } from '@/components/Context';
 
+import './vr.css';
+
 export async function loader({ params }) {
 
     const iecs = await getIECsForVR(params.visual_review_instance_id);
@@ -25,11 +27,11 @@ export default function RouteMaskVR() {
     return (
         <Context.Provider value={{ title: "Route Mask VR" }}>
             <Header />
-			<p>Route: Mask VR ({vr})</p>
-			<MaskIECMultiPanel 
-				vr={vr}
-				iecs={iecs}
-			/>
+            <p>Route: Mask VR ({vr})</p>
+            <MaskIECMultiPanel
+                vr={vr}
+                iecs={iecs}
+            />
         </Context.Provider>
     );
 }

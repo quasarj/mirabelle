@@ -4,6 +4,8 @@ import { decrement, increment, incrementByAmount } from '../features/counterSlic
 
 import MaterialButtonSet from './MaterialButtonSet';
 
+import './Counter.css';
+
 export function Counter() {
   const count = useSelector((state) => state.counter.value)
   const dispatch = useDispatch()

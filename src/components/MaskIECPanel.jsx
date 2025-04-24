@@ -8,9 +8,9 @@ import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaDat
 import { volumeLoader } from "@cornerstonejs/core";
 import * as cornerstone from "@cornerstonejs/core";
 import * as cornerstoneTools from '@cornerstonejs/tools';
-import { 
-	expandSegTo3D,
-	loadIECVolumeAndSegmentation,
+import {
+  expandSegTo3D,
+  loadIECVolumeAndSegmentation,
 } from '../utilities';
 import { finalCalc } from '../masking';
 
@@ -21,6 +21,8 @@ import { VolumeView } from '@/features/volume-view';
 import { StackView } from '@/features/stack-view';
 
 import { Context } from './Context.js';
+
+import './MaskIECPanel.css';
 
 const {
   ToolGroupManager,
@@ -74,14 +76,14 @@ function MaskIECPanel({ iec, volumetric }) {
     const initializeStack = async () => {
       const imageIds = await createImageIdsAndCacheMetaData({
         StudyInstanceUID:
-        `iec:${iec}`,
+          `iec:${iec}`,
         SeriesInstanceUID:
-        "any",
+          "any",
         wadoRsRoot: "/papi/v1/wadors",
       })
       setImageIds(imageIds);
       setIsInitialized(true);
-      
+
       dispatch(setStackConfig());
     };
 
@@ -97,8 +99,8 @@ function MaskIECPanel({ iec, volumetric }) {
 
     //flag data as updated so it will redraw
     cornerstoneTools.segmentation
-        .triggerSegmentationEvents
-        .triggerSegmentationDataModified(segmentationId);
+      .triggerSegmentationEvents
+      .triggerSegmentationDataModified(segmentationId);
 
 
     // TODO I don't like this being here, perhaps put it inside VolumeView
@@ -110,11 +112,11 @@ function MaskIECPanel({ iec, volumetric }) {
       if (viewportId.startsWith("coronal3d")) {
         await segmentation.addSegmentationRepresentations(
           viewportId, [
-            {
-              segmentationId,
-              type: csToolsEnums.SegmentationRepresentations.Surface,
-            }
-          ],
+          {
+            segmentationId,
+            type: csToolsEnums.SegmentationRepresentations.Surface,
+          }
+        ],
         );
       }
     });
@@ -156,12 +158,12 @@ function MaskIECPanel({ iec, volumetric }) {
     console.log(">>>>> about to pass volumeId=", volumeId);
     return (
       <>
-        <VolumeView 
-          volumeId={volumeId} 
-          segmentationId={segmentationId} 
-          defaultPreset3d="CT-MIP" 
+        <VolumeView
+          volumeId={volumeId}
+          segmentationId={segmentationId}
+          defaultPreset3d="CT-MIP"
         />
-        <OperationsPanel 
+        <OperationsPanel
           onExpand={handleExpand}
           onClear={handleClear}
           onAccept={handleAccept}
@@ -171,7 +173,7 @@ function MaskIECPanel({ iec, volumetric }) {
   } else {
     return (
       <>
-        <StackView frames={imageIds}/>
+        <StackView frames={imageIds} />
       </>
     );
   }

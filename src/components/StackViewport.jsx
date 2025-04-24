@@ -7,6 +7,8 @@ import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { RenderingEngine, Enums, volumeLoader } from "@cornerstonejs/core"
 
+import './StackViewport.css';
+
 const {
   PanTool,
   WindowLevelTool,
@@ -47,7 +49,7 @@ function StackViewport({ frames, mip, viewportId, renderingEngine, toolGroup }) 
       // Get the stack viewport that was created
       const viewport = renderingEngine.getViewport(viewportId);
 
-		  toolGroup.addViewport(viewportId, renderingEngine.id);
+      toolGroup.addViewport(viewportId, renderingEngine.id);
 
       await viewport.setStack(frames);
 
@@ -60,17 +62,17 @@ function StackViewport({ frames, mip, viewportId, renderingEngine, toolGroup }) 
 
 
   return (
-	  <>
-    <div
-      ref={elementRef}
-      onContextMenu={(e) => e.preventDefault()}
-      style={{
-        width: "512px",
-        height: "512px",
-        backgroundColor: "#000",
-      }}
-    ></div>
-	</>
+    <>
+      <div
+        ref={elementRef}
+        onContextMenu={(e) => e.preventDefault()}
+        style={{
+          width: "512px",
+          height: "512px",
+          backgroundColor: "#000",
+        }}
+      ></div>
+    </>
   )
 }
 

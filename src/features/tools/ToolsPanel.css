@@ -1,8 +1,5 @@
 #tools-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
+  @apply flex flex-col gap-4 p-4;
 }
 
 .preset-dropdown-container {

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import './Slider.css';
+
 const Slider = ({ min = 0, max = 100, step = 1, initial = 0, onChange }) => {
   const [value, setValue] = useState(initial);
 

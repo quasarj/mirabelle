@@ -9,6 +9,8 @@ import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { RenderingEngine, Enums, volumeLoader } from "@cornerstonejs/core"
 
+import './VolumeViewport.css';
+
 const {
   PanTool,
   WindowLevelTool,
@@ -63,7 +65,7 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
       // Get the stack viewport that was created
       const viewport = renderingEngine.getViewport(viewportId);
 
-		  toolGroup.addViewport(viewportId, renderingEngine.id);
+      toolGroup.addViewport(viewportId, renderingEngine.id);
 
       // Set the volume on the viewport and it's default properties
       viewport.setVolumes([{ volumeId }])
@@ -110,17 +112,17 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
   }, [mip]);
 
   return (
-	  <>
-    <div
-      ref={elementRef}
-      onContextMenu={(e) => e.preventDefault()}
-      style={{
-        width: "512px",
-        height: "512px",
-        backgroundColor: "#000",
-      }}
-    ></div>
-	</>
+    <>
+      <div
+        ref={elementRef}
+        onContextMenu={(e) => e.preventDefault()}
+        style={{
+          width: "512px",
+          height: "512px",
+          backgroundColor: "#000",
+        }}
+      ></div>
+    </>
   )
 }
 

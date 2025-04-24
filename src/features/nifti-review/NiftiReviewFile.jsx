@@ -11,6 +11,7 @@ import { toAbsoluteURL } from '@/utilities';
 
 import { VolumeView } from '@/features/volume-view';
 import LabelingPanel from '@/components/LabelingPanel';
+
 import './NiftiReviewFile.css'
 
 export default function NiftiReviewFile({ file }) {
@@ -19,14 +20,14 @@ export default function NiftiReviewFile({ file }) {
   const [error, setError] = useState(false);
 
   const labelPanelConfig = [
-		{
-			name: "Good",
+    {
+      name: "Good",
       action: "good",
-		},
-		{
-			name: "Bad",
+    },
+    {
+      name: "Bad",
       action: "bad",
-		},
+    },
   ];
 
   useEffect(() => {
@@ -79,8 +80,8 @@ export default function NiftiReviewFile({ file }) {
 
       // remove everything else from the cache. There is a purgeCache
       // function but it deletes too much and breaks the world
-      cornerstone.cache.getVolumes().forEach((v) => { 
-        if (v.volumeId != volumeId) { 
+      cornerstone.cache.getVolumes().forEach((v) => {
+        if (v.volumeId != volumeId) {
           cornerstone.cache.removeVolumeLoadObject(v.volumeId);
         }
       });
@@ -96,31 +97,31 @@ export default function NiftiReviewFile({ file }) {
 
   if (error === true) {
     return (
-    <div id="NiftiReviewFile">
-      <p>NiftiReviewFile: ({file})</p>
-      <p>Error loading this file, cannot continue</p>
-    </div>
+      <div id="NiftiReviewFile">
+        <p>NiftiReviewFile: ({file})</p>
+        <p>Error loading this file, cannot continue</p>
+      </div>
     );
   }
   if (loaded === false) {
     return (
-    <div id="NiftiReviewFile">
-      <p>NiftiReviewFile: ({file})</p>
-      <p>Loading...</p>
-    </div>
+      <div id="NiftiReviewFile">
+        <p>NiftiReviewFile: ({file})</p>
+        <p>Loading...</p>
+      </div>
     );
   }
 
   return (
     <div id="NiftiReviewFile">
       <p>NiftiReviewFile: ({file})</p>
-      <VolumeView 
+      <VolumeView
         volumeId={volumeId}
-        defaultPreset3d="MR-Default" 
+        defaultPreset3d="MR-Default"
       />
-      <LabelingPanel 
+      <LabelingPanel
         onLabel={alert}
-	  	config={labelPanelConfig}
+        config={labelPanelConfig}
       />
     </div>
   );

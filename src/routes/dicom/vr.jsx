@@ -12,9 +12,11 @@ import { StackView } from '@/features/stack-view';
 
 import createImageIdsAndCacheMetaData from '@/lib/createImageIdsAndCacheMetaData';
 
+import './vr.css';
+
 export async function loader({ params }) {
 
-    return { vr: params.vr };
+  return { vr: params.vr };
 
 }
 
@@ -24,13 +26,13 @@ export default function RouteDicomReviewVR() {
   const dispatch = useDispatch()
 
   dispatch(setToolsConfig({
-      viewToolGroup: {
-        visible: true,
-        value: 'volume',
-        volumeVisible: false,
-        projectionVisible: false,
-        stackVisible: false,
-      }
+    viewToolGroup: {
+      visible: true,
+      value: 'volume',
+      volumeVisible: false,
+      projectionVisible: false,
+      stackVisible: false,
+    }
   }));
 
   dispatch(setStateValue({ path: "left", value: true }));
@@ -48,9 +50,9 @@ export default function RouteDicomReviewVR() {
     const f = async () => {
       const imageIds = await createImageIdsAndCacheMetaData({
         StudyInstanceUID:
-        `iec:${iec}`,
+          `iec:${iec}`,
         SeriesInstanceUID:
-        "any",
+          "any",
         wadoRsRoot: "/papi/v1/wadors",
       })
       setImageIds(imageIds);
@@ -60,15 +62,15 @@ export default function RouteDicomReviewVR() {
   }, []);
 
 
-	return (
+  return (
     <div id="RouteDICOMReviewVR">
       <Context.Provider value={{ title: "DICOM Review VR" }}>
         <Header />
         <div>
           <p>Route: DICOM Review: VR ({vr})</p>
-          <StackView frames={imageIds}/>
+          <StackView frames={imageIds} />
         </div>
       </Context.Provider>
     </div>
-	);
+  );
 }

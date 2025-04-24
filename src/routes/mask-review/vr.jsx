@@ -6,19 +6,21 @@ import { Context } from '@/components/Context';
 import OperationsPanel from '@/components/OperationsPanel';
 import Header from '@/components/Header';
 
+import './vr.css';
+
 export async function loader({ params }) {
 
-    return { vr: params.vr };
+  return { vr: params.vr };
 
 }
 
 export default function RouteMaskReviewVR() {
-    const { vr } = useLoaderData();
-	// An example of how you could read the params without having
-	// to use a dataLoader
-	const { vr: vr2 } = useParams();
+  const { vr } = useLoaderData();
+  // An example of how you could read the params without having
+  // to use a dataLoader
+  const { vr: vr2 } = useParams();
 
-	return (
+  return (
     <div id="RouteMaskReviewIEC">
       <Context.Provider value={{ title: "Route Mask Review VR" }}>
         <Header />
@@ -28,5 +30,5 @@ export default function RouteMaskReviewVR() {
         </p>
       </Context.Provider>
     </div>
-	);
+  );
 }

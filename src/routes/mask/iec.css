@@ -1,0 +1,12 @@
+#content {
+    @apply 
+        relative
+        
+        grid-rows-[auto,1fr]
+        gap-2 w-screen
+        min-w-[1300px]
+        h-screen
+        p-2
+        bg-blue-950
+        ;
+}

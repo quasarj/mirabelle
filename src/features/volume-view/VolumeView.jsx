@@ -44,7 +44,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
     if (renderingEngine === undefined) {
       renderingEngine = new RenderingEngine("re1");
     }
-    
+
     let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
     let toolGroup3d = ToolGroupManager.createToolGroup("toolGroup3d");
 
@@ -84,8 +84,8 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
     <div id="VolumeView">
       <div id="main">
         <div id="leftPanel">
-          <ToolsPanel 
-            toolGroup={toolGroup} 
+          <ToolsPanel
+            toolGroup={toolGroup}
             defaultPreset={defaultPreset3d}
             onPresetChange={(val) => setPreset3d(val)}
           />
@@ -106,7 +106,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
               />
             </td>
             <td>
-              <VolumeViewport 
+              <VolumeViewport
                 viewportId="axial2d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}
@@ -118,7 +118,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
           </tr>
           <tr>
             <td>
-              <VolumeViewport 
+              <VolumeViewport
                 viewportId="sagittal2d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}
@@ -128,7 +128,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
               />
             </td>
             <td>
-              <VolumeViewport 
+              <VolumeViewport
                 viewportId="coronal2d"
                 volumeId={volumeId}
                 renderingEngine={renderingEngine}

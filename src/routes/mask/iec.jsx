@@ -12,14 +12,15 @@ import { TASK_CONFIGS } from '@/config/config';
 
 import { setMaskerConfig, Enums, reset } from '@/features/presentationSlice'
 
+import './iec.css';
 
 // function to load data for this component
 // will be called by the Router before rendering
 export async function loader({ params }) {
 
-    const details = await getDetails(params.iec);
-    const { volumetric } = await getIECInfo(params.iec);
-    return { details, volumetric, iec: params.iec };
+  const details = await getDetails(params.iec);
+  const { volumetric } = await getIECInfo(params.iec);
+  return { details, volumetric, iec: params.iec };
 }
 
 export default function RouteMaskIEC() {
@@ -41,7 +42,7 @@ export default function RouteMaskIEC() {
   return (
     <Context.Provider value={{ title: "Mask IEC" }}>
       <Header />
-      <MaskIECPanel iec={iec} volumetric={volumetric}/>
+      <MaskIECPanel iec={iec} volumetric={volumetric} />
     </Context.Provider>
   );
 }

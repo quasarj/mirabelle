@@ -4,6 +4,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { VolumeView } from '@/features/volume-view';
 import { loadIECVolumeAndSegmentation } from '@/utilities';
 
+import './DicomReviewIEC.css';
+
 export default function DicomReviewIEC({ iec, details }) {
 
   const [volumeId, setVolumeId] = useState()
@@ -56,10 +58,10 @@ export default function DicomReviewIEC({ iec, details }) {
   return (
     <>
       <p>DicomReviewIEC {iec}</p>
-      <VolumeView 
-        volumeId={volumeId} 
-        segmentationId={segmentationId} 
-        defaultPreset3d="CT-MIP" 
+      <VolumeView
+        volumeId={volumeId}
+        segmentationId={segmentationId}
+        defaultPreset3d="CT-MIP"
       />
     </>
   );

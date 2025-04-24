@@ -11,17 +11,19 @@ import { TASK_CONFIGS } from '@/config/config';
 import Header from '@/components/Header';
 import DicomReviewIEC from '@/features/dicom-review/DicomReviewIEC';
 
+import './iec.css';
+
 export async function loader({ params }) {
 
-    const details = await getDicomDetails(params.iec);
-    return { details, iec: params.iec };
+  const details = await getDicomDetails(params.iec);
+  return { details, iec: params.iec };
 }
 
 export default function RouteDicomReviewIEC() {
 
   const { details, iec } = useLoaderData();
 
-	return (
+  return (
     <div id="RouteDICOMReviewIEC">
       <Context.Provider value={{ title: "DICOM Review IEC" }}>
         <Header />
@@ -32,5 +34,5 @@ export default function RouteDicomReviewIEC() {
         />
       </Context.Provider>
     </div>
-	)
+  )
 }

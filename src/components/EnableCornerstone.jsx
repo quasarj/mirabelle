@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-import { 
-  RenderingEngine, 
-  Enums, 
+import {
+  RenderingEngine,
+  Enums,
   volumeLoader,
-  cornerstoneStreamingImageVolumeLoader } from "@cornerstonejs/core"
+  cornerstoneStreamingImageVolumeLoader
+} from "@cornerstonejs/core"
 import * as cornerstone from "@cornerstonejs/core"
 import { init as csRenderInit, imageLoader } from "@cornerstonejs/core"
 import { init as csToolsInit } from "@cornerstonejs/tools"
@@ -13,9 +14,11 @@ import { init as dicomImageLoaderInit } from "@cornerstonejs/dicom-image-loader"
 import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader'
 import * as polySeg from '@cornerstonejs/polymorphic-segmentation'
 
+import './EnableCornerstone.css';
+
 
 volumeLoader.registerUnknownVolumeLoader(
-  cornerstoneStreamingImageVolumeLoader 
+  cornerstoneStreamingImageVolumeLoader
 )
 
 
@@ -55,7 +58,7 @@ function EnableCornerstone({ children }) {
 
   return (
     <>
-    {children}
+      {children}
     </>
   );
 };

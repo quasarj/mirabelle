@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import MaterialButtonSet from '@/components/MaterialButtonSet';
 import MaskIECPanel from '@/components/MaskIECPanel';
 
+import './MaskIECMultiPanel.css';
+
 export default function MaskIECMultiPanel({ vr, iecs }) {
 	const [iec, setIec] = useState();
 	const [offset, setOffset] = useState();
@@ -9,7 +11,7 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 	const handleNext = () => {
 		let currentOffset = 0;
 		if (offset != null) {
-			currentOffset = offset + 1;	
+			currentOffset = offset + 1;
 		}
 		console.log("setting to", currentOffset);
 		setIec(iecs[currentOffset]);
@@ -19,14 +21,14 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 	const handlePrevious = () => {
 		let currentOffset = 0;
 		if (offset != null) {
-			currentOffset = offset - 1;	
+			currentOffset = offset - 1;
 		}
 		console.log("setting to", currentOffset);
 		setIec(iecs[currentOffset]);
 		setOffset(currentOffset);
 	};
 
-    const navigationButtonConfig = [
+	const navigationButtonConfig = [
 		{
 			name: "Previous",
 			icon: "arrow_back",
@@ -38,7 +40,7 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 			action: () => handleNext(),
 		},
 
-    ];
+	];
 
 	return (
 		<div id="MaskIECMultiPanel">
@@ -47,10 +49,10 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 				buttonConfig={navigationButtonConfig}
 			/>
 			<p>Current IEC: {iec}</p>
-			{ iec && 
+			{iec &&
 				<MaskIECPanel iec={iec} />
 			}
-			
+
 		</div>
 	);
 }
