@@ -1405,22 +1405,23 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         const maskForm = context.formToolGroupValue
         const maskFunction = context.functionToolGroupValue
         await finalCalc(coords, volumeId, iec, maskForm, maskFunction);
+        context.showToast("Submitted for masking!");
     }
     async function handleMarkAccepted() {
         await flagAsAccepted(iec);
-        alert("Marked as accepted!");
+        context.showToast("Marked as accepted!");
     }
     async function handleMarkRejected() {
         await flagAsRejected(iec);
-        alert("Marked as rejected!");
+        context.showToast("Marked as rejected!");
     }
     async function handleMarkSkipped() {
         await flagAsSkipped(iec);
-        alert("Marked as skipped!");
+        context.showToast("Marked as skipped!");
     }
     async function handleMarkNonmaskable() {
         await flagAsNonmaskable(iec);
-        alert("Marked as Non-Maskable!");
+        context.showToast("Marked as Non-Maskable!");
     }
     async function handleMarkGood() {
         if (context.nifti) {
@@ -1428,7 +1429,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         } else {
             await setDicomStatus(iec, "Good");
         }
-        alert("Marked as Good!");
+        context.showToast("Marked as Good!");
     }
     async function handleMarkBad() {
         if (context.nifti) {
@@ -1436,7 +1437,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         } else {
             await setDicomStatus(iec, "Bad");
         }
-        alert("Marked as Bad!");
+        context.showToast("Marked as Bad!");
 
     }
     async function handleMarkBlank() {
@@ -1445,7 +1446,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         } else {
             await setDicomStatus(iec, "Blank");
         }
-        alert("Marked as Blank!");
+        context.showToast("Marked as Blank!");
     }
     async function handleMarkScout() {
         if (context.nifti) {
@@ -1453,7 +1454,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         } else {
             await setDicomStatus(iec, "Scout");
         }
-        alert("Marked as Scout!");
+        context.showToast("Marked as Scout!");
     }
     async function handleMarkOther() {
         if (context.nifti) {
@@ -1461,7 +1462,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         } else {
             await setDicomStatus(iec, "Other");
         }
-        alert("Marked as Other!");
+        context.showToast("Marked as Other!");
     }
     async function handleMarkFlag() {
         if (context.nifti) {
@@ -1469,7 +1470,7 @@ function ViewVolumePanel({ volumeName, files, iec }) {
         } else {
             await setMaskingFlag(iec);
         }
-        alert("Flagged for Masking");
+        context.showToast("Flagged for Masking");
     }
 
     return (

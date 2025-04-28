@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "./Context.js";
 
 function MaskerPanel({
@@ -22,6 +22,40 @@ function MaskerPanel({
     maskerReviewPanelSkipVisible,
     maskerReviewPanelNonMaskableVisible,
   } = useContext(Context);
+
+  /*
+   * Handle shortcut key(s)
+   */
+  useEffect(() => {
+    const handleKeyDown = async (event) => {
+      if (event.key == 'e') {
+        event.preventDefault();
+        onExpand();
+      }
+      if (event.key == 'a') {
+        event.preventDefault();
+        onAccept();
+      }
+      if (event.key == 'c') {
+        event.preventDefault();
+        onClear();
+      }
+      if (event.key == 's') {
+        event.preventDefault();
+        onMarkSkip();
+      }
+      if (event.key == 'n') {
+        event.preventDefault();
+        onMarkNonMaskable();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   function renderMaskerReviewPanel() {
     return (

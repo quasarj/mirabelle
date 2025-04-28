@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Context } from "./Context.js";
 import { getNextIECForVRReview, getNextIECForVR } from '../utilities';
 
@@ -7,6 +7,24 @@ import NavigationPanel from "./NavigationPanel";
 function ToolsPanel({ iec, details }) {
   const context = useContext(Context);
   const layout = context.layout;
+
+  /*
+   * Handle shortcut key(s)
+   */
+  useEffect(() => {
+    const handleKeyDown = async (event) => {
+      if (event.keyCode == 9) {
+        event.preventDefault();
+        await handleOnNext()
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleOpacityChange = (event) => {
     const newOpacity = parseFloat(event.target.value);
