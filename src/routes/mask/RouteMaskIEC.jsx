@@ -12,7 +12,7 @@ import { TASK_CONFIGS } from '@/config/config';
 
 import { setMaskerConfig, Enums, reset } from '@/features/presentationSlice'
 
-import './iec.css';
+import './RouteMaskIEC.css';
 
 // function to load data for this component
 // will be called by the Router before rendering
@@ -41,8 +41,10 @@ export default function RouteMaskIEC() {
 
   return (
     <Context.Provider value={{ title: "Mask IEC" }}>
-      <Header />
-      <MaskIECPanel iec={iec} volumetric={volumetric} />
+      <div id="content">
+        <Header />
+        <MaskIECPanel iec={iec} volumetric={volumetric} />
+      </div>
     </Context.Provider>
   );
 }

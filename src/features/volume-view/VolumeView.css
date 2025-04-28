@@ -1,15 +1,8 @@
-#VolumeView2 {
+#volume-view {
   @apply
-    relative 
-    grid 
-    grid-rows-[auto,1fr] 
-    gap-2 
-    w-screen 
-    min-w-[1300px] 
-    h-screen 
-    p-2;
+    block
 }
-#main {
+#volume-view #main {
   @apply
     h-full
     w-full
@@ -21,10 +14,43 @@
     duration-200
     overflow-hidden;
 }
-#leftPanel {
+
+#volume-view #left-panel {
   @apply
+    relative
     w-full
     h-full
     rounded-lg
     overflow-hidden;
+}
+
+#volume-view #middle-panel {
+  @apply
+    rounded-lg
+    border-4
+    border-blue-500
+    p-2;
+}
+
+#volume-view #viewer-panel {
+  @apply
+    w-full
+    h-full
+    rounded-lg
+    overflow-hidden
+    grid
+    grid-rows-[1fr,auto]
+    gap-2;
+}
+
+#volume-view #viewports-panel {
+  @apply
+    w-full
+    h-full
+    rounded-lg
+    overflow-hidden
+    grid
+    grid-cols-[1fr,1fr]
+    grid-rows-[1fr,1fr]
+    gap-2;
 }

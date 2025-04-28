@@ -102,10 +102,11 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
   return (
     <>
       <div
+        id={viewportId}
         ref={elementRef}
         style={{
-          width: "512px",
-          height: "512px",
+          width: "100%",
+          height: "100%",
           backgroundColor: "#000",
         }}
       ></div>

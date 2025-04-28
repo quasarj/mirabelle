@@ -9,6 +9,8 @@ import VolumeViewport3d from '@/components/VolumeViewport3d';
 // import ToolsPanel from '@/features/tools/ToolsPanel';
 import { ToolsPanel } from '@/features/tools';
 
+import OperationsPanel from '@/components/OperationsPanel';
+
 import './VolumeView.css';
 
 const {
@@ -23,6 +25,52 @@ const {
 const { MouseBindings } = csToolsEnums;
 
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
+
+async function handleExpand() {
+  coords = expandSegTo3D(segmentationId);
+
+  //flag data as updated so it will redraw
+  cornerstoneTools.segmentation
+    .triggerSegmentationEvents
+    .triggerSegmentationDataModified(segmentationId);
+
+
+  // TODO I don't like this being here, perhaps put it inside VolumeView
+  // and expose a callback that can be called from here? 
+  const renderingEngine = cornerstone.getRenderingEngines()[0];
+  const viewports = renderingEngine.getViewports();
+  viewports.forEach(async (item) => {
+    let viewportId = item.id;
+    if (viewportId.startsWith("coronal3d")) {
+      await segmentation.addSegmentationRepresentations(
+        viewportId, [
+        {
+          segmentationId,
+          type: csToolsEnums.SegmentationRepresentations.Surface,
+        }
+      ],
+      );
+    }
+  });
+
+}
+function handleClear() {
+  const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
+  const { dimensions, voxelManager } = segmentationVolume;
+
+  let scalarData = voxelManager.getCompleteScalarDataArray();
+  scalarData.fill(0);
+  voxelManager.setCompleteScalarDataArray(scalarData);
+
+  //flag data as updated so it will redraw
+  cornerstoneTools.segmentation
+    .triggerSegmentationEvents
+    .triggerSegmentationDataModified(segmentationId);
+}
+async function handleAccept() {
+  console.log(coords, volumeId, iec);
+  await finalCalc(coords, volumeId, iec, "cuboid", "mask");
+}
 
 
 function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
@@ -81,20 +129,18 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   }
 
   return (
-    <div id="VolumeView">
+    <div id="volume-view">
       <div id="main">
-        <div id="leftPanel">
+        <div id="left-panel">
           <ToolsPanel
             toolGroup={toolGroup}
             defaultPreset={defaultPreset3d}
             onPresetChange={(val) => setPreset3d(val)}
           />
         </div>
-      </div>
-      <table>
-        <tbody>
-          <tr>
-            <td>
+        <div id="middle-panel">
+          <div id="viewer-panel">
+            <div id="viewports-panel">
               <VolumeViewport3d
                 viewportId="coronal3d"
                 volumeId={volumeId}
@@ -104,8 +150,6 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 orientation="CORONAL"
                 preset3d={preset3d}
               />
-            </td>
-            <td>
               <VolumeViewport
                 viewportId="axial2d"
                 volumeId={volumeId}
@@ -114,10 +158,6 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 segmentationId={segmentationId}
                 orientation="AXIAL"
               />
-            </td>
-          </tr>
-          <tr>
-            <td>
               <VolumeViewport
                 viewportId="sagittal2d"
                 volumeId={volumeId}
@@ -126,8 +166,6 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 segmentationId={segmentationId}
                 orientation="SAGITTAL"
               />
-            </td>
-            <td>
               <VolumeViewport
                 viewportId="coronal2d"
                 volumeId={volumeId}
@@ -136,11 +174,19 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
                 segmentationId={segmentationId}
                 orientation="CORONAL"
               />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+
+            </div>
+            <OperationsPanel
+            /* onExpand={handleExpand}
+            onClear={handleClear}
+            onAccept={handleAccept} */
+            />
+          </div>
+        </div>
+        <div id="right-panel">
+        </div>
+      </div>
+    </div >
   );
 }
 

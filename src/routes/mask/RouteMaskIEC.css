@@ -1,0 +1,13 @@
+#content {
+    @apply 
+        relative
+        grid
+        grid-rows-[auto,1fr,auto]
+        gap-2
+        w-screen
+        h-screen
+        min-w-[1300px]
+        bg-blue-950
+        /* overflow-hidden */
+        ;
+}

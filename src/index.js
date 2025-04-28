@@ -19,10 +19,11 @@ import ErrorPage from './error-page';
 import './index.css'
 
 import LoadingSpinner from '@/components/LoadingSpinner';
+
 import Home from './routes/home';
 
 import RouteMaskIEC, { loader as routeMaskIECLoader, } 
-from './routes/mask/iec';
+from './routes/mask/RouteMaskIEC';
 
 import RouteMaskReviewIEC, { loader as routeMaskReviewIECLoader, } 
 from './routes/mask-review/iec';
@@ -110,10 +111,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
 	<Provider store={store}>
-    <div id="content">
-      <EnableCornerstone>
-        <RouterProvider router={router} />
-      </EnableCornerstone>
-    </div>
+			<EnableCornerstone>
+				<RouterProvider router={router} />
+			</EnableCornerstone>
 	</Provider>
 );

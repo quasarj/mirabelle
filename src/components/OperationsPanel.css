@@ -1,3 +1,6 @@
-#OperationsPanel {
-	padding: 10px;
+#operations-panel {
+	@apply
+		place-self-center
+		flex
+		gap-2;
 }

@@ -15,7 +15,7 @@ import {
 import { finalCalc } from '../masking';
 
 import Header from './Header';
-import OperationsPanel from './OperationsPanel';
+
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { VolumeView } from '@/features/volume-view';
 import { StackView } from '@/features/stack-view';
@@ -157,24 +157,15 @@ function MaskIECPanel({ iec, volumetric }) {
   if (volumetric) {
     console.log(">>>>> about to pass volumeId=", volumeId);
     return (
-      <>
-        <VolumeView
-          volumeId={volumeId}
-          segmentationId={segmentationId}
-          defaultPreset3d="CT-MIP"
-        />
-        <OperationsPanel
-          onExpand={handleExpand}
-          onClear={handleClear}
-          onAccept={handleAccept}
-        />
-      </>
+      <VolumeView
+        volumeId={volumeId}
+        segmentationId={segmentationId}
+        defaultPreset3d="CT-MIP"
+      />
     )
   } else {
     return (
-      <>
-        <StackView frames={imageIds} />
-      </>
+      <StackView frames={imageIds} />
     );
   }
 }

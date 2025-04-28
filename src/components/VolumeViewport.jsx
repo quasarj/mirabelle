@@ -117,8 +117,8 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
         ref={elementRef}
         onContextMenu={(e) => e.preventDefault()}
         style={{
-          width: "512px",
-          height: "512px",
+          width: "100%",
+          height: "100%",
           backgroundColor: "#000",
         }}
       ></div>
