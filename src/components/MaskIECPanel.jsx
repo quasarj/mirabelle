@@ -19,6 +19,8 @@ import Header from './Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { VolumeView } from '@/features/volume-view';
 import { StackView } from '@/features/stack-view';
+import { ToolsPanel } from '@/features/tools';
+import OperationsPanel from './OperationsPanel';
 
 import { Context } from './Context.js';
 
@@ -34,17 +36,48 @@ const {
 function MaskIECPanel({ iec, volumetric }) {
   console.log(">>>>", iec, "volumetric:", volumetric);
 
+  const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
+
   const dispatch = useDispatch();
 
   const [volumeId, setVolumeId] = useState()
   const [segmentationId, setSegmentationId] = useState();
   const [imageIds, setImageIds] = useState()
 
+  const [toolGroup, setToolGroup] = useState();
+  const [preset3d, setPreset3d] = useState("CT-MIP");
+
   const [isInitialized, setIsInitialized] = useState(false);
   const [isErrored, setIsErrored] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
 
+  let viewer;
+
   let coords; // coordinates of drawn mask
+
+  useEffect(() => {
+    // Only create a new rendering engine if one doesn't already exist
+    if (renderingEngine === undefined) {
+      setRenderingEngine(new cornerstone.RenderingEngine("re1"));
+    }
+
+    let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
+
+    setRenderingEngine(renderingEngine);
+    setToolGroup(toolGroup);
+
+    // TODO: this is for debug use only
+    window.ToolGroupManager = ToolGroupManager;
+    window.renderingEngine = renderingEngine;
+    window.toolGroup2d = toolGroup;
+
+    // Teardown function
+    return () => {
+      ToolGroupManager.destroyToolGroup("toolGroup2d")
+      // Do not delete the RenderingEngine here, it needs
+      // to stay, for now
+    };
+  }, []);
 
   // Load the volume into the cache
   useEffect(() => {
@@ -156,18 +189,40 @@ function MaskIECPanel({ iec, volumetric }) {
 
   if (volumetric) {
     console.log(">>>>> about to pass volumeId=", volumeId);
-    return (
+    viewer =
       <VolumeView
         volumeId={volumeId}
         segmentationId={segmentationId}
         defaultPreset3d="CT-MIP"
       />
-    )
   } else {
-    return (
-      <StackView frames={imageIds} />
-    );
+    viewer = <StackView frames={imageIds} />
   }
+
+  return (
+    <div id="content">
+      <Header />
+      <div id="main">
+        <div id="left-panel">
+          <ToolsPanel
+            toolGroup={toolGroup}
+            defaultPreset={"CT-MIP"}
+            onPresetChange={(val) => setPreset3d(val)}
+          />
+        </div>
+        <div id="middle-panel">
+          {viewer}
+          <OperationsPanel
+          /* onExpand={handleExpand}
+          onClear={handleClear}
+          onAccept={handleAccept} */
+          />
+        </div>
+        <div id="right-panel">
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default MaskIECPanel

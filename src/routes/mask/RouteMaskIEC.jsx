@@ -41,10 +41,7 @@ export default function RouteMaskIEC() {
 
   return (
     <Context.Provider value={{ title: "Mask IEC" }}>
-      <div id="content">
-        <Header />
-        <MaskIECPanel iec={iec} volumetric={volumetric} />
-      </div>
+      <MaskIECPanel iec={iec} volumetric={volumetric} />
     </Context.Provider>
   );
 }

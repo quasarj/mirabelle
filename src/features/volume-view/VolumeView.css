@@ -1,5 +1,20 @@
 #volume-view {
   @apply
+    w-full
+    h-full
+    rounded-lg
+    overflow-hidden
+    grid
+    grid-cols-[1fr,1fr]
+    grid-rows-[1fr,1fr]
+    gap-2
+  ;
+}
+
+/* 
+
+#volume-view {
+  @apply
     block
 }
 #volume-view #main {
@@ -54,3 +69,5 @@
     grid-rows-[1fr,1fr]
     gap-2;
 }
+
+*/

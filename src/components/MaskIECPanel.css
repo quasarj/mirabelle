@@ -1,1 +1,36 @@
 /* MaskIECPanel.css */
+
+#content {
+    @apply
+        relative
+        grid
+        grid-rows-[auto,1fr]
+        gap-2
+        w-screen
+        h-screen
+        min-w-[1300px]
+        bg-blue-950
+        p-2
+        overflow-hidden
+    ;
+}
+
+#content #main {
+    @apply
+        w-full
+        h-full
+        grid
+        grid-cols-[18rem,1fr,0rem]
+        rounded-lg
+        gap-2
+        overflow-hidden
+    ;
+}
+
+#content #middle-panel {
+    @apply
+        grid
+        grid-rows-[1fr,auto]
+        gap-2
+    ;
+}

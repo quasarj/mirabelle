@@ -24,8 +24,6 @@ const {
 
 const { MouseBindings } = csToolsEnums;
 
-const toolGroupId = 'STACK_TOOL_GROUP_ID';
-
 async function handleExpand() {
   coords = expandSegTo3D(segmentationId);
 
@@ -72,7 +70,6 @@ async function handleAccept() {
   await finalCalc(coords, volumeId, iec, "cuboid", "mask");
 }
 
-
 function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
   const [renderingEngine, setRenderingEngine] = useState();
   const [toolGroup, setToolGroup] = useState();
@@ -106,7 +103,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
       ],
     });
 
-    // TODO: this is for debu use only
+    // TODO: this is for debug use only
     window.ToolGroupManager = ToolGroupManager;
     window.renderingEngine = renderingEngine;
     window.toolGroup2d = toolGroup;
@@ -130,62 +127,39 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
 
   return (
     <div id="volume-view">
-      <div id="main">
-        <div id="left-panel">
-          <ToolsPanel
-            toolGroup={toolGroup}
-            defaultPreset={defaultPreset3d}
-            onPresetChange={(val) => setPreset3d(val)}
-          />
-        </div>
-        <div id="middle-panel">
-          <div id="viewer-panel">
-            <div id="viewports-panel">
-              <VolumeViewport3d
-                viewportId="coronal3d"
-                volumeId={volumeId}
-                renderingEngine={renderingEngine}
-                toolGroup={toolGroup3d}
-                segmentationId={segmentationId}
-                orientation="CORONAL"
-                preset3d={preset3d}
-              />
-              <VolumeViewport
-                viewportId="axial2d"
-                volumeId={volumeId}
-                renderingEngine={renderingEngine}
-                toolGroup={toolGroup}
-                segmentationId={segmentationId}
-                orientation="AXIAL"
-              />
-              <VolumeViewport
-                viewportId="sagittal2d"
-                volumeId={volumeId}
-                renderingEngine={renderingEngine}
-                toolGroup={toolGroup}
-                segmentationId={segmentationId}
-                orientation="SAGITTAL"
-              />
-              <VolumeViewport
-                viewportId="coronal2d"
-                volumeId={volumeId}
-                renderingEngine={renderingEngine}
-                toolGroup={toolGroup}
-                segmentationId={segmentationId}
-                orientation="CORONAL"
-              />
-
-            </div>
-            <OperationsPanel
-            /* onExpand={handleExpand}
-            onClear={handleClear}
-            onAccept={handleAccept} */
-            />
-          </div>
-        </div>
-        <div id="right-panel">
-        </div>
-      </div>
+      <VolumeViewport3d
+        viewportId="coronal3d"
+        volumeId={volumeId}
+        renderingEngine={renderingEngine}
+        toolGroup={toolGroup3d}
+        segmentationId={segmentationId}
+        orientation="CORONAL"
+        preset3d={preset3d}
+      />
+      <VolumeViewport
+        viewportId="axial2d"
+        volumeId={volumeId}
+        renderingEngine={renderingEngine}
+        toolGroup={toolGroup}
+        segmentationId={segmentationId}
+        orientation="AXIAL"
+      />
+      <VolumeViewport
+        viewportId="sagittal2d"
+        volumeId={volumeId}
+        renderingEngine={renderingEngine}
+        toolGroup={toolGroup}
+        segmentationId={segmentationId}
+        orientation="SAGITTAL"
+      />
+      <VolumeViewport
+        viewportId="coronal2d"
+        volumeId={volumeId}
+        renderingEngine={renderingEngine}
+        toolGroup={toolGroup}
+        segmentationId={segmentationId}
+        orientation="CORONAL"
+      />
     </div >
   );
 }
