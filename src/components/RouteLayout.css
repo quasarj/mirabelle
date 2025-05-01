@@ -32,26 +32,39 @@
     ;
 }
 
+.viewport {
+    @apply
+        w-full
+        h-full
+        rounded-lg
+        overflow-hidden
+    ;
+}
+
 /* all three panels */
 .main--3col {
     @apply
-        grid-cols-[auto,1fr,auto];
+        grid-cols-[auto,1fr,auto]
+    ;
 }
 
 /* left + middle */
 .main--2col-left {
     @apply
-        grid-cols-[auto,1fr];
+        grid-cols-[auto,1fr]
+    ;
 }
 
 /* middle + right */
 .main--2col-right {
     @apply
-        grid-cols-[1fr,auto];
+        grid-cols-[1fr,auto]
+    ;
 }
 
 /* only middle */
 .main--1col {
     @apply
-        grid-cols-[1fr];
+        grid-cols-[1fr]
+    ;
 }

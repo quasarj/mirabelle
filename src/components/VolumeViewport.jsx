@@ -116,11 +116,7 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
       <div
         ref={elementRef}
         onContextMenu={(e) => e.preventDefault()}
-        style={{
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#000",
-        }}
+        className="volume-viewport viewport"
       ></div>
     </>
   )

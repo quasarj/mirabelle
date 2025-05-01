@@ -66,11 +66,7 @@ function StackViewport({ frames, mip, viewportId, renderingEngine, toolGroup }) 
       <div
         ref={elementRef}
         onContextMenu={(e) => e.preventDefault()}
-        style={{
-          width: "512px",
-          height: "512px",
-          backgroundColor: "#000",
-        }}
+        className="stack-viewport viewport"
       ></div>
     </>
   )
