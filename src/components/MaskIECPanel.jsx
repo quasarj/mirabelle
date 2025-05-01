@@ -23,6 +23,7 @@ import { ToolsPanel } from '@/features/tools';
 import OperationsPanel from './OperationsPanel';
 
 import { Context } from './Context.js';
+import RouteLayout from './RouteLayout';
 
 import './MaskIECPanel.css';
 
@@ -200,28 +201,28 @@ function MaskIECPanel({ iec, volumetric }) {
   }
 
   return (
-    <div id="content">
-      <Header />
-      <div id="main">
-        <div id="left-panel">
-          <ToolsPanel
-            toolGroup={toolGroup}
-            defaultPreset={"CT-MIP"}
-            onPresetChange={(val) => setPreset3d(val)}
-          />
-        </div>
-        <div id="middle-panel">
+
+    <RouteLayout
+      header={<Header />}
+      leftPanel={
+        <ToolsPanel
+          toolGroup={toolGroup}
+          defaultPreset={preset3d}
+          onPresetChange={setPreset3d}
+        />
+      }
+      middlePanel={
+        <>
           {viewer}
           <OperationsPanel
           /* onExpand={handleExpand}
           onClear={handleClear}
           onAccept={handleAccept} */
           />
-        </div>
-        <div id="right-panel">
-        </div>
-      </div>
-    </div>
+        </>
+      }
+      rightPanel={null}
+    />
   )
 }
 
