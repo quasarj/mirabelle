@@ -35,7 +35,7 @@ const {
   segmentation
 } = cornerstoneTools;
 
-function MaskIECPanel({ iec, volumetric }) {
+function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
 
   console.log(">>>>", iec, "volumetric:", volumetric);
 
@@ -93,7 +93,7 @@ function MaskIECPanel({ iec, volumetric }) {
       let segmentationId = `vol-${iec}-seg`;
 
       try {
-        await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId);
+        await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId, vr);
       } catch (error) {
         console.log(error);
         // TODO: set an isError status here and display an error message?
@@ -207,7 +207,13 @@ function MaskIECPanel({ iec, volumetric }) {
       header={<Header />}
       leftPanel={
         <>
-          <NavigationPanel />
+          {vr &&
+            <NavigationPanel
+              onNext={onNext}
+              onPrevious={onPrevious}
+              currentIec={iec}
+            />
+          }
           <ToolsPanel
             toolGroup={toolGroup}
             defaultPreset={preset3d}

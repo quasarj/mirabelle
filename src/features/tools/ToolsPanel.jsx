@@ -45,7 +45,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
   manager.switchRightClickMode("zoom");
 
   return (
-    <div id="tools-panel">
+    <div id="tools-panel" className="side-panel">
       {
         globalToolsConfig.viewToolGroup.visible &&
         <div>

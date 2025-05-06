@@ -1,5 +1,5 @@
 ul {
-  @apply h-full pb-4;
+  @apply pb-4;
   display: flex;
 }
 

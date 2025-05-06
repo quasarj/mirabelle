@@ -38,7 +38,7 @@ import RouteDicomReviewIEC, { loader as routeDicomReviewIECLoader }
 from './routes/dicom/iec';
 
 import RouteMaskVR, { loader as routeMaskVRLoader }
-from './routes/mask/vr';
+from './routes/mask/RouteMaskVR';
 
 import RouteNiftiReviewFile, { loader as routeNiftiReviewFileLoader }
 from './routes/nifti/RouteNiftiReviewFile';

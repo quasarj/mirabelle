@@ -10,7 +10,7 @@ import { getIECsForVR } from '@/utilities';
 
 import { Context } from '@/components/Context';
 
-import './vr.css';
+import './RouteMaskVR.css';
 
 export async function loader({ params }) {
 
@@ -26,8 +26,6 @@ export default function RouteMaskVR() {
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ title: "Route Mask VR" }}>
-            <Header />
-            <p>Route: Mask VR ({vr})</p>
             <MaskIECMultiPanel
                 vr={vr}
                 iecs={iecs}

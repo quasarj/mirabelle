@@ -24,10 +24,27 @@
     ;
 }
 
+#content #side-panel {
+    @apply
+        flex
+        flex-col
+        gap-2
+    ;
+}
+
 #content #middle-panel {
     @apply
         grid
         grid-rows-[1fr,auto]
+        gap-2
+    ;
+}
+
+#content #left-panel, #content #right-panel {
+    @apply
+        flex
+        flex-col
+        w-72
         gap-2
     ;
 }
