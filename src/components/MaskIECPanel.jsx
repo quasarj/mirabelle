@@ -21,6 +21,7 @@ import { VolumeView } from '@/features/volume-view';
 import { StackView } from '@/features/stack-view';
 import { ToolsPanel } from '@/features/tools';
 import OperationsPanel from './OperationsPanel';
+import NavigationPanel from './NavigationPanel';
 
 import { Context } from './Context.js';
 import RouteLayout from './RouteLayout';
@@ -35,6 +36,7 @@ const {
 } = cornerstoneTools;
 
 function MaskIECPanel({ iec, volumetric }) {
+
   console.log(">>>>", iec, "volumetric:", volumetric);
 
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
@@ -204,11 +206,14 @@ function MaskIECPanel({ iec, volumetric }) {
     <RouteLayout
       header={<Header />}
       leftPanel={
-        <ToolsPanel
-          toolGroup={toolGroup}
-          defaultPreset={preset3d}
-          onPresetChange={setPreset3d}
-        />
+        <>
+          <NavigationPanel />
+          <ToolsPanel
+            toolGroup={toolGroup}
+            defaultPreset={preset3d}
+            onPresetChange={setPreset3d}
+          />
+        </>
       }
       middlePanel={
         <>

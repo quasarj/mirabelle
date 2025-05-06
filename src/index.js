@@ -41,7 +41,7 @@ import RouteMaskVR, { loader as routeMaskVRLoader }
 from './routes/mask/vr';
 
 import RouteNiftiReviewFile, { loader as routeNiftiReviewFileLoader }
-from './routes/nifti/file';
+from './routes/nifti/RouteNiftiReviewFile';
 
 import RouteNiftiReviewVR, { loader as routeNiftiReviewVRLoader }
 from './routes/nifti/vr';

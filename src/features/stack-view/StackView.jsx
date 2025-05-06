@@ -40,7 +40,7 @@ function StackView({ frames }) {
     if (renderingEngine === undefined) {
       renderingEngine = new RenderingEngine("re1");
     }
-    
+
     let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
 
 
@@ -66,38 +66,13 @@ function StackView({ frames }) {
   }
 
   return (
-    <div id="StackView">
-      <div id="main">
-        <div id="leftPanel">
-          <ToolsPanel 
-            toolGroup={toolGroup} 
-            defaultPreset=""
-            onPresetChange={(val) => {}}
-          />
-        </div>
-      </div>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <StackViewport
-                frames={frames}
-                toolGroup={toolGroup}
-                renderingEngine={renderingEngine}
-                viewportId="myviewport"
-              />
-            </td>
-            <td>
-            </td>
-          </tr>
-          <tr>
-            <td>
-            </td>
-            <td>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div id="stack-view">
+      <StackViewport
+        frames={frames}
+        toolGroup={toolGroup}
+        renderingEngine={renderingEngine}
+        viewportId="myviewport"
+      />
     </div>
   );
 }

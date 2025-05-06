@@ -6,18 +6,24 @@ import {
   createNiftiImageIdsAndCacheMetadata,
 } from '@cornerstonejs/nifti-volume-loader';
 import { volumeLoader } from '@cornerstonejs/core';
+import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import { toAbsoluteURL } from '@/utilities';
 
 import { VolumeView } from '@/features/volume-view';
 import LabelingPanel from '@/components/LabelingPanel';
+import ToolsPanel from '@/features/tools/ToolsPanel';
+import RouteLayout from '@/components/RouteLayout';
+import Header from '@/components/Header';
 
-import './NiftiReviewFile.css'
+import './NiftiReviewFile.css';
 
 export default function NiftiReviewFile({ file }) {
   const [loaded, setLoaded] = useState(false);
   const [volumeId, setVolumeId] = useState();
   const [error, setError] = useState(false);
+  const [toolGroup, setToolGroup] = useState(null);
+  const [preset3d, setPreset3d] = useState("MR-Default");
 
   const labelPanelConfig = [
     {
@@ -34,17 +40,11 @@ export default function NiftiReviewFile({ file }) {
     setError(false);
     setLoaded(false);
 
-    // NOTE this syntax just creates an anonymous
-    // async function and immediately runs it
-    // This is necessary because the function given to 
-    // useEffect is not allowed to be async
-    (async () => {
-      // code to load the volume goes here
-      // try to keep most of it in an external file
-      // when it's done, call setLoaded(true) and
-      // also setVolumeId(new_volume_id)
+    // Initialize the tool group
+    const tg = cornerstoneTools.ToolGroupManager.createToolGroup("niftiToolGroup");
+    setToolGroup(tg);
 
-      // await cornerstone.cache.purgeVolumeCache();
+    (async () => {
       const details = await getNiftiDetails(file);
 
       if (details.download_path === undefined) {
@@ -52,17 +52,13 @@ export default function NiftiReviewFile({ file }) {
         return;
       }
 
-      // This is a workaround to deal with the fact that 
-      // the nifti image loader guesses at zipped status based
-      // only on the end of the filename
       let rel_url = details.download_path;
       if (details.is_zipped) {
-        rel_url += ".gz"
+        rel_url += ".gz";
       }
       const url = toAbsoluteURL(rel_url);
       const imageIds = await createNiftiImageIdsAndCacheMetadata({ url });
       const volumeId = `cornerstoneStreamingImageVolume: ${rel_url}`;
-      // check if it's already in the cache
       let volume = cornerstone.cache.getVolume(volumeId);
       if (!volume) {
         volume = await volumeLoader.createAndCacheVolume(volumeId, {
@@ -76,24 +72,16 @@ export default function NiftiReviewFile({ file }) {
         return;
       }
 
-      // console.log(url, imageIds, volumeId, volume);
-
-      // remove everything else from the cache. There is a purgeCache
-      // function but it deletes too much and breaks the world
       cornerstone.cache.getVolumes().forEach((v) => {
-        if (v.volumeId != volumeId) {
+        if (v.volumeId !== volumeId) {
           cornerstone.cache.removeVolumeLoadObject(v.volumeId);
         }
       });
 
-
-      // set the component state
       setVolumeId(volumeId);
       setLoaded(true);
-
     })();
   }, [file]);
-
 
   if (error === true) {
     return (
@@ -113,19 +101,28 @@ export default function NiftiReviewFile({ file }) {
   }
 
   return (
-    <div id="NiftiReviewFile">
-      <p>NiftiReviewFile: ({file})</p>
-      <VolumeView
-        volumeId={volumeId}
-        defaultPreset3d="MR-Default"
-      />
-      <LabelingPanel
-        onLabel={alert}
-        config={labelPanelConfig}
-      />
-    </div>
+    <RouteLayout
+      header={<Header />}
+      leftPanel={
+        <ToolsPanel
+          toolGroup={toolGroup}
+          defaultPreset={preset3d}
+          onPresetChange={setPreset3d}
+        />
+      }
+      middlePanel={
+        <>
+          <VolumeView
+            volumeId={volumeId}
+            defaultPreset3d="MR-Default"
+          />
+          <LabelingPanel
+            onLabel={alert}
+            config={labelPanelConfig}
+          />
+        </>
+      }
+      rightPanel={null}
+    />
   );
 }
-
-
-

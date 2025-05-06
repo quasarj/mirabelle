@@ -11,6 +11,7 @@ import './header.css';
 function Header() {
   const [username, setUsername] = useState("Username");
   const { template, title } = useContext(Context);
+  console.log("Header title:", title);
 
   useEffect(() => {
     (async () => {

@@ -11,26 +11,22 @@ import { TASK_CONFIGS } from '@/config/config';
 
 import NiftiReviewFile from '@/features/nifti-review/NiftiReviewFile';
 
-import './file.css';
+import './RouteNiftiReviewFile.css';
 
 export async function loader({ params }) {
 
-    // const details = await getNiftiDetails(params.fileId);
-    // const files = [params.fileId];
-    // return { details, files };
+  // const details = await getNiftiDetails(params.fileId);
+  // const files = [params.fileId];
+  // return { details, files };
   return { file: params.fileId };
 }
 
 export default function RouteNiftiReviewFile() {
-    const { file } = useLoaderData();
+  const { file } = useLoaderData();
 
-    return (
-        <Context.Provider value={{ title: "Nifti Review File" }}>
-          <Header />
-          <div id="RouteNiftiReviewFile">
-            <p>Route: Nifti Review: File ({file})</p>
-            <NiftiReviewFile file={file} />
-          </div>
-        </Context.Provider>
-    );
+  return (
+    <Context.Provider value={{ title: "Nifti Review File" }}>
+      <NiftiReviewFile file={file} />
+    </Context.Provider>
+  );
 }
