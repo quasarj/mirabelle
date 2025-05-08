@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux'
-import { setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
+import { setStackConfig, setVolumeConfig, setTitle } from '@/features/presentationSlice';
 
 import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
 import { volumeLoader } from "@cornerstonejs/core";
@@ -106,6 +106,7 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
       setVolumeId(volumeId);
       setSegmentationId(segmentationId);
 
+      dispatch(setTitle("Mask Volume"));
       dispatch(setVolumeConfig());
     };
 
@@ -120,6 +121,7 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
       setImageIds(imageIds);
       setIsInitialized(true);
 
+      dispatch(setTitle("Mask Stack"));
       dispatch(setStackConfig());
     };
 

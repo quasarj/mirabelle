@@ -361,6 +361,11 @@ const presentationSlice = createSlice({
 
       return state;
     },
+    setTitle: (state, action) => {
+      state.stateValues.title = action.payload;
+
+      return state;
+    },
 
   }
 })
@@ -380,6 +385,7 @@ export const {
   setVolumeConfig,
   setNiftiConfig,
   setStateValue,
+  setTitle,
 } = presentationSlice.actions
 
 export default presentationSlice.reducer 

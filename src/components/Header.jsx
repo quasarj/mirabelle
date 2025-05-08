@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Context } from './Context.js';
+import { useSelector } from 'react-redux';
 
 import { Link } from 'react-router-dom';
 import logoLight from '@/assets/mirabelle-logo-light.svg';
@@ -9,8 +9,8 @@ import { getUsername } from '@/utilities';
 import './header.css';
 
 function Header() {
+  const title = useSelector(state => state.presentation.stateValues.title);
   const [username, setUsername] = useState("Username");
-  const { template, title } = useContext(Context);
   console.log("Header title:", title);
 
   useEffect(() => {
