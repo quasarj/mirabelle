@@ -70,10 +70,8 @@ async function handleAccept() {
   await finalCalc(coords, volumeId, iec, "cuboid", "mask");
 }
 
-function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
+function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, toolGroup3d }) {
   const [renderingEngine, setRenderingEngine] = useState();
-  const [toolGroup, setToolGroup] = useState();
-  const [toolGroup3d, setToolGroup3d] = useState();
   const [preset3d, setPreset3d] = useState(defaultPreset3d);
 
   const [mip, setMip] = useState(false);
@@ -89,9 +87,6 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
     if (renderingEngine === undefined) {
       renderingEngine = new RenderingEngine("re1");
     }
-
-    let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
-    let toolGroup3d = ToolGroupManager.createToolGroup("toolGroup3d");
 
     toolGroup3d.addTool(TrackballRotateTool.toolName);
 
@@ -109,15 +104,9 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d }) {
     window.toolGroup2d = toolGroup;
 
     setRenderingEngine(renderingEngine);
-    setToolGroup(toolGroup);
-    setToolGroup3d(toolGroup3d);
 
     // Teardown function
     return () => {
-      ToolGroupManager.destroyToolGroup("toolGroup2d")
-      ToolGroupManager.destroyToolGroup("toolGroup3d")
-      // Do not delete the RenderingEngine here, it needs
-      // to stay, for now
     };
   }, []);
 

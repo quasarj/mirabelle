@@ -114,6 +114,8 @@ export default function NiftiReviewFile({ file }) {
           <VolumeView
             volumeId={volumeId}
             defaultPreset3d="MR-Default"
+            toolGroup={toolGroup}
+            toolGroup3d={toolGroup}
           />
           <LabelingPanel
             onLabel={alert}

@@ -48,6 +48,7 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
   const [imageIds, setImageIds] = useState()
 
   const [toolGroup, setToolGroup] = useState();
+  const [toolGroup3d, setToolGroup3d] = useState();
   const [preset3d, setPreset3d] = useState("CT-MIP");
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -65,9 +66,11 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
     }
 
     let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
+    let toolGroup3d = ToolGroupManager.createToolGroup("toolGroup3d");
 
     setRenderingEngine(renderingEngine);
     setToolGroup(toolGroup);
+    setToolGroup3d(toolGroup3d);
 
     // TODO: this is for debug use only
     window.ToolGroupManager = ToolGroupManager;
@@ -77,6 +80,7 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
     // Teardown function
     return () => {
       ToolGroupManager.destroyToolGroup("toolGroup2d")
+      ToolGroupManager.destroyToolGroup("toolGroup3d")
       // Do not delete the RenderingEngine here, it needs
       // to stay, for now
     };
@@ -199,9 +203,11 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
         volumeId={volumeId}
         segmentationId={segmentationId}
         defaultPreset3d="CT-MIP"
+        toolGroup={toolGroup}
+        toolGroup3d={toolGroup3d}
       />
   } else {
-    viewer = <StackView frames={imageIds} />
+    viewer = <StackView toolGroup={toolGroup} frames={imageIds} />
   }
 
   return (
@@ -226,9 +232,9 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
         <>
           {viewer}
           <OperationsPanel
-          /* onExpand={handleExpand}
-          onClear={handleClear}
-          onAccept={handleAccept} */
+            onExpand={handleExpand}
+            // onClear={handleClear}
+            // onAccept={handleAccept}
           />
         </>
       }

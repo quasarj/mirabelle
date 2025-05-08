@@ -23,9 +23,8 @@ const { MouseBindings } = csToolsEnums;
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
 
-function StackView({ frames }) {
+function StackView({ frames, toolGroup }) {
   const [renderingEngine, setRenderingEngine] = useState();
-  const [toolGroup, setToolGroup] = useState();
 
   const [mip, setMip] = useState(false);
 
@@ -41,9 +40,6 @@ function StackView({ frames }) {
       renderingEngine = new RenderingEngine("re1");
     }
 
-    let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
-
-
 
     // TODO: this is for debu use only
     window.ToolGroupManager = ToolGroupManager;
@@ -51,13 +47,9 @@ function StackView({ frames }) {
     window.toolGroup2d = toolGroup;
 
     setRenderingEngine(renderingEngine);
-    setToolGroup(toolGroup);
 
     // Teardown function
     return () => {
-      ToolGroupManager.destroyToolGroup("toolGroup2d")
-      // Do not delete the RenderingEngine here, it needs
-      // to stay, for now
     };
   }, []);
 
