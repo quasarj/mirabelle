@@ -1,0 +1,13 @@
+#app {
+    @apply
+        grid
+        grid-rows-[auto,1fr]
+        gap-2
+        w-screen
+        h-screen
+        min-w-[1300px]
+        bg-blue-950
+        p-2
+        dark:bg-blue-950
+    ;
+}

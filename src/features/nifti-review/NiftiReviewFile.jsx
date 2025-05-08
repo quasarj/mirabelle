@@ -102,7 +102,6 @@ export default function NiftiReviewFile({ file }) {
 
   return (
     <RouteLayout
-      header={<Header />}
       leftPanel={
         <ToolsPanel
           toolGroup={toolGroup}

@@ -206,7 +206,6 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
 
   return (
     <RouteLayout
-      header={<Header />}
       leftPanel={
         <>
           {vr &&

@@ -1,19 +1,4 @@
-#content {
-    @apply
-        relative
-        grid
-        grid-rows-[auto,1fr]
-        gap-2
-        w-screen
-        h-screen
-        min-w-[1300px]
-        bg-blue-950
-        p-2
-        overflow-hidden
-    ;
-}
-
-#content #main {
+#main {
     @apply
         w-full
         h-full
@@ -24,7 +9,7 @@
     ;
 }
 
-#content #side-panel {
+#main #side-panel {
     @apply
         flex
         flex-col
@@ -32,7 +17,7 @@
     ;
 }
 
-#content #middle-panel {
+#main #middle-panel {
     @apply
         grid
         grid-rows-[1fr,auto]
@@ -40,7 +25,7 @@
     ;
 }
 
-#content #left-panel, #content #right-panel {
+#main #left-panel, #main #right-panel {
     @apply
         flex
         flex-col

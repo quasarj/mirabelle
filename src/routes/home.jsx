@@ -1,12 +1,21 @@
-import React from 'react';
+
+import React, { useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Context } from '@/components/Context';
 import Header from '@/components/Header';
+import { useDispatch } from 'react-redux';
+import { setTitle } from '@/features/presentationSlice';
 
 import './home.css';
 
 export default function Home() {
+  const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    dispatch(setTitle('Home'));  // <-- set the title on mount
+  }, [dispatch]);
+
   const iecExamples = {
     "A torso and a sliver": 1,
     "A nice torso": 2,
@@ -68,7 +77,6 @@ export default function Home() {
   return (
     <Context.Provider value={{ title: "Home Page", template: "" }}>
       <div id="RouteHome">
-        <Header />
         <p>
           This is a dev/testing page with links to a number of
           examples.

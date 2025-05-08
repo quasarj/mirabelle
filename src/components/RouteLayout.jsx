@@ -13,14 +13,11 @@ function RouteLayout({ header, leftPanel, middlePanel, rightPanel }) {
     }
 
     return (
-        <div id="content">
-            {header && header}
-            <div id="main" className={colsClass}>
-                {leftPanel && <div id="left-panel">{leftPanel}</div>}
-                <div id="middle-panel">{middlePanel}</div>
-                {rightPanel && <div id="right-panel">{rightPanel}</div>}
-            </div>
-        </div >
+        <div id="main" className={colsClass}>
+            {leftPanel && <div id="left-panel">{leftPanel}</div>}
+            <div id="middle-panel">{middlePanel}</div>
+            {rightPanel && <div id="right-panel">{rightPanel}</div>}
+        </div>
     );
 }
 
