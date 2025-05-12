@@ -1,17 +1,12 @@
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { Context } from './Context.js';
 
 function DescriptionPanel({ details }) {
-
-    //function downloadFile() {
-    //    const element = document.createElement("a");
-    //    const file = new Blob([details["test"]], { type: 'text/plain' });
-    //    element.href = URL.createObjectURL(file);
-    //    element.target = "_blank"
-    //    element.download = "file.txt";
-    //    document.body.appendChild(element); // Required for this to work in FireFox
-    //    element.click();
-    //}
+    const {
+        nifti,
+        layout,
+    } = useContext(Context);
 
     function downloadFile() {
         // Fetch the file from the path specified in details["path"]
@@ -32,26 +27,24 @@ function DescriptionPanel({ details }) {
     }
 
     function downloadIEC() {
-        // Fetch the file from the path specified in details["path"]
-        fetch(details["download_path"])
-            .then(response => response.blob()) // Convert the response to a blob
-            .then(blob => {
-                const element = document.createElement("a");
-                const url = URL.createObjectURL(blob);
-                element.href = url;
-                element.target = "_blank";
-                element.download = details["download_name"]
-                document.body.appendChild(element); // Required for this to work in FireFox
-                element.click();
-                document.body.removeChild(element); // Clean up after download
-                URL.revokeObjectURL(url); // Free up memory
-            })
-            .catch(error => console.error('Error downloading file:', error));
+      // Fetch the file from the path specified in details["path"]
+
+      const iec = details["image_equivalence_class_id"];
+
+      let download_path = details["download_path"];
+      if (layout == "MaskerReview") {
+        download_path = `/papi/v1/masking/${iec}/reviewfiles/download`;
+      }
+
+      const link = document.createElement("a");
+      link.href = download_path;
+      link.target = "_blank";
+      link.download = details["download_name"];
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
-    const {
-        nifti
-    } = useContext(Context);
 
     if (nifti) {
         return (

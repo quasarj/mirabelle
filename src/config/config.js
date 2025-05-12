@@ -167,6 +167,8 @@ const MASKER_REVIEW_CONFIG = {
     maskerReviewPanelRejectedVisible: true,
     maskerReviewPanelSkipVisible: true,
     maskerReviewPanelNonMaskableVisible: true,
+
+    descriptionPanelVisible: true,
 };
 
 const VISUAL_REVIEW_CONFIG = {
