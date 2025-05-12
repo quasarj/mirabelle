@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import { getNiftiDetails } from '@/visualreview';
+import { useDispatch } from 'react-redux'
+import { setTitle } from '@/features/presentationSlice';
 import {
   Enums as NiftiEnums,
   createNiftiImageIdsAndCacheMetadata,
@@ -24,6 +26,7 @@ export default function NiftiReviewFile({ file }) {
   const [error, setError] = useState(false);
   const [toolGroup, setToolGroup] = useState(null);
   const [preset3d, setPreset3d] = useState("MR-Default");
+  const dispatch = useDispatch();
 
   const labelPanelConfig = [
     {
@@ -40,6 +43,7 @@ export default function NiftiReviewFile({ file }) {
     setError(false);
     setLoaded(false);
 
+    dispatch(setTitle("Nifti File Review"));
     // Initialize the tool group
     const tg = cornerstoneTools.ToolGroupManager.createToolGroup("niftiToolGroup");
     setToolGroup(tg);
