@@ -104,6 +104,8 @@ function DescriptionPanel({ details }) {
 
                 <div className="w-full mb-2 font-bold">Series Instance UID:</div>
                 <div className="w-full mb-2 font-normal break-words mb-4">{details["series_instance_uid"]}</div>
+                <div className="w-full mb-2 font-bold">Series Description:</div>
+                <div className="w-full mb-2 font-normal break-words mb-4">{details["series_description"]}</div>
                 <hr className="border-t border-gray-300 mb-4" />
 
                 <div className="w-full mb-2 font-bold">Path:</div>
