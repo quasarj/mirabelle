@@ -4,17 +4,17 @@ import { useState, useContext } from 'react';
 
 import "./OperationsPanel.css";
 
-function OperationsPanel( { onExpand, onClear, onAccept } ) {
+function OperationsPanel({ onAction }) {
 
   return (
     <div id="operations-panel">
-      <button onClick={onExpand} >
+      <button onClick={() => onAction("expand")} >
         Expand Selection
       </button>
-      <button onClick={onClear} >
+      <button onClick={() => onAction("clear")} >
         Clear Selection
       </button>
-      <button onClick={onAccept} >
+      <button onClick={() => onAction("accept")} >
         Accept Selection
       </button>
     </div>

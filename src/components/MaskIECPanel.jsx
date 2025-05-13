@@ -232,9 +232,9 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
         <>
           {viewer}
           <OperationsPanel
-            onExpand={handleExpand}
-            // onClear={handleClear}
-            // onAccept={handleAccept}
+            onAction={handleExpand}
+          // onClear={handleClear}
+          // onAccept={handleAccept}
           />
         </>
       }
