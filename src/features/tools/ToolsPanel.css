@@ -1,8 +1,6 @@
 #tools-panel {
   @apply
     relative
-    max-h-full
-    overflow-y-auto
     p-6
     rounded-lg
     bg-blue-100

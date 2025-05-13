@@ -58,7 +58,8 @@ function StackView({ frames, toolGroup }) {
   }
 
   return (
-    <div id="stack-view">
+    <div id="stack-view"
+      className="viewer">
       <StackViewport
         frames={frames}
         toolGroup={toolGroup}
