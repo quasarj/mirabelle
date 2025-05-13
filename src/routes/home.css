@@ -2,7 +2,8 @@
 	display: block;
 	padding-bottom: 0;
 	@apply
-		pl-3;
+		
+	pl-3;
 }
 #RouteHome li a {
 	@apply
@@ -21,4 +22,9 @@
 	@apply
 		mt-10
 		mb-10
+}
+
+#RouteHome {
+	@apply
+	overflow-y-auto;
 }
