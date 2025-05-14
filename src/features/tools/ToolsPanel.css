@@ -8,6 +8,20 @@
   ;
 }
 
+#tools-panel select {
+  @apply
+  w-full
+  cursor-pointer
+  text-black
+  dark:text-white
+  border
+  border-gray-300
+  dark:bg-slate-800
+  rounded-lg
+  p-4
+  ;
+}
+
 .preset-dropdown-container {
   display: flex;
   align-items: center;
