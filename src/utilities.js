@@ -1,62 +1,60 @@
-import * as cornerstone from '@cornerstonejs/core';
+import * as cornerstone from "@cornerstonejs/core";
 import {
-	cornerstoneStreamingImageVolumeLoader,
-	cornerstoneStreamingDynamicImageVolumeLoader,
-} from '@cornerstonejs/streaming-image-volume-loader';
-import cornerstoneDICOMImageLoader from '@cornerstonejs/dicom-image-loader';
-import dicomParser from 'dicom-parser';
-import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
+  cornerstoneStreamingImageVolumeLoader,
+  cornerstoneStreamingDynamicImageVolumeLoader,
+} from "@cornerstonejs/streaming-image-volume-loader";
+import cornerstoneDICOMImageLoader from "@cornerstonejs/dicom-image-loader";
+import dicomParser from "dicom-parser";
+import { cornerstoneNiftiImageVolumeLoader } from "@cornerstonejs/nifti-volume-loader";
 
 const { volumeLoader } = cornerstone;
 
 export function initVolumeLoader() {
-	volumeLoader.registerUnknownVolumeLoader(
-		cornerstoneStreamingImageVolumeLoader
-	);
-	volumeLoader.registerVolumeLoader(
-		'cornerstoneStreamingImageVolume',
-		cornerstoneStreamingImageVolumeLoader
-	);
-	volumeLoader.registerVolumeLoader(
-		'cornerstoneStreamingDynamicImageVolume',
-		cornerstoneStreamingDynamicImageVolumeLoader
-	);
-	volumeLoader.registerVolumeLoader(
-		'nifti',
-		cornerstoneNiftiImageVolumeLoader
-	);
+  volumeLoader.registerUnknownVolumeLoader(
+    cornerstoneStreamingImageVolumeLoader,
+  );
+  volumeLoader.registerVolumeLoader(
+    "cornerstoneStreamingImageVolume",
+    cornerstoneStreamingImageVolumeLoader,
+  );
+  volumeLoader.registerVolumeLoader(
+    "cornerstoneStreamingDynamicImageVolume",
+    cornerstoneStreamingDynamicImageVolumeLoader,
+  );
+  volumeLoader.registerVolumeLoader("nifti", cornerstoneNiftiImageVolumeLoader);
 }
 
 export function initCornerstoneDICOMImageLoader() {
-	const { preferSizeOverAccuracy, useNorm16Texture } = cornerstone.getConfiguration().rendering;
-	cornerstoneDICOMImageLoader.external.cornerstone = cornerstone;
-	cornerstoneDICOMImageLoader.external.dicomParser = dicomParser;
-	cornerstoneDICOMImageLoader.configure({
-		useWebWorkers: true,
-		decodeConfig: {
-			convertFloatPixelDataToInt: false,
-			use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
-		},
-	});
+  const { preferSizeOverAccuracy, useNorm16Texture } =
+    cornerstone.getConfiguration().rendering;
+  cornerstoneDICOMImageLoader.external.cornerstone = cornerstone;
+  cornerstoneDICOMImageLoader.external.dicomParser = dicomParser;
+  cornerstoneDICOMImageLoader.configure({
+    useWebWorkers: true,
+    decodeConfig: {
+      convertFloatPixelDataToInt: false,
+      use16BitDataType: preferSizeOverAccuracy || useNorm16Texture,
+    },
+  });
 
-	let maxWebWorkers = 1;
+  let maxWebWorkers = 1;
 
-	if (navigator.hardwareConcurrency) {
-		maxWebWorkers = Math.min(navigator.hardwareConcurrency, 7);
-	}
+  if (navigator.hardwareConcurrency) {
+    maxWebWorkers = Math.min(navigator.hardwareConcurrency, 7);
+  }
 
-	var config = {
-		maxWebWorkers,
-		startWebWorkersOnDemand: false,
-		taskConfiguration: {
-			decodeTask: {
-				initializeCodecsOnStartup: false,
-				strict: false,
-			},
-		},
-	};
+  var config = {
+    maxWebWorkers,
+    startWebWorkersOnDemand: false,
+    taskConfiguration: {
+      decodeTask: {
+        initializeCodecsOnStartup: false,
+        strict: false,
+      },
+    },
+  };
 
-	cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
+  cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
 }
 
 /*
@@ -94,131 +92,141 @@ export function isSegFlag(segmentationId) {
   return isFlat;
 }
 export function expandSegTo3D(segmentationId) {
-	const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
-	const scalarData = segmentationVolume.scalarData;
-	const dims = segmentationVolume.dimensions;
+  const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
+  const scalarData = segmentationVolume.scalarData;
+  const dims = segmentationVolume.dimensions;
 
-	const [x_size, y_size, z_size] = dims;
+  const [x_size, y_size, z_size] = dims;
 
-	let xmin = z_size * y_size * x_size;
-	let xmax = 0;
-	let ymin = xmin;
-	let ymax = 0;
-	let zmin = xmin;
-	let zmax = 0;
+  let xmin = z_size * y_size * x_size;
+  let xmax = 0;
+  let ymin = xmin;
+  let ymax = 0;
+  let zmin = xmin;
+  let zmax = 0;
 
-	for (let z = 0; z < z_size; z++) {
-		for (let y = 0; y < y_size; y++) {
-			for (let x = 0; x < x_size; x++) {
-				// offset into the array
-				let offset = (z * x_size * y_size) + (y * x_size) + x;
+  for (let z = 0; z < z_size; z++) {
+    for (let y = 0; y < y_size; y++) {
+      for (let x = 0; x < x_size; x++) {
+        // offset into the array
+        let offset = z * x_size * y_size + y * x_size + x;
 
-				if (scalarData[offset] > 0) {
-					if (x < xmin) { xmin = x; }
-					if (x > xmax) { xmax = x; }
-					if (y < ymin) { ymin = y; }
-					if (y > ymax) { ymax = y; }
-					if (z < zmin) { zmin = z; }
-					if (z > zmax) { zmax = z; }
-				}
-			}
-		}
-	}
-	// Expand into a cube
-	for (let z = 0; z < z_size; z++) {
-		for (let y = 0; y < y_size; y++) {
-			for (let x = 0; x < x_size; x++) {
-				// offset into the array
-				let offset = (z * x_size * y_size) + (y * x_size) + x;
-				if (
-					x >= xmin &&
-					x <= xmax &&
-					y >= ymin &&
-					y <= ymax &&
-					z >= zmin &&
-					z <= zmax
-				) {
-					scalarData[offset] = 2;
-				} else {
-					scalarData[offset] = 0;
-				}
-			}
-		}
-	}
+        if (scalarData[offset] > 0) {
+          if (x < xmin) {
+            xmin = x;
+          }
+          if (x > xmax) {
+            xmax = x;
+          }
+          if (y < ymin) {
+            ymin = y;
+          }
+          if (y > ymax) {
+            ymax = y;
+          }
+          if (z < zmin) {
+            zmin = z;
+          }
+          if (z > zmax) {
+            zmax = z;
+          }
+        }
+      }
+    }
+  }
+  // Expand into a cube
+  for (let z = 0; z < z_size; z++) {
+    for (let y = 0; y < y_size; y++) {
+      for (let x = 0; x < x_size; x++) {
+        // offset into the array
+        let offset = z * x_size * y_size + y * x_size + x;
+        if (
+          x >= xmin &&
+          x <= xmax &&
+          y >= ymin &&
+          y <= ymax &&
+          z >= zmin &&
+          z <= zmax
+        ) {
+          scalarData[offset] = 2;
+        } else {
+          scalarData[offset] = 0;
+        }
+      }
+    }
+  }
 
-	return {
-		x: { min: xmin, max: xmax },
-		y: { min: ymin, max: ymax },
-		z: { min: zmin, max: zmax },
-	};
+  return {
+    x: { min: xmin, max: xmax },
+    y: { min: ymin, max: ymax },
+    z: { min: zmin, max: zmax },
+  };
 }
 
 /**
  * A generic distance calucaltion between two (3D) points
  */
 export function calculateDistance(point1, point2) {
-	const dx = point2[0] - point1[0];
-	const dy = point2[1] - point1[1];
-	const dz = point2[2] - point1[2];
+  const dx = point2[0] - point1[0];
+  const dy = point2[1] - point1[1];
+  const dz = point2[2] - point1[2];
 
-	const distance = Math.sqrt(dx ** 2 + dy ** 2 + dz ** 2);
+  const distance = Math.sqrt(dx ** 2 + dy ** 2 + dz ** 2);
 
-	return distance;
+  return distance;
 }
 
 export async function getUsername() {
-	const response = await fetch(`/papi/v1/other/testme`);
-	const details = await response.json();
+  const response = await fetch(`/papi/v1/other/testme`);
+  const details = await response.json();
 
-	return details.username;
+  return details.username;
 }
 
 export async function getFiles(iec) {
+  const response = await fetch(`/papi/v1/iecs/${iec}/files`);
+  const details = await response.json();
 
-	const response = await fetch(`/papi/v1/iecs/${iec}/files`);
-	const details = await response.json();
-
-	return details.file_ids;
+  return details.file_ids;
 }
 
-export async function getIECInfo(iec, mask_review=false) {
+export async function getIECInfo(iec, mask_review = false) {
+  let response;
 
-	let response
+  if (mask_review) {
+    response = await fetch(`/papi/v1/masking/${iec}/reviewfiles`);
+  } else {
+    response = await fetch(`/papi/v1/iecs/${iec}/frames`);
+  }
 
-	if (mask_review) {
-		response = await fetch(`/papi/v1/masking/${iec}/reviewfiles`);
-	} else {
-		response = await fetch(`/papi/v1/iecs/${iec}/frames`);
-	}
+  let volumetric;
+  let frames = [];
 
-	let volumetric;
-	let frames = [];
+  if (response && response.ok) {
+    let fileInfo = await response.json();
+    volumetric = fileInfo.volumetric;
 
-	if (response && response.ok) {
-		let fileInfo = await response.json();
-		volumetric = fileInfo.volumetric;
-
-		for (let file of fileInfo.frames) {
-			//console.log(file);
-			for (let i = 0; i < file.num_of_frames; i++) {
-				if (frames.num_of_frames > 1) {
-					frames.push(`wadouri:/papi/v1/files/${file.file_id}/data?frame=${i}`);
-				} else {
-					frames.push(`wadouri:/papi/v1/files/${file.file_id}/data`);
-				}
-			}
-		}
-	}
-	return { volumetric, frames };
+    for (let file of fileInfo.frames) {
+      //console.log(file);
+      for (let i = 0; i < file.num_of_frames; i++) {
+        if (frames.num_of_frames > 1) {
+          frames.push(`wadouri:/papi/v1/files/${file.file_id}/data?frame=${i}`);
+        } else {
+          frames.push(`wadouri:/papi/v1/files/${file.file_id}/data`);
+        }
+      }
+    }
+  }
+  return { volumetric, frames };
 }
 
 export async function getIECsForVR(visual_review_id) {
+  const response = await fetch(
+    `/papi/v1/masking/visualreview/${visual_review_id}`,
+  );
+  const details = await response.json();
 
-	const response = await fetch(
-		`/papi/v1/masking/visualreview/${visual_review_id}`);
-	const details = await response.json();
-
-	return details;
+  return details;
 }
 
 export async function getNextIECForVR(visual_review_id) {
@@ -227,14 +235,15 @@ export async function getNextIECForVR(visual_review_id) {
    * none remain).
    */
 
-	const response = await fetch(
-		`/papi/v1/masking/visualreview/${visual_review_id}/next`);
+  const response = await fetch(
+    `/papi/v1/masking/visualreview/${visual_review_id}/next`,
+  );
   if (!response.ok) {
     return undefined;
   }
-	const details = await response.json();
+  const details = await response.json();
 
-	return details;
+  return details;
 }
 
 export async function getNextIECForVRReview(visual_review_id) {
@@ -242,12 +251,13 @@ export async function getNextIECForVRReview(visual_review_id) {
    * to have it's mask reviewed (or undef if none remain).
    */
 
-	const response = await fetch(
-		`/papi/v1/masking/visualreview/${visual_review_id}/next-for-review`);
+  const response = await fetch(
+    `/papi/v1/masking/visualreview/${visual_review_id}/next-for-review`,
+  );
   if (!response.ok) {
     return undefined;
   }
-	const details = await response.json();
+  const details = await response.json();
 
-	return details;
+  return details;
 }
