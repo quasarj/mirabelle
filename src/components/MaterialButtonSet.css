@@ -5,7 +5,7 @@ ul {
 }
 
 li {
-  @apply dark:bg-opacity-5 rounded-lg flex space-x-2;
+  @apply w-full dark:bg-opacity-5 rounded-lg flex space-x-2;
 }
 
 .active {
