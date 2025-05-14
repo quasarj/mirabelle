@@ -16,7 +16,7 @@ import dicomParser from 'dicom-parser';
 import { cornerstoneNiftiImageVolumeLoader } from '@cornerstonejs/nifti-volume-loader';
 
 // Utilities
-import { expandSegTo3D } from '../utilities';
+import { expandSegTo3D, isSegFlag } from '../utilities';
 import { setParameters, loaded, flagAsAccepted, flagAsRejected, flagAsSkipped, flagAsNonmaskable, finalCalc } from '../masking';
 import { getNiftiDetails, setNiftiStatus, getDicomDetails, setDicomStatus, setMaskingFlag } from '../visualreview';
 
@@ -1370,6 +1370,10 @@ function ViewVolumePanel({ volumeName, files, iec }) {
 
 
     async function handleExpandSelection() {
+        if (isSegFlag(segId)) {
+          alert("Cannot expand flat selection! You must draw in at least two planes.");
+          return;
+        }
         // console.log('handleExpandSelection called, setId is', segId);
         coords = expandSegTo3D(segId);
 
@@ -1402,6 +1406,10 @@ function ViewVolumePanel({ volumeName, files, iec }) {
             .triggerSegmentationDataModified(segId);
     }
     async function handleAcceptSelection() {
+      if (coords === undefined) {
+        alert("You must Expand Selection first!");
+        return;
+      }
         const maskForm = context.formToolGroupValue
         const maskFunction = context.functionToolGroupValue
         await finalCalc(coords, volumeId, iec, maskForm, maskFunction);

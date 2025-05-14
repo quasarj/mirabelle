@@ -59,6 +59,40 @@ export function initCornerstoneDICOMImageLoader() {
 	cornerstoneDICOMImageLoader.webWorkerManager.initialize(config);
 }
 
+/*
+ * Return true if the given segmentation is
+ * empty or flat (exists in only one plane / 2 dimensions)
+ */
+export function isSegFlag(segmentationId) {
+  const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
+  const scalarData = segmentationVolume.scalarData;
+  const dims = segmentationVolume.dimensions;
+
+  const [x_size, y_size, z_size] = dims;
+
+  const xSet = new Set();
+  const ySet = new Set();
+  const zSet = new Set();
+
+  for (let z = 0; z < z_size; z++) {
+    for (let y = 0; y < y_size; y++) {
+      for (let x = 0; x < x_size; x++) {
+        // offset into the array
+        let offset = z * x_size * y_size + y * x_size + x;
+
+        if (scalarData[offset] === 1) {
+          xSet.add(x);
+          ySet.add(y);
+          zSet.add(z);
+        }
+      }
+    }
+  }
+
+  const isFlat = xSet.size === 1 || ySet.size === 1 || zSet.size === 1;
+
+  return isFlat;
+}
 export function expandSegTo3D(segmentationId) {
 	const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
 	const scalarData = segmentationVolume.scalarData;
