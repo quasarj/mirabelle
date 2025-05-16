@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import MainPanel from '../../components/MainPanel.jsx';
 import { Context } from '../../components/Context';
@@ -6,6 +6,8 @@ import useConfigState from '../../hooks/useConfigState';
 import { getDicomDetails } from '../../visualreview.js';
 import { getFiles, getIECInfo } from '../../utilities';
 import { TASK_CONFIGS } from '../../config/config';
+
+import Toast from "../../components/Toast";
 
 export async function loader({ params }) {
 
@@ -15,6 +17,8 @@ export async function loader({ params }) {
 }
 
 export default function ReviewDICOM() {
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("initial message");
 
     const { details, fileInfo, iec } = useLoaderData();
 
@@ -27,10 +31,21 @@ export default function ReviewDICOM() {
         configState = useConfigState(TASK_CONFIGS.dicom_review_stack || TASK_CONFIGS.default);
     }
 
+  configState.showToast = (message) => {
+    setToastMessage(message)
+    setShowToast(true)
+  };
+
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ ...configState }}>
             <MainPanel details={details} files={fileInfo.frames} iec={iec} />
+            {showToast && (
+                <Toast
+                    message={toastMessage}
+                    onClose={() => setShowToast(false)}
+                />
+            )}
         </Context.Provider>
     );
 }

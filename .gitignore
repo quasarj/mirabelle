@@ -25,10 +25,10 @@ dist-ssr
 *.sln
 *.sw?
 
-dicom
-dicom2
-dicom3
-nifti
+dicom/
+dicom2/
+dicom3/
+nifti/
 obj
 *.esproj
 *.esproj.user
