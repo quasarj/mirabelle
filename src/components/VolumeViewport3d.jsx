@@ -53,7 +53,6 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
         element: elementRef.current,
         defaultOptions: {
           orientation: realOrientation,
-          background: CONSTANTS.BACKGROUND_COLORS.slicer3D,
         },
       }];
 

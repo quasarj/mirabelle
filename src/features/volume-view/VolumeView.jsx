@@ -115,7 +115,8 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
   }
 
   return (
-    <div id="volume-view">
+    <div id="volume-view"
+      className="viewer">
       <VolumeViewport3d
         viewportId="coronal3d"
         volumeId={volumeId}

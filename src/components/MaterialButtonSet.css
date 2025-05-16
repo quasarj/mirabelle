@@ -1,10 +1,11 @@
 ul {
-  @apply pb-4;
-  display: flex;
+  @apply
+  flex
+  gap-2
 }
 
 li {
-  @apply pt-1 pb-4 dark:bg-opacity-5 rounded-lg flex space-x-2;
+  @apply w-full dark:bg-opacity-5 rounded-lg flex space-x-2;
 }
 
 .active {

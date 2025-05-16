@@ -1,12 +1,24 @@
 #tools-panel {
   @apply
     relative
-    max-h-full
-    overflow-y-auto
     p-6
     rounded-lg
     bg-blue-100
     dark:bg-blue-900
+  ;
+}
+
+#tools-panel select {
+  @apply
+  w-full
+  cursor-pointer
+  text-black
+  dark:text-white
+  border
+  border-gray-300
+  dark:bg-slate-800
+  rounded-lg
+  p-4
   ;
 }
 

@@ -1,6 +1,11 @@
 #operations-panel {
 	@apply
-		place-self-center
+		
 		flex
-		gap-2;
+		gap-2
+		w-full
+		justify-center
+		dark:bg-blue-900
+		rounded-lg
+		p-2;
 }

@@ -87,7 +87,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
       {
         globalToolsConfig.presetToolGroup.visible &&
         <div className="preset-dropdown-container">
-          <label htmlFor="preset-select">Preset:</label>
+          {/* <label htmlFor="preset-select">Preset:</label> */}
           <select
             id="preset-select"
             value={globalStateValues.preset}
