@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "./Context.js";
-import { getNextIECForVRReview, getNextIECForVR } from '../utilities';
+import { getNextIECForVRReview, getNextIECForVR } from "../utilities";
 
 import NavigationPanel from "./NavigationPanel";
 
@@ -15,14 +15,14 @@ function ToolsPanel({ iec, details }) {
     const handleKeyDown = async (event) => {
       if (event.keyCode == 9) {
         event.preventDefault();
-        await handleOnNext()
+        await handleOnNext();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -38,10 +38,10 @@ function ToolsPanel({ iec, details }) {
 
   async function handleOnNext() {
     const vr = details.visual_review_instance_id;
-    
+
     let iec;
     let newURL;
-    if (layout === 'MaskerReview') {
+    if (layout === "MaskerReview") {
       iec = await getNextIECForVRReview(vr);
       newURL = `/mira/review/mask/iec/${iec}`;
     } else {

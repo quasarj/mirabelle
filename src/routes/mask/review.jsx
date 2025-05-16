@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
-import MainPanel from '../../components/MainPanel.jsx';
-import { Context } from '../../components/Context';
-import useConfigState from '../../hooks/useConfigState';
-import { getDetails } from '../../masking.js';
-import { getFiles, getIECInfo } from '../../utilities';
-import { TASK_CONFIGS } from '../../config/config';
-import { getDicomDetails } from '../../visualreview.js';
+import React, { useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import MainPanel from "../../components/MainPanel.jsx";
+import { Context } from "../../components/Context";
+import useConfigState from "../../hooks/useConfigState";
+import { getDetails } from "../../masking.js";
+import { getFiles, getIECInfo } from "../../utilities";
+import { TASK_CONFIGS } from "../../config/config";
+import { getDicomDetails } from "../../visualreview.js";
 
 import Toast from "../../components/Toast";
 
 export async function loader({ params }) {
-
-    // const details = await getDetails(params.iec);
-    const details = await getDicomDetails(params.iec);
-    //const files = await getFiles(params.iec);
-    const fileInfo = await getIECInfo(params.iec, true);
-    return { details, fileInfo, iec: params.iec };
+  // const details = await getDetails(params.iec);
+  const details = await getDicomDetails(params.iec);
+  //const files = await getFiles(params.iec);
+  const fileInfo = await getIECInfo(params.iec, true);
+  return { details, fileInfo, iec: params.iec };
 }
 
 export default function ReviewIEC({ forcenav }) {
@@ -42,8 +41,8 @@ export default function ReviewIEC({ forcenav }) {
   }
 
   configState.showToast = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
+    setToastMessage(message);
+    setShowToast(true);
   };
 
   // Here we just assemble the various panels that we need for this mode
@@ -51,10 +50,7 @@ export default function ReviewIEC({ forcenav }) {
     <Context.Provider value={{ ...configState }}>
       <MainPanel details={details} files={fileInfo.frames} iec={iec} />
       {showToast && (
-        <Toast
-          message={toastMessage}
-          onClose={() => setShowToast(false)}
-        />
+        <Toast message={toastMessage} onClose={() => setShowToast(false)} />
       )}
     </Context.Provider>
   );

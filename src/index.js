@@ -1,84 +1,78 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import {
-	createBrowserRouter,
-	RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import ErrorPage from './error-page';
-import './index.css'
+import ErrorPage from "./error-page";
+import "./index.css";
 //import './transitions.css';
 
 //import App from './App';
 
-import Home from './routes/home';
+import Home from "./routes/home";
 
-import MaskIEC, {
-	loader as iecLoader,
-} from './routes/mask/iec';
+import MaskIEC, { loader as iecLoader } from "./routes/mask/iec";
 
-import ReviewIEC, {
-  loader as iecReviewLoader,
-} from './routes/mask/review';
+import ReviewIEC, { loader as iecReviewLoader } from "./routes/mask/review";
 
 import RouteMaskReviewVR, {
   loader as vrReviewLoader,
-} from './routes/mask/reviewvr';
+} from "./routes/mask/reviewvr";
 
 import ReviewNIFTI, {
   loader as niftiReviewLoader,
-} from './routes/nifti/review';
+} from "./routes/nifti/review";
 
-import MaskVR, {
-	loader as vrLoader,
-} from './routes/mask/vr';
+import MaskVR, { loader as vrLoader } from "./routes/mask/vr";
 
 import ReviewDICOM, {
-	loader as dicomReviewLoader,
-} from './routes/dicom/review';
+  loader as dicomReviewLoader,
+} from "./routes/dicom/review";
 
-const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <Home />,
-		errorElement: <ErrorPage />,
-	},
-	{
-		path: "mask/iec/:iec",
-		element: <MaskIEC />,
-		loader: iecLoader,
-	},
-	{
-		path: "mask/vr/:visual_review_instance_id",
-		element: <MaskVR />,
-		loader: vrLoader,
-	},
-	{
-		path: "review/mask/iec/:iec",
-		element: <ReviewIEC />,
-		loader: iecReviewLoader,
-	},
-	{
-		path: "review/mask/vr/:visual_review_instance_id",
-		element: <RouteMaskReviewVR />,
-		loader: vrReviewLoader,
-	},
-	{
-		path: "review/nifti/fileId/:fileId",
-		element: <ReviewNIFTI />,
-		loader: niftiReviewLoader,
-	},
-	{
-		path: "review/dicom/iec/:iec",
-		element: <ReviewDICOM />,
-		loader: dicomReviewLoader,
-	},
-], {
-	basename: "/mira",
-});
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Home />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "mask/iec/:iec",
+      element: <MaskIEC />,
+      loader: iecLoader,
+    },
+    {
+      path: "mask/vr/:visual_review_instance_id",
+      element: <MaskVR />,
+      loader: vrLoader,
+    },
+    {
+      path: "review/mask/iec/:iec",
+      element: <ReviewIEC />,
+      loader: iecReviewLoader,
+    },
+    {
+      path: "review/mask/vr/:visual_review_instance_id",
+      element: <RouteMaskReviewVR />,
+      loader: vrReviewLoader,
+    },
+    {
+      path: "review/nifti/fileId/:fileId",
+      element: <ReviewNIFTI />,
+      loader: niftiReviewLoader,
+    },
+    {
+      path: "review/dicom/iec/:iec",
+      element: <ReviewDICOM />,
+      loader: dicomReviewLoader,
+    },
+  ],
+  {
+    basename: "/mira",
+  },
+);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 // Not currently working in StrictMode for some reason, investigate?
 // root.render(
@@ -87,6 +81,4 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 // 	</React.StrictMode>
 // );
 //
-root.render(
-		<RouterProvider router={router} />
-);
+root.render(<RouterProvider router={router} />);

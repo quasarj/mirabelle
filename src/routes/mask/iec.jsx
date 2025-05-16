@@ -43,8 +43,8 @@ export default function MaskIEC({ forcenav }) {
   }
 
   configState.showToast = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
+    setToastMessage(message);
+    setShowToast(true);
   };
 
   // Here we just assemble the various panels that we need for this mode
@@ -52,10 +52,7 @@ export default function MaskIEC({ forcenav }) {
     <Context.Provider value={{ ...configState }}>
       <MainPanel details={details} files={fileInfo.frames} iec={iec} />
       {showToast && (
-        <Toast
-          message={toastMessage}
-          onClose={() => setShowToast(false)}
-        />
+        <Toast message={toastMessage} onClose={() => setShowToast(false)} />
       )}
     </Context.Provider>
   );

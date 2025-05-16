@@ -28,32 +28,32 @@ function MaskerPanel({
    */
   useEffect(() => {
     const handleKeyDown = async (event) => {
-      if (event.key == 'e') {
+      if (event.key == "e") {
         event.preventDefault();
         onExpand();
       }
-      if (event.key == 'a') {
+      if (event.key == "a") {
         event.preventDefault();
         onAccept();
       }
-      if (event.key == 'c') {
+      if (event.key == "c") {
         event.preventDefault();
         onClear();
       }
-      if (event.key == 's') {
+      if (event.key == "s") {
         event.preventDefault();
         onMarkSkip();
       }
-      if (event.key == 'n') {
+      if (event.key == "n") {
         event.preventDefault();
         onMarkNonMaskable();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
