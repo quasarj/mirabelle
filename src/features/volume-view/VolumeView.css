@@ -11,6 +11,22 @@
   ;
 }
 
+#volume-view #axial2d {
+  @apply row-start-1 col-start-1;
+}
+
+#volume-view #coronal3d {
+  @apply row-start-1 col-start-2;
+}
+
+#volume-view #coronal2d {
+  @apply row-start-2 col-start-1;
+}
+
+#volume-view #sagittal2d {
+  @apply row-start-2 col-start-2;
+}
+
 /* 
 
 #volume-view {
