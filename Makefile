@@ -1,13 +1,13 @@
 default: serve
 
 serve: node_modules
-	npm run start
+	pnpm run start
 
 build: node_modules
-	npm run build
+	pnpm run build
 
 node_modules: package.json
-	npm i
+	pnpm i
 
 clean:
 	rm -rf node_modules dist
