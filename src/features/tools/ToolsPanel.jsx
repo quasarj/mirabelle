@@ -21,8 +21,6 @@ function toTitleCase(some_string) {
 
 function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
   const presets = useSelector(state => state.presentation.presets);
-  // const toolsConfig = useSelector(state => state.presentation.presets);
-  //
   const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
   const globalStateValues = useSelector(state => state.presentation.stateValues);
 
@@ -31,7 +29,11 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   const [selectedPreset, setSelectedPreset] = useState(defaultPreset);
 
-  const manager = useToolsManager({ toolGroup });
+  const manager = useToolsManager({ 
+    toolGroup,
+    defaultLeftClickMode: "selection",
+    defaultRightClickMode: "zoom",
+  });
   const toolsConfigs = useToolsConfigs({ manager });
 
   const handlePresetChange = (event) => {
@@ -41,8 +43,8 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
   };
 
   // activate the default tool selection for left and right click
-  manager.switchLeftClickMode("selection");
-  manager.switchRightClickMode("zoom");
+  // manager.switchLeftClickMode("selection");
+  // manager.switchRightClickMode("zoom");
 
   return (
     <div id="tools-panel" className="side-panel">
