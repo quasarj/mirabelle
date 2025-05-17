@@ -5,6 +5,7 @@
 		gap-2
 		w-full
 		justify-center
+		bg-blue-100
 		dark:bg-blue-900
 		rounded-lg
 		p-2;

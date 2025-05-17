@@ -135,20 +135,20 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
         orientation="AXIAL"
       />
       <VolumeViewport
-        viewportId="sagittal2d"
-        volumeId={volumeId}
-        renderingEngine={renderingEngine}
-        toolGroup={toolGroup}
-        segmentationId={segmentationId}
-        orientation="SAGITTAL"
-      />
-      <VolumeViewport
         viewportId="coronal2d"
         volumeId={volumeId}
         renderingEngine={renderingEngine}
         toolGroup={toolGroup}
         segmentationId={segmentationId}
         orientation="CORONAL"
+      />
+      <VolumeViewport
+        viewportId="sagittal2d"
+        volumeId={volumeId}
+        renderingEngine={renderingEngine}
+        toolGroup={toolGroup}
+        segmentationId={segmentationId}
+        orientation="SAGITTAL"
       />
     </div >
   );

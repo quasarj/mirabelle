@@ -114,6 +114,7 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
   return (
     <>
       <div
+        id={viewportId}
         ref={elementRef}
         onContextMenu={(e) => e.preventDefault()}
         className="volume-viewport viewport"
