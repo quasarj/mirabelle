@@ -9,6 +9,7 @@ import store from './store';
 import { Provider } from 'react-redux';
 
 import EnableCornerstone from '@/components/EnableCornerstone';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 import {
 	createBrowserRouter,
@@ -123,7 +124,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<Provider store={store}>
 			<EnableCornerstone>
-				<RouterProvider router={router} />
+        <LoadingOverlay>
+          <RouterProvider router={router} />
+        </LoadingOverlay>
 			</EnableCornerstone>
 	</Provider>
 );

@@ -152,6 +152,7 @@ const presentationSlice = createSlice({
       rightClick: Enums.RightClickOptions.ZOOM,
       opacity: 0.3,
       preset: 'CT-MIP',
+      loading: false,
     },
 
     maximumIntensityProjection: false,
@@ -366,6 +367,11 @@ const presentationSlice = createSlice({
 
       return state;
     },
+    setLoading: (state, action) => {
+      state.stateValues.loading = action.payload;
+
+      return state;
+    },
 
   }
 })
@@ -386,6 +392,7 @@ export const {
   setNiftiConfig,
   setStateValue,
   setTitle,
+  setLoading,
 } = presentationSlice.actions
 
 export default presentationSlice.reducer 
