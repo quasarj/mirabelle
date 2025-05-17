@@ -90,6 +90,46 @@ export function calculateDistance(point1, point2) {
 	return distance;
 }
 
+/*
+ * Return true if the given segmentation is
+ * empty or flat (exists in only one plane / 2 dimensions)
+ */
+export function isSegFlat(segmentationId) {
+  const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
+	const { dimensions, voxelManager } = segmentationVolume;
+	const scalarData = voxelManager.getCompleteScalarDataArray();
+
+  const [x_size, y_size, z_size] = dimensions;
+
+  const xSet = new Set();
+  const ySet = new Set();
+  const zSet = new Set();
+
+  for (let z = 0; z < z_size; z++) {
+    for (let y = 0; y < y_size; y++) {
+      for (let x = 0; x < x_size; x++) {
+        // offset into the array
+        let offset = z * x_size * y_size + y * x_size + x;
+
+        if (scalarData[offset] === 1) {
+          xSet.add(x);
+          ySet.add(y);
+          zSet.add(z);
+        }
+      }
+    }
+  }
+
+  const isFlat = xSet.size === 1 || ySet.size === 1 || zSet.size === 1;
+
+  if (xSet.size === 0 && ySet.size === 0 && zSet.size === 0) {
+    // empty segmentation, same as flat for our purposes
+    return true;
+  }
+
+  return isFlat;
+}
+
 export async function getUsername() {
 	const response = await fetch(`/papi/v1/other/testme`);
 	const details = await response.json();

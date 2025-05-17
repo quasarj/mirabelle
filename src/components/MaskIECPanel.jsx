@@ -2,7 +2,8 @@ import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux'
-import { setStackConfig, setVolumeConfig, setTitle } from '@/features/presentationSlice';
+import { setStackConfig, setVolumeConfig, setTitle, setLoading } from '@/features/presentationSlice';
+import toast from 'react-hot-toast';
 
 import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
 import { volumeLoader } from "@cornerstonejs/core";
@@ -10,8 +11,12 @@ import * as cornerstone from "@cornerstonejs/core";
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import {
   expandSegTo3D,
+  isSegFlat,
   loadIECVolumeAndSegmentation,
-} from '../utilities';
+  getIECInfo,
+
+} from '@/utilities';
+import { getDicomDetails } from '@/visualreview';
 import { finalCalc } from '../masking';
 
 import Header from './Header';
@@ -35,9 +40,7 @@ const {
   segmentation
 } = cornerstoneTools;
 
-function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
-
-  console.log(">>>>", iec, "volumetric:", volumetric);
+function MaskIECPanel({ iec, vr, onNext, onPrevious }) {
 
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
 
@@ -54,6 +57,9 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isErrored, setIsErrored] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+
+  const [volumetric, setVolumetric] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   let viewer;
 
@@ -112,6 +118,7 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("Mask Volume"));
       dispatch(setVolumeConfig());
+      dispatch(setLoading(false));
     };
 
     const initializeStack = async () => {
@@ -122,8 +129,13 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
           "any",
         wadoRsRoot: "/papi/v1/wadors",
       })
+
+      const { volumetric } = getDicomDetails(iec);
+
+
       setImageIds(imageIds);
       setIsInitialized(true);
+      setVolumetric(volumetric);
 
       dispatch(setTitle("Mask Stack"));
       dispatch(setStackConfig());
@@ -134,9 +146,29 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
     } else {
       initializeStack();
     }
-  }, [iec, volumetric]);
+  }, [iec]);
+
+  async function handleOperationsAction(action) {
+    switch (action) {
+      case "expand":
+        await handleExpand();
+        break;
+      case "clear":
+        handleClear();
+        break;
+      case "accept":
+        await handleAccept();
+        break;
+      default:
+        console.log("Unknown action:", action);
+    }
+  }
 
   async function handleExpand() {
+    if (!expanded && isSegFlat(segmentationId)) {
+      alert("Cannot expand a flat selection! You must draw in at least two planes.");
+      return;
+    }
     coords = expandSegTo3D(segmentationId);
 
     //flag data as updated so it will redraw
@@ -163,6 +195,8 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
       }
     });
 
+    setExpanded(true);
+    toast.success("Expanded selection!");
   }
   function handleClear() {
     const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
@@ -178,8 +212,13 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
       .triggerSegmentationDataModified(segmentationId);
   }
   async function handleAccept() {
+    if (coords === undefined) {
+      alert("You Expand Selection first!");
+      return;
+    }
     console.log(coords, volumeId, iec);
     await finalCalc(coords, volumeId, iec, "cuboid", "mask");
+    toast.success("Submitted for masking!");
   }
 
 
@@ -232,9 +271,7 @@ function MaskIECPanel({ iec, volumetric, vr, onNext, onPrevious }) {
         <>
           {viewer}
           <OperationsPanel
-            onAction={handleExpand}
-          // onClear={handleClear}
-          // onAccept={handleAccept}
+            onAction={handleOperationsAction}
           />
         </>
       }
