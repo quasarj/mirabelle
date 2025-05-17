@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { RenderingEngine } from "@cornerstonejs/core"
 import * as cornerstone from "@cornerstonejs/core"
 import * as cornerstoneTools from '@cornerstonejs/tools';
+import toast from 'react-hot-toast';
 
 import VolumeViewport from '@/components/VolumeViewport';
 import VolumeViewport3d from '@/components/VolumeViewport3d';
-// import ToolsPanel from '@/features/tools/ToolsPanel';
 import { ToolsPanel } from '@/features/tools';
 
 import OperationsPanel from '@/components/OperationsPanel';
@@ -23,52 +23,6 @@ const {
 } = cornerstoneTools;
 
 const { MouseBindings } = csToolsEnums;
-
-async function handleExpand() {
-  coords = expandSegTo3D(segmentationId);
-
-  //flag data as updated so it will redraw
-  cornerstoneTools.segmentation
-    .triggerSegmentationEvents
-    .triggerSegmentationDataModified(segmentationId);
-
-
-  // TODO I don't like this being here, perhaps put it inside VolumeView
-  // and expose a callback that can be called from here? 
-  const renderingEngine = cornerstone.getRenderingEngines()[0];
-  const viewports = renderingEngine.getViewports();
-  viewports.forEach(async (item) => {
-    let viewportId = item.id;
-    if (viewportId.startsWith("coronal3d")) {
-      await segmentation.addSegmentationRepresentations(
-        viewportId, [
-        {
-          segmentationId,
-          type: csToolsEnums.SegmentationRepresentations.Surface,
-        }
-      ],
-      );
-    }
-  });
-
-}
-function handleClear() {
-  const segmentationVolume = cornerstone.cache.getVolume(segmentationId);
-  const { dimensions, voxelManager } = segmentationVolume;
-
-  let scalarData = voxelManager.getCompleteScalarDataArray();
-  scalarData.fill(0);
-  voxelManager.setCompleteScalarDataArray(scalarData);
-
-  //flag data as updated so it will redraw
-  cornerstoneTools.segmentation
-    .triggerSegmentationEvents
-    .triggerSegmentationDataModified(segmentationId);
-}
-async function handleAccept() {
-  console.log(coords, volumeId, iec);
-  await finalCalc(coords, volumeId, iec, "cuboid", "mask");
-}
 
 function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, toolGroup3d }) {
   const [renderingEngine, setRenderingEngine] = useState();
