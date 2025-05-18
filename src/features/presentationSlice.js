@@ -336,7 +336,7 @@ const presentationSlice = createSlice({
       state.toolsConfig.viewToolGroup.defaultValue = Enums.ViewOptions.VOLUME;
       state.toolsConfig.viewToolGroup.visibility.volume = true;
       state.toolsConfig.viewToolGroup.visibility.projection = true;
-      state.toolsConfig.viewToolGroup.visibility.stack = true; // need capability to switch to stack, but not now
+      state.toolsConfig.viewToolGroup.visibility.stack = true;
 
       state.toolsConfig.functionToolGroup.defaultValue = Enums.FunctionOptions.MASK;
       state.toolsConfig.functionToolGroup.visibility.mask = true;
@@ -357,8 +357,8 @@ const presentationSlice = createSlice({
 
     // Sets the configuration for Stacks
     setNiftiConfig: (state, action) => {
-      state.presetToolGroup.defaultValue = 'MR-Default';
       state.buttonConfig.visualReview.visibility.flag = false;
+      state.toolsConfig.viewToolGroup.visibility.stack = false;
 
       return state;
     },

@@ -51,7 +51,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
       {
         globalToolsConfig.viewToolGroup.visible &&
         <div>
-          <p>View</p>
+          <p>View:</p>
           <MaterialButtonSet
             buttonConfig={toolsConfigs.viewGroupButtonConfig}
             initialActiveButton={toTitleCase(globalStateValues.view)}
@@ -60,48 +60,63 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
       }
       {
         globalToolsConfig.functionToolGroup.visible &&
-        <MaterialButtonSet
-          buttonConfig={toolsConfigs.functionGroupButtonConfig}
-          initialActiveButton={toTitleCase(globalStateValues.function)}
-        />
+        <div>
+          <p>Function:</p>
+          <MaterialButtonSet
+            buttonConfig={toolsConfigs.functionGroupButtonConfig}
+            initialActiveButton={toTitleCase(globalStateValues.function)}
+          />
+        </div>
       }
       {
         globalToolsConfig.formToolGroup.visible &&
-        <MaterialButtonSet
-          buttonConfig={toolsConfigs.formGroupButtonConfig}
-          initialActiveButton={toTitleCase(globalStateValues.form)}
-        />
+        <div>
+          <p>Form:</p>
+          <MaterialButtonSet
+            buttonConfig={toolsConfigs.formGroupButtonConfig}
+            initialActiveButton={toTitleCase(globalStateValues.form)}
+          />
+        </div>
       }
       {
         globalToolsConfig.leftClickToolGroup.visible &&
-        <MaterialButtonSet
-          buttonConfig={toolsConfigs.leftClickGroupButtonConfig}
-          initialActiveButton={toTitleCase(globalStateValues.leftClick)}
-        />
+        <div>
+          <p>Left-Click:</p>
+          <MaterialButtonSet
+            buttonConfig={toolsConfigs.leftClickGroupButtonConfig}
+            initialActiveButton={toTitleCase(globalStateValues.leftClick)}
+          />
+        </div>
       }
       {
         globalToolsConfig.rightClickToolGroup.visible &&
-        <MaterialButtonSet
-          buttonConfig={toolsConfigs.rightClickGroupButtonConfig}
-          initialActiveButton={toTitleCase(globalStateValues.rightClick)}
-        />
+        <div>
+          <p>Right-Click:</p>
+          <MaterialButtonSet
+            buttonConfig={toolsConfigs.rightClickGroupButtonConfig}
+            initialActiveButton={toTitleCase(globalStateValues.rightClick)}
+          />
+        </div>
       }
       {
         globalToolsConfig.presetToolGroup.visible &&
-        <div className="preset-dropdown-container">
-          {/* <label htmlFor="preset-select">Preset:</label> */}
-          <select
-            id="preset-select"
-            value={globalStateValues.preset}
-            onChange={handlePresetChange}
-            className="preset-select"
-          >
-            {presets.map(preset => (
-              <option key={preset} value={preset}>
-                {preset}
-              </option>
-            ))}
-          </select>
+        <div>
+          <p>Preset:</p>
+          <div className="preset-dropdown-container">
+            {/* <label htmlFor="preset-select">Preset:</label> */}
+            <select
+              id="preset-select"
+              value={globalStateValues.preset}
+              onChange={handlePresetChange}
+              className="preset-select"
+            >
+              {presets.map(preset => (
+                <option key={preset} value={preset}>
+                  {preset}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       }
     </div>

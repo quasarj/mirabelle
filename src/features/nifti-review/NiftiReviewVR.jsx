@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import NiftiReviewFile from './NiftiReviewFile';
+//import NiftiReviewFile from './NiftiReviewFile';
 import Slider from '@/components/Slider';
 
 import './NiftiReviewVR.css';
@@ -51,7 +51,7 @@ export default function NiftiReviewVR({ vr }) {
         <button onClick={() => setOffset(offset + 1)}>Next</button>
       </section>
       <section>
-        <NiftiReviewFile file={fakeVRFiles[offset]} />
+        {/*<NiftiReviewFile file={fakeVRFiles[offset]} />*/}
       </section>
     </div>
   );
