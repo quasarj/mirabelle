@@ -11,7 +11,7 @@ import { TASK_CONFIGS } from '@/config/config';
 
 import NiftiReviewVR from '@/features/nifti-review/NiftiReviewVR';
 
-import './vr.css';
+import './RouteNiftiReviewVR.css';
 
 export async function loader({ params }) {
   return { vr: params.vr };

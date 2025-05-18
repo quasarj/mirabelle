@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
-
+import { useDispatch, useSelector } from 'react-redux'
+import NiftiReviewFile from '@/features/nifti-review/NiftiReviewFile';
 import Header from '@/components/Header';
 
 import { Context } from '@/components/Context';
-
-import useConfigState from '@/hooks/useConfigState';
 import { getUsername, getNiftiDetails } from '@/visualreview';
-import { TASK_CONFIGS } from '@/config/config';
 
-import NiftiReviewFile from '@/features/nifti-review/NiftiReviewFile';
+import { setVisualReviewConfig, Enums, reset } from '@/features/presentationSlice'
 
 import './RouteNiftiReviewFile.css';
 
@@ -22,7 +20,16 @@ export async function loader({ params }) {
 }
 
 export default function RouteNiftiReviewFile() {
-  const { file } = useLoaderData();
+  const dispatch = useDispatch();
+  const viewState = useSelector(state => state.presentation.stateValues.view);
+
+  let { file } = useLoaderData();
+
+  let volumetric = true;
+
+  useEffect(() => {
+    dispatch(setVisualReviewConfig());
+  }, [volumetric]);
 
   return (
     <Context.Provider value={{ title: "Nifti Review File" }}>

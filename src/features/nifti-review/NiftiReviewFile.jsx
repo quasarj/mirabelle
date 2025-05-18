@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { getNiftiDetails } from '@/visualreview';
 import { useDispatch } from 'react-redux'
-import { setTitle } from '@/features/presentationSlice';
+import { setVolumeConfig, setNiftiConfig, setTitle } from '@/features/presentationSlice';
 import {
   Enums as NiftiEnums,
   createNiftiImageIdsAndCacheMetadata,
@@ -12,21 +12,41 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 
 import { toAbsoluteURL } from '@/utilities';
 
-import { VolumeView } from '@/features/volume-view';
-import LabelingPanel from '@/components/LabelingPanel';
-import ToolsPanel from '@/features/tools/ToolsPanel';
-import RouteLayout from '@/components/RouteLayout';
 import Header from '@/components/Header';
+
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { VolumeView } from '@/features/volume-view';
+import { ToolsPanel } from '@/features/tools';
+import OperationsPanel from '@/components/OperationsPanel';
+import NavigationPanel from '@/components/NavigationPanel';
+
+//import LabelingPanel from '@/components/LabelingPanel';
+//import ToolsPanel from '@/features/tools/ToolsPanel';
+
+import { Context } from '@/components/Context.js';
+import RouteLayout from '@/components/RouteLayout';
 
 import './NiftiReviewFile.css';
 
-export default function NiftiReviewFile({ file }) {
+const {
+  ToolGroupManager,
+  TrackballRotateTool,
+  Enums: csToolsEnums,
+  segmentation
+} = cornerstoneTools;
+
+function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
+
+  const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
+
+  const dispatch = useDispatch();
+
   const [loaded, setLoaded] = useState(false);
   const [volumeId, setVolumeId] = useState();
   const [error, setError] = useState(false);
   const [toolGroup, setToolGroup] = useState(null);
   const [preset3d, setPreset3d] = useState("MR-Default");
-  const dispatch = useDispatch();
+ 
 
   const labelPanelConfig = [
     {

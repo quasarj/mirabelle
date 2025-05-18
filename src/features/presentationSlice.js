@@ -361,6 +361,8 @@ const presentationSlice = createSlice({
 
       return state;
     },
+
+    // Sets the title for the header display
     setTitle: (state, action) => {
       state.stateValues.title = action.payload;
 

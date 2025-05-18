@@ -46,7 +46,7 @@ import RouteNiftiReviewFile, { loader as routeNiftiReviewFileLoader }
 from './routes/nifti/RouteNiftiReviewFile';
 
 import RouteNiftiReviewVR, { loader as routeNiftiReviewVRLoader }
-from './routes/nifti/vr';
+from './routes/nifti/RouteNiftiReviewVR';
 
 const router = createBrowserRouter(
 	[
