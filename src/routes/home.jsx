@@ -96,10 +96,13 @@ export default function Home() {
 
           <li>Masking Review</li>
           <li>
-            <Link to="/mask/review/iec/1">Mask Review IEC</Link>
+            <Link to="/mask/review/iec/1117950">Mask Review IEC (volume)</Link>
           </li>
           <li>
-            <Link to="/mask/review/vr/1">Mask Review VR</Link>
+            <Link to="/mask/review/iec/1167702">Mask Review IEC (stack)</Link>
+          </li>
+          <li>
+            <Link to="/mask/review/vr/1336">Mask Review VR</Link>
           </li>
 
           <li>DICOM Visual Review</li>
