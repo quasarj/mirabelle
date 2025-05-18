@@ -145,6 +145,9 @@ export async function getFiles(iec) {
 	return details.file_ids;
 }
 
+/**
+ * Get the file list for an IEC, or the reviewfiles list
+ */
 export async function getIECInfo(iec, mask_review=false) {
 
 	let response
@@ -185,7 +188,6 @@ export async function getIECsForVR(visual_review_id) {
 	return details;
 }
 
-
 export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId) {
   const imageIds = await createImageIdsAndCacheMetaData({
     StudyInstanceUID:
@@ -194,6 +196,12 @@ export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId
     "any",
     wadoRsRoot: "/papi/v1/wadors",
   })
+
+  return await loadVolumeAndSegmentation(imageIds, volumeId, segmentationId);
+
+}
+
+export async function loadVolumeAndSegmentation(imageIds, volumeId, segmentationId) {
 
 
   let volume = cornerstone.cache.getVolume(volumeId);
@@ -206,6 +214,9 @@ export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId
     console.log("Volume already existed, not creating it");
     cornerstone.cache.removeVolumeLoadObject(segmentationId);
   }
+
+  // Set the volume to load
+  await volume.load();
 
   cornerstoneTools.segmentation.removeAllSegmentations();
   cornerstoneTools.segmentation.removeAllSegmentationRepresentations();
@@ -232,8 +243,6 @@ export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId
   ]);
 
 
-  // Set the volume to load
-  volume.load();
 
   return volume;
 }
