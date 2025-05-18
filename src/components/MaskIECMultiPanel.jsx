@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import MaterialButtonSet from '@/components/MaterialButtonSet';
 import MaskIECPanel from '@/components/MaskIECPanel';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/features/presentationSlice';
 
 import './MaskIECMultiPanel.css';
 
 export default function MaskIECMultiPanel({ vr, iecs }) {
 	const [iec, setIec] = useState(0);
 	const [offset, setOffset] = useState(null);
+  const dispatch = useDispatch();
 
 	// as soon as we get an array of iecs, show the first one
 	useEffect(() => {
@@ -22,6 +25,7 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 			currentOffset = offset + 1;
 		}
 		console.log("setting to", currentOffset);
+    dispatch(setLoading(true));
 		setIec(iecs[currentOffset]);
 		setOffset(currentOffset);
 	};

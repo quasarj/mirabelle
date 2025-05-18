@@ -326,5 +326,4 @@ export async function finalCalc(coords, volumeId, iec, maskForm, maskFunction) {
 
     // console.log(output);
     await setParameters(iec, output);
-    alert("Submitted for masking!");
 }
