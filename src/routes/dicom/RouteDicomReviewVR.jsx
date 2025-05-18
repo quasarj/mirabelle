@@ -12,7 +12,7 @@ import { StackView } from '@/features/stack-view';
 
 import createImageIdsAndCacheMetaData from '@/lib/createImageIdsAndCacheMetaData';
 
-import './vr.css';
+import './RouteDicomReviewVR.css';
 
 export async function loader({ params }) {
 

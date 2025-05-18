@@ -35,10 +35,10 @@ import RouteMaskReviewVR, { loader as routeMaskerReviewVRLoader }
 from './routes/mask-review/vr';
 
 import RouteDicomReviewVR, { loader as routeDicomReviewVRLoader }
-from './routes/dicom/vr';
+from './routes/dicom/RouteDicomReviewVR';
 
 import RouteDicomReviewIEC, { loader as routeDicomReviewIECLoader }
-from './routes/dicom/iec';
+from './routes/dicom/RouteDicomReviewIEC';
 
 import RouteMaskVR, { loader as routeMaskVRLoader }
 from './routes/mask/RouteMaskVR';

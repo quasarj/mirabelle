@@ -2,34 +2,34 @@ import React, { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 
-import NiftiReviewFile from '@/features/nifti-review/NiftiReviewFile';
+import DicomReviewIEC from '@/features/dicom-review/DicomReviewIEC';
 
-// import { getUsername, getNiftiDetails } from '@/visualreview';
+//import { getDicomDetails } from '@/visualreview.js';
 
 import { setVisualReviewConfig } from '@/features/presentationSlice'
 
-import './RouteNiftiReviewFile.css';
+import './RouteDicomReviewIEC.css';
 
 export async function loader({ params }) {
 
-  // const details = await getNiftiDetails(params.fileId);
-  // const files = [params.fileId];
-  // return { details, files };
+  //const details = await getDicomDetails(params.iec);
+  //return { details, iec: params.iec };
 
-  return { file: params.fileId };
+  return { iec: params.iec };
 }
 
-export default function RouteNiftiReviewFile() {
+export default function RouteDicomReviewIEC() {
+
   const dispatch = useDispatch();
   const viewState = useSelector(state => state.presentation.stateValues.view);
 
-  let { file } = useLoaderData();
+  let { iec } = useLoaderData();
 
   useEffect(() => {
     dispatch(setVisualReviewConfig());
   }, []);
 
   return (
-    <NiftiReviewFile file={file} />
+    <DicomReviewIEC iec={iec} />
   );
 }
