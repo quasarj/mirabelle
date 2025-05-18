@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { RenderingEngine } from "@cornerstonejs/core"
 import * as cornerstone from "@cornerstonejs/core"
 import * as cornerstoneTools from '@cornerstonejs/tools';
+import useRendererResize from '@/hooks/useRendererResize';
 
 import StackViewport from '@/components/StackViewport';
 import { ToolsPanel } from '@/features/tools';
@@ -27,6 +28,8 @@ function StackView({ frames, toolGroup }) {
   const [renderingEngine, setRenderingEngine] = useState();
 
   const [mip, setMip] = useState(false);
+
+  useRendererResize(renderingEngine);
 
   useEffect(() => {
     cornerstoneTools.addTool(TrackballRotateTool);

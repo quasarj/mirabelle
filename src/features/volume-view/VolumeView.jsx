@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import VolumeViewport from '@/components/VolumeViewport';
 import VolumeViewport3d from '@/components/VolumeViewport3d';
 import { ToolsPanel } from '@/features/tools';
+import useRendererResize from '@/hooks/useRendererResize';
 
 import OperationsPanel from '@/components/OperationsPanel';
 
@@ -30,17 +31,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
 
   const [mip, setMip] = useState(false);
 
-  useEffect(() => {
-    if (!renderingEngine) return;
-
-    const onResize = () => {
-      // first arg = force rerender, second = maintain FOV(aspect)
-      renderingEngine.resize(true, true);
-    };
-
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [renderingEngine]);
+  useRendererResize(renderingEngine);
 
   useEffect(() => {
     cornerstoneTools.addTool(TrackballRotateTool);
