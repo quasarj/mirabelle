@@ -104,15 +104,18 @@ export default function Home() {
 
           <li>DICOM Visual Review</li>
           <li>
-            <Link to="/review/dicom/iec/1117950">DICOM Review IEC</Link>
+            <Link to="/review/dicom/iec/1117950">DICOM Review IEC (volume)</Link>
           </li>
           <li>
-            <Link to="/review/dicom/vr/1">DICOM Review VR</Link>
+            <Link to="/review/dicom/iec/1167702">DICOM Review IEC (stack)</Link>
+          </li>
+          <li>
+            <Link to="/review/dicom/vr/1515">DICOM Review VR</Link>
           </li>
 
           <li>Nifti Visual Review</li>
           <li>
-            <Link to="/review/nifti/file/92559156">Nifti Review File</Link>
+            <Link to="/review/nifti/file/155149761">Nifti Review File</Link>
           </li>
           <li>
             <Link to="/review/nifti/vr/1">Nifti Review VR</Link>

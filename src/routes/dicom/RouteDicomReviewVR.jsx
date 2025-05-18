@@ -1,76 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { useDispatch } from 'react-redux'
-import { setToolsConfig, setStateValue, Enums } from '@/features/presentationSlice';
+
+import Header from '@/components/Header';
+import DicomReviewVR from '@/features/dicom-review/DicomReviewVR';
+
+import { getIECsForVR } from '@/utilities';
 
 import { Context } from '@/components/Context';
-
-import OperationsPanel from '@/components/OperationsPanel';
-import Header from '@/components/Header';
-
-import { StackView } from '@/features/stack-view';
-
-import createImageIdsAndCacheMetaData from '@/lib/createImageIdsAndCacheMetaData';
 
 import './RouteDicomReviewVR.css';
 
 export async function loader({ params }) {
 
-  return { vr: params.vr };
+  const iecs = await getIECsForVR(params.visual_review_instance_id);
+
+  return { vr: params.visual_review_instance_id, iecs };
 
 }
 
-export default function RouteDicomReviewVR() {
-  const { vr } = useLoaderData();
-  const [imageIds, setImageIds] = useState();
-  const dispatch = useDispatch()
+function RouteDicomReviewVR() {
+  const { vr, iecs } = useLoaderData();
 
-  dispatch(setToolsConfig({
-    viewToolGroup: {
-      visible: true,
-      value: 'volume',
-      volumeVisible: false,
-      projectionVisible: false,
-      stackVisible: false,
-    }
-  }));
-
-  dispatch(setStateValue({ path: "left", value: true }));
-  dispatch(setStateValue({ path: "view", value: Enums.ViewOptions.STACK }));
-
-  // dispatch(setToolsConfig(
-  //   {viewToolGroup: {visible: true}}
-  // ));
-
-
-  // const iec = 1167702;
-  const iec = 1167698;
-
-  useEffect(() => {
-    const f = async () => {
-      const imageIds = await createImageIdsAndCacheMetaData({
-        StudyInstanceUID:
-          `iec:${iec}`,
-        SeriesInstanceUID:
-          "any",
-        wadoRsRoot: "/papi/v1/wadors",
-      })
-      setImageIds(imageIds);
-    };
-
-    f();
-  }, []);
-
-
+  // Here we just assemble the various panels that we need for this mode
   return (
-    <div id="RouteDICOMReviewVR">
-      <Context.Provider value={{ title: "DICOM Review VR" }}>
-        <Header />
-        <div>
-          <p>Route: DICOM Review: VR ({vr})</p>
-          <StackView frames={imageIds} />
-        </div>
-      </Context.Provider>
-    </div>
+    <DicomReviewVR
+      vr={vr}
+      iecs={iecs}
+    />
   );
 }
+
+export default RouteDicomReviewVR

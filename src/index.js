@@ -94,7 +94,7 @@ const router = createBrowserRouter(
 					loader: routeNiftiReviewFileLoader,
 				},
 				{
-					path: "review/nifti/vr/:vr",
+					path: "review/nifti/vr/:nifti_visual_review_instance_id",
 					element: <RouteNiftiReviewVR />,
 				HydrateFallback: LoadingSpinner,
 					loader: routeNiftiReviewVRLoader,
@@ -106,7 +106,7 @@ const router = createBrowserRouter(
 					loader: routeDicomReviewIECLoader,
 				},
 				{
-					path: "review/dicom/vr/:vr",
+					path: "review/dicom/vr/:visual_review_instance_id",
 					element: <RouteDicomReviewVR />,
 				HydrateFallback: LoadingSpinner,
 					loader: routeDicomReviewVRLoader,
