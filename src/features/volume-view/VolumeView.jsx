@@ -31,6 +31,18 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
   const [mip, setMip] = useState(false);
 
   useEffect(() => {
+    if (!renderingEngine) return;
+
+    const onResize = () => {
+      // first arg = force rerender, second = maintain FOV(aspect)
+      renderingEngine.resize(true, true);
+    };
+
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [renderingEngine]);
+
+  useEffect(() => {
     cornerstoneTools.addTool(TrackballRotateTool);
     cornerstoneTools.addTool(BrushTool);
     cornerstoneTools.addTool(RectangleScissorsTool);
