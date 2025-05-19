@@ -54,10 +54,6 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
     onPresetChange(newPreset);
   };
 
-  // activate the default tool selection for left and right click
-  // manager.switchLeftClickMode("selection");
-  // manager.switchRightClickMode("zoom");
-
   return (
     <div id="tools-panel" className="side-panel">
       {

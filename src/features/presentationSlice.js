@@ -191,7 +191,8 @@ const presentationSlice = createSlice({
       const initial = presentationSlice.getInitialState();
       return {
         ...initial,
-        ...state.stateValues,
+        // preserve the stateValues
+        stateValues: { ...state.stateValues },
       }
     },
 
@@ -220,13 +221,10 @@ const presentationSlice = createSlice({
     // Sets the configuration for the Masker Route
     setMaskerConfig: (state, action) => {
 
-      const oldstate = { ...state };
-      // Reset to initialState manually
-      Object.assign(state,
-        JSON.parse(JSON.stringify(presentationSlice.getInitialState())));
-
-      // preserve the stateValues
-      state.stateValues = oldstate.stateValues;
+      // const oldstate = { ...state };
+      // // Reset to initialState manually
+      // Object.assign(state,
+      //   JSON.parse(JSON.stringify(presentationSlice.getInitialState())));
 
       state.panelConfig.visibility.left = true;
       state.panelConfig.visibility.tools = true;

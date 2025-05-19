@@ -13,6 +13,7 @@ import {
   expandSegTo3D,
   isSegFlat,
   loadIECVolumeAndSegmentation,
+  loadVolumeAndSegmentation,
   getIECInfo,
 
 } from '@/utilities';
@@ -99,8 +100,11 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
       // setIsInitialized(false);
       setIsErrored(false);
       // cornerstone.cache.purgeCache();
-      let volumeId = `vol-${iec}`;
-      let segmentationId = `vol-${iec}-seg`;
+      let volumeId = `vol-${iec}-${Date.now()}`;
+      let segmentationId = `vol-${iec}-seg-${Date.now()}`;
+
+      // const { volumetric, frames } = await getIECInfo(iec, false); 
+      // await loadVolumeAndSegmentation(frames, volumeId, segmentationId);
 
       try {
         await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId, vr);

@@ -6,7 +6,7 @@ import MaskIEC from '@/features/mask/MaskIEC';
 
 // import { getDetails } from '@/masking.js';
 
-import { setMaskerConfig } from '@/features/presentationSlice'
+import { setMaskerConfig, reset } from '@/features/presentationSlice'
 
 import './RouteMaskIEC.css';
 
@@ -25,6 +25,7 @@ export default function RouteMaskIEC() {
   let { iec } = useLoaderData();
 
   useEffect(() => {
+    dispatch(reset());
     dispatch(setMaskerConfig());
   }, []);
 

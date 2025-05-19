@@ -8,7 +8,7 @@ import { getFiles, getIECInfo } from '@/utilities';
 import { TASK_CONFIGS } from '@/config/config';
 
 import { useDispatch, useSelector } from 'react-redux'
-import { setMaskerReviewConfig } from '@/features/presentationSlice'
+import { setMaskerReviewConfig, reset } from '@/features/presentationSlice'
 import MaskReviewIEC from '@/features/mask-review/MaskReviewIEC';
 
 import './RouteMaskReviewIEC.css';
@@ -26,6 +26,7 @@ export default function RouteMaskReviewIEC() {
   const { details, iec } = useLoaderData();
 
   useEffect(() => {
+    dispatch(reset());
     dispatch(setMaskerReviewConfig());
   }, []);
 

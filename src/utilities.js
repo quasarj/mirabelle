@@ -5,6 +5,8 @@ import createImageIdsAndCacheMetaData from './lib/createImageIdsAndCacheMetaData
 
 const { 
   volumeLoader,
+  imageLoader,
+  metaData,
 } = cornerstone;
 const { 
   Enums: csToolsEnums,
@@ -203,7 +205,6 @@ export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId
 
 export async function loadVolumeAndSegmentation(imageIds, volumeId, segmentationId) {
 
-
   let volume = cornerstone.cache.getVolume(volumeId);
   if (!volume) {
     console.log("Volume didn't already exist, creating it");
@@ -220,7 +221,6 @@ export async function loadVolumeAndSegmentation(imageIds, volumeId, segmentation
 
   cornerstoneTools.segmentation.removeAllSegmentations();
   cornerstoneTools.segmentation.removeAllSegmentationRepresentations();
-
 
   // Create a segmentation of the same resolution as the source data for the CT volume
   volumeLoader.createAndCacheDerivedLabelmapVolume(volumeId, {
@@ -241,8 +241,6 @@ export async function loadVolumeAndSegmentation(imageIds, volumeId, segmentation
       },
     },
   ]);
-
-
 
   return volume;
 }
