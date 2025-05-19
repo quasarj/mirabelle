@@ -6,7 +6,7 @@ import DicomReviewIEC from '@/features/dicom-review/DicomReviewIEC';
 
 //import { getDicomDetails } from '@/visualreview.js';
 
-import { setVisualReviewConfig } from '@/features/presentationSlice'
+import { setVisualReviewConfig, reset } from '@/features/presentationSlice'
 
 import './RouteDicomReviewIEC.css';
 
@@ -26,6 +26,7 @@ export default function RouteDicomReviewIEC() {
   let { iec } = useLoaderData();
 
   useEffect(() => {
+    dispatch(reset());
     dispatch(setVisualReviewConfig());
   }, []);
 
