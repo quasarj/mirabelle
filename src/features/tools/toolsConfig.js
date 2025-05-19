@@ -45,17 +45,17 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.functionToolGroup.visibility.mask, {
       name: "Mask",
       icon: "domino_mask",
-      action: () => manager.switchFunctionMode("mask"),
+      action: () => manager.switchFunctionMode(Enums.FunctionOptions.MASK),
     }),
     ...maybe(globalToolsConfig.functionToolGroup.visibility.blackout, {
       name: "Blackout",
       icon: "imagesearch_roller",
-      action: () => manager.switchFunctionMode("blackout"),
+      action: () => manager.switchFunctionMode(Enums.FunctionOptions.BLACKOUT),
     }),
     ...maybe(globalToolsConfig.functionToolGroup.visibility.mask, {
       name: "Slice Removal",
       icon: "content_cut",
-      action: () => manager.switchFunctionMode("slice_removal"),
+      action: () => manager.switchFunctionMode(Enums.FunctionOptions.SLICE_REMOVE),
     }),
   ];
 
@@ -63,12 +63,12 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.formToolGroup.visibility.cylinder, {
       name: "Cylinder",
       icon: "circle",
-      action: () => manager.switchFormMode("cylinder"),
+      action: () => manager.switchFormMode(Enums.FormOptions.CYLINDER),
     }),
     ...maybe(globalToolsConfig.formToolGroup.visibility.cuboid, {
       name: "Cuboid",
       icon: "square",
-      action: () => manager.switchFormMode("cuboid"),
+      action: () => manager.switchFormMode(Enums.FormOptions.CUBOID),
     }),
   ];
 
@@ -76,17 +76,17 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.leftClickToolGroup.visibility.windowLevel, {
       name: "Window Level",
       icon: "exposure",
-      action: () => manager.switchLeftClickMode("winlev"),
+      action: () => manager.switchLeftClickMode(Enums.LeftClickOptions.WINDOW_LEVEL),
     }),
     ...maybe(globalToolsConfig.leftClickToolGroup.visibility.crossHairs, {
       name: "Crosshairs",
       icon: "point_scan",
-      action: () => manager.switchLeftClickMode("crosshair"),
+      action: () => manager.switchLeftClickMode(Enums.LeftClickOptions.CROSSHAIRS),
     }),
     ...maybe(globalToolsConfig.leftClickToolGroup.visibility.rectangleScissors, {
       name: "Selection",
       icon: "gesture_select",
-      action: () => manager.switchLeftClickMode("selection"),
+      action: () => manager.switchLeftClickMode(Enums.LeftClickOptions.SELECTION),
     }),
   ];
 
@@ -94,12 +94,12 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.rightClickToolGroup.visibility.zoom, {
       name: "Zoom",
       icon: "search",
-      action: () => manager.switchRightClickMode("zoom"),
+      action: () => manager.switchRightClickMode(Enums.RightClickOptions.ZOOM),
     }),
     ...maybe(globalToolsConfig.rightClickToolGroup.visibility.pan, {
       name: "Pan",
       icon: "pan_tool",
-      action: () => manager.switchRightClickMode("pan"),
+      action: () => manager.switchRightClickMode(Enums.RightClickOptions.PAN),
     }),
   ];
 

@@ -43,8 +43,8 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   const manager = useToolsManager({
     toolGroup,
-    defaultLeftClickMode: "selection",
-    defaultRightClickMode: "zoom",
+    defaultLeftClickMode: globalToolsConfig.leftClickToolGroup.defaultValue,
+    defaultRightClickMode: globalToolsConfig.rightClickToolGroup.defaultValue,
   });
   const toolsConfigs = useToolsConfigs({ manager });
 

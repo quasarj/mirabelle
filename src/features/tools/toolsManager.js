@@ -54,15 +54,15 @@ export default function useToolsManager({
     let newTool;
 
     switch (new_mode) {
-      case "winlev":
+      case Enums.LeftClickOptions.WINDOW_LEVEL:
         newTool = WindowLevelTool;
         break;
 
-      case "crosshair":
+      case Enums.LeftClickOptions.CROSSHAIRS:
         newTool = CrosshairsTool;
         break;
 
-      case "selection":
+      case Enums.LeftClickOptions.SELECTION:
         newTool = RectangleScissorsTool;
         break;
     }
@@ -90,11 +90,11 @@ export default function useToolsManager({
     let newTool;
 
     switch (new_mode) {
-      case "pan":
+      case Enums.RightClickOptions.PAN:
         newTool = PanTool;
         break;
 
-      case "zoom":
+      case Enums.RightClickOptions.ZOOM:
         newTool = ZoomTool;
         break;
     }

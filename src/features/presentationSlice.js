@@ -9,7 +9,7 @@ export const Enums = {
   FunctionOptions: Object.freeze({
     MASK: 'mask',
     BLACKOUT: 'blackout',
-    SLICE_REMOVE: 'slice-remove',
+    SLICE_REMOVE: 'slice_remove',
   }),
   FormOptions: Object.freeze({
     CUBOID: 'cuboid',
@@ -17,7 +17,7 @@ export const Enums = {
   }),
   LeftClickOptions: Object.freeze({
     SELECTION: 'selection',
-    WINDOW_LEVEL: 'window-level',
+    WINDOW_LEVEL: 'window_level',
     CROSSHAIRS: 'crosshairs',
   }),
   RightClickOptions: Object.freeze({
