@@ -29,10 +29,10 @@ import RouteMaskIEC, { loader as routeMaskIECLoader, }
 from './routes/mask/RouteMaskIEC';
 
 import RouteMaskReviewIEC, { loader as routeMaskReviewIECLoader, } 
-from './routes/mask-review/iec';
+from './routes/mask-review/RouteMaskReviewIEC';
 
 import RouteMaskReviewVR, { loader as routeMaskerReviewVRLoader }
-from './routes/mask-review/vr';
+from './routes/mask-review/RouteMaskReviewVR';
 
 import RouteDicomReviewVR, { loader as routeDicomReviewVRLoader }
 from './routes/dicom/RouteDicomReviewVR';

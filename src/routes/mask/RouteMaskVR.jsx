@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLoaderData, Link } from 'react-router-dom';
 
 import Header from '@/components/Header';
-import MaskIECMultiPanel from '@/components/MaskIECMultiPanel';
+import MaskVR from '@/features/mask/MaskVR';
 
 
 import { getDetails } from '@/masking';
@@ -26,7 +26,7 @@ export default function RouteMaskVR() {
     // Here we just assemble the various panels that we need for this mode
     return (
         <Context.Provider value={{ title: "Route Mask VR" }}>
-            <MaskIECMultiPanel
+            <MaskVR
                 vr={vr}
                 iecs={iecs}
             />

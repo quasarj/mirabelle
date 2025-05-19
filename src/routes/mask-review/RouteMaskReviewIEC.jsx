@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setMaskerReviewConfig } from '@/features/presentationSlice'
 import MaskReviewIEC from '@/features/mask-review/MaskReviewIEC';
 
-import './iec.css';
+import './RouteMaskReviewIEC.css';
 
 export async function loader({ params }) {
 

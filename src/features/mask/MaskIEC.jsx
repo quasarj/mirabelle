@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { setStackConfig, setVolumeConfig, setTitle, setLoading } from '@/features/presentationSlice';
 import toast from 'react-hot-toast';
 
-import createImageIdsAndCacheMetaData from "../lib/createImageIdsAndCacheMetaData";
+import createImageIdsAndCacheMetaData from "@/lib/createImageIdsAndCacheMetaData";
 import { volumeLoader } from "@cornerstonejs/core";
 import * as cornerstone from "@cornerstonejs/core";
 import * as cornerstoneTools from '@cornerstonejs/tools';
@@ -17,21 +17,21 @@ import {
 
 } from '@/utilities';
 import { getDicomDetails } from '@/visualreview';
-import { finalCalc } from '../masking';
+import { finalCalc } from '@/masking';
 
-import Header from './Header';
+import Header from '@/components/Header';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { VolumeView } from '@/features/volume-view';
 import { StackView } from '@/features/stack-view';
 import { ToolsPanel } from '@/features/tools';
-import OperationsPanel from './OperationsPanel';
-import NavigationPanel from './NavigationPanel';
+import OperationsPanel from '@/components/OperationsPanel';
+import NavigationPanel from '@/components/NavigationPanel';
 
-import { Context } from './Context.js';
-import RouteLayout from './RouteLayout';
+import { Context } from '@/components/Context.js';
+import RouteLayout from '@/components/RouteLayout';
 
-import './MaskIECPanel.css';
+import './MaskIEC.css';
 
 const {
   ToolGroupManager,
@@ -40,7 +40,7 @@ const {
   segmentation
 } = cornerstoneTools;
 
-function MaskIECPanel({ iec, vr, onNext, onPrevious }) {
+function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
 
@@ -94,7 +94,7 @@ function MaskIECPanel({ iec, vr, onNext, onPrevious }) {
 
   // Load the volume into the cache
   useEffect(() => {
-    console.log("MaskIECPanel useEffect[iec]:", iec);
+    console.log("MaskIEC useEffect[iec]:", iec);
     const initializeVolume = async () => {
       // setIsInitialized(false);
       setIsErrored(false);
@@ -280,4 +280,4 @@ function MaskIECPanel({ iec, vr, onNext, onPrevious }) {
   )
 }
 
-export default MaskIECPanel
+export default MaskIEC

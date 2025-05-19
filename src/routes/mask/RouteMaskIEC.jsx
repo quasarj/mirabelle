@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 
-import MaskIECPanel from '@/components/MaskIECPanel';
+import MaskIEC from '@/features/mask/MaskIEC';
 
 // import { getDetails } from '@/masking.js';
 
@@ -29,6 +29,6 @@ export default function RouteMaskIEC() {
   }, []);
 
   return (
-    <MaskIECPanel iec={iec} />
+    <MaskIEC iec={iec} />
   );
 }

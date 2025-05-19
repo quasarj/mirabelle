@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import MaterialButtonSet from '@/components/MaterialButtonSet';
-import MaskIECPanel from '@/components/MaskIECPanel';
+import MaskIEC from '@/features/mask/MaskIEC';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/features/presentationSlice';
 
-import './MaskIECMultiPanel.css';
+import './MaskVR.css';
 
-export default function MaskIECMultiPanel({ vr, iecs }) {
+export default function MaskVR({ vr, iecs }) {
 	const [iec, setIec] = useState(0);
 	const [offset, setOffset] = useState(null);
   const dispatch = useDispatch();
@@ -43,7 +43,7 @@ export default function MaskIECMultiPanel({ vr, iecs }) {
 	return (
 		<>
 			{iec && (
-				<MaskIECPanel
+				<MaskIEC
 					vr={vr}
 					iec={iec}
 					onNext={handleNext}

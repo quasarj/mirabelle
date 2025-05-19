@@ -6,7 +6,7 @@ import { Context } from '@/components/Context';
 import OperationsPanel from '@/components/OperationsPanel';
 import Header from '@/components/Header';
 
-import './vr.css';
+import './RouteMaskReviewVR.css';
 
 export async function loader({ params }) {
 
