@@ -23,6 +23,12 @@
   ;
 }
 
+#tools-panel div.opacity-control input {
+  @apply
+    w-full
+  ;
+}
+
 .preset-dropdown-container {
   display: flex;
   align-items: center;

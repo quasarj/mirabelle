@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setStateValue } from '@/features/presentationSlice';
 
 import * as cornerstoneTools from '@cornerstonejs/tools';
 
@@ -20,16 +21,27 @@ function toTitleCase(some_string) {
 };
 
 function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
+  const dispatch = useDispatch();
+
   const presets = useSelector(state => state.presentation.presets);
   const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
   const globalStateValues = useSelector(state => state.presentation.stateValues);
+
+  // pull opacity config + value from Redux
+  const { opacityToolGroup } = globalToolsConfig;
+  const opacity = globalStateValues.opacity;
+
+  const handleOpacityChange = e => {
+    const value = parseFloat(e.target.value);
+    dispatch(setStateValue({ path: 'opacity', value }));
+  };
 
   const maskingFunction = useSelector(state => state.masking.function);
   const maskingForm = useSelector(state => state.masking.form);
 
   const [selectedPreset, setSelectedPreset] = useState(defaultPreset);
 
-  const manager = useToolsManager({ 
+  const manager = useToolsManager({
     toolGroup,
     defaultLeftClickMode: "selection",
     defaultRightClickMode: "zoom",
@@ -98,6 +110,19 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
           />
         </div>
       }
+      {opacityToolGroup.visible && (
+        <div className="opacity-control">
+          <p>Opacity <span>{opacity.toFixed(1)}:</span></p>
+          <input
+            type="range"
+            min={opacityToolGroup.min}
+            max={opacityToolGroup.max}
+            step={opacityToolGroup.step}
+            value={opacity}
+            onChange={handleOpacityChange}
+          />
+        </div>
+      )}
       {
         globalToolsConfig.presetToolGroup.visible &&
         <div>
