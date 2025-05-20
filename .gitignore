@@ -29,5 +29,3 @@ obj
 *.esproj
 *.esproj.user
 tags
-/launch-webpack-vs.js
-/bin
