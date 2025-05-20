@@ -191,13 +191,19 @@ export async function getIECsForVR(visual_review_id) {
 }
 
 export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId) {
-  const imageIds = await createImageIdsAndCacheMetaData({
-    StudyInstanceUID:
-    `iec:${iec}`,
-    SeriesInstanceUID:
-    "any",
-    wadoRsRoot: "/papi/v1/wadors",
-  })
+  let imageIds;
+  try {
+    imageIds = await createImageIdsAndCacheMetaData({
+      StudyInstanceUID:
+      `iec:${iec}`,
+      SeriesInstanceUID:
+      "any",
+      wadoRsRoot: "/papi/v1/wadors",
+    })
+  } catch (error) {
+    console.log(error);
+    return;
+  }
 
   return await loadVolumeAndSegmentation(imageIds, volumeId, segmentationId);
 

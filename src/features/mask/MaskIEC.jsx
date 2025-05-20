@@ -61,10 +61,9 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
   const [volumetric, setVolumetric] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const [coords, setCoords] = useState();
 
   let viewer;
-
-  let coords; // coordinates of drawn mask
 
   useEffect(() => {
     // Only create a new rendering engine if one doesn't already exist
@@ -113,7 +112,6 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
         // TODO: set an isError status here and display an error message?
         setErrorMessage(error);
         setIsErrored(true);
-        return;
       }
 
       setIsInitialized(true);
@@ -173,7 +171,8 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
       alert("Cannot expand a flat selection! You must draw in at least two planes.");
       return;
     }
-    coords = expandSegTo3D(segmentationId);
+    const coords = expandSegTo3D(segmentationId);
+
 
     //flag data as updated so it will redraw
     cornerstoneTools.segmentation
@@ -200,6 +199,7 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
     });
 
     setExpanded(true);
+    setCoords(coords);
     toast.success("Expanded selection!");
   }
   function handleClear() {
@@ -216,7 +216,7 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
       .triggerSegmentationDataModified(segmentationId);
   }
   async function handleAccept() {
-    if (coords === undefined) {
+    if (!expanded) {
       alert("You Expand Selection first!");
       return;
     }
