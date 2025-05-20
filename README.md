@@ -1,5 +1,1 @@
-npm install
-
-npx webpack
-
-npm run start
+Mirabelle is a tool for displaying image volumes and applying masks.
