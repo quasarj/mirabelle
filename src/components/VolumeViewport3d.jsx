@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
-import { RenderingEngine, Enums, volumeLoader } from "@cornerstonejs/core"
+import { RenderingEngine, Enums, volumeLoader } from "@cornerstonejs/core";
+import { useSelector } from 'react-redux';
 
 import './VolumeViewport3d.css';
 
@@ -31,6 +32,8 @@ const { ViewportType } = Enums;
 
 function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, orientation, preset3d }) {
   const elementRef = useRef(null);
+
+  const opacity = useSelector(state => state.presentation.stateValues.opacity);
 
   let realOrientation = Enums.OrientationAxis.ACQUISITION;
   if (orientation == 'SAGITTAL') {
@@ -87,7 +90,30 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
     }
 
     setup()
-  }, [elementRef, volumeId])
+  }, [elementRef, volumeId]);
+
+  // Update scalar opacity
+  useEffect(() => {
+    if (!renderingEngine) return;
+    const viewport = renderingEngine.getViewport(viewportId);
+    if (!viewport) return;
+
+    const actorEntry = viewport.getActors()[0];
+    if (!actorEntry?.actor) return;
+    const volumeActor = actorEntry.actor;
+    const property = volumeActor.getProperty();
+    const fn = property.getScalarOpacity(0);
+
+    fn.removeAllPoints();
+    fn.addPoint(0, 0.0);
+    fn.addPoint(500, opacity);
+    fn.addPoint(1000, opacity);
+    fn.addPoint(1500, opacity);
+    fn.addPoint(2000, opacity);
+
+    property.setScalarOpacity(0, fn);
+    viewport.render();
+  }, [renderingEngine, viewportId, opacity]);
 
   useEffect(() => {
     const viewport = renderingEngine.getViewport(viewportId);
