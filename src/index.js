@@ -1,5 +1,5 @@
 /**
- * This is the true entrypoint of the program
+ * This is the true entrypoint of the program.
  */
 
 import React from 'react'
