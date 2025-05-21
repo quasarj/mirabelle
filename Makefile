@@ -1,3 +1,5 @@
+.PHONY: default tags clean
+
 default: serve
 
 serve: node_modules
@@ -8,6 +10,9 @@ build: node_modules
 
 node_modules: package.json
 	pnpm i
+
+tags: 
+	ctags -R --languages=JavaScript,TypeScript --exclude=node_modules --exclude=build --exclude=dist
 
 clean:
 	rm -rf node_modules dist
