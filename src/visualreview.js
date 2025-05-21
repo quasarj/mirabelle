@@ -29,8 +29,6 @@ export async function setNiftiStatus(file_id, status) {
 	return details;
 }
 
-
-
 export async function getDicomDetails(iec) {
 
 	const response = await fetch(`/papi/v1/iecs/${iec}/info`);

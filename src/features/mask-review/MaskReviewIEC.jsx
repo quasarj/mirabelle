@@ -95,8 +95,16 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
   useEffect(() => {
     console.log("MaskReviewIEC useEffect[iec]:", iec);
 
-    const { volumetric } = getDicomDetails(iec);
-    setVolumetric(volumetric);
+    const initialize = async () => {
+      const { volumetric } = await getDicomDetails(iec);
+      setVolumetric(volumetric); // still update state
+
+      if (volumetric) {
+        await initializeVolume();
+      } else {
+        await initializeStack();
+      }
+    };
 
     const initializeVolume = async () => {
       setIsErrored(false);
@@ -132,11 +140,8 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
       dispatch(setStackConfig());
     };
 
-    if (volumetric) {
-      initializeVolume();
-    } else {
-      initializeStack();
-    }
+    initialize();
+
   }, [iec]);
 
   function handleAction(action) {
