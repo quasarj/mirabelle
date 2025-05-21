@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setStateValue, Enums } from '@/features/presentationSlice'
+import { Enums } from '@/features/presentationSlice'
+import { setOption } from '@/features/optionSlice';
 
 const maybe = (condition, item) => condition ? [item]: [];
 
@@ -11,7 +12,7 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.viewToolGroup.visibility.volume, {
       name: "Volume",
       icon: "deployed_code",
-      action: () => dispatch(setStateValue(
+      action: () => dispatch(setOption(
         {
           path: "view",
           value: Enums.ViewOptions.VOLUME,
@@ -21,7 +22,7 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.viewToolGroup.visibility.projection, {
       name: "Maximum Intensity Projection",
       icon: "light_mode",
-      action: () => dispatch(setStateValue(
+      action: () => dispatch(setOption(
         {
           path: "view",
           value: Enums.ViewOptions.PROJECTION,
@@ -31,7 +32,7 @@ export default function useToolsConfigs({ manager }) {
     ...maybe(globalToolsConfig.viewToolGroup.visibility.stack, {
       name: "Stack",
       icon: "stacks",
-      action: () => dispatch(setStateValue(
+      action: () => dispatch(setOption(
         {
           path: "view",
           value: Enums.ViewOptions.STACK,

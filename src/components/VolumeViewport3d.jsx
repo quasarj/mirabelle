@@ -33,7 +33,7 @@ const { ViewportType } = Enums;
 function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, orientation, preset3d }) {
   const elementRef = useRef(null);
 
-  const opacity = useSelector(state => state.presentation.stateValues.opacity);
+  const opacity = useSelector(state => state.options.opacity);
 
   let realOrientation = Enums.OrientationAxis.ACQUISITION;
   if (orientation == 'SAGITTAL') {

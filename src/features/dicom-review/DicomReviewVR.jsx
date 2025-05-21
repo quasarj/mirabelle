@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MaterialButtonSet from '@/components/MaterialButtonSet';
 import DicomReviewIEC from '@/features/dicom-review/DicomReviewIEC';
 import { useDispatch } from 'react-redux';
-import { setLoading } from '@/features/presentationSlice';
+import { setLoading } from '@/features/optionSlice';
 
 import './DicomReviewVR.css';
 

@@ -14,7 +14,7 @@ export async function loader({ params }) {
 
 export default function RouteNiftiReviewFile() {
   const dispatch = useDispatch();
-  const viewState = useSelector(state => state.presentation.stateValues.view);
+  const viewState = useSelector(state => state.options.view);
 
   let { file } = useLoaderData();
 

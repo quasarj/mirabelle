@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setStateValue } from '@/features/presentationSlice';
+import { setOption } from '@/features/optionSlice';
 
 import * as cornerstoneTools from '@cornerstonejs/tools';
 
@@ -25,7 +25,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   const presets = useSelector(state => state.presentation.presets);
   const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
-  const globalStateValues = useSelector(state => state.presentation.stateValues);
+  const globalStateValues = useSelector(state => state.options);
 
   // pull opacity config + value from Redux
   const { opacityToolGroup } = globalToolsConfig;
@@ -33,7 +33,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   const handleOpacityChange = e => {
     const value = parseFloat(e.target.value);
-    dispatch(setStateValue({ path: 'opacity', value }));
+    dispatch(setOption({ path: 'opacity', value }));
   };
 
   const maskingFunction = useSelector(state => state.masking.function);

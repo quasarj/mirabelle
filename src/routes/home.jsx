@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Context } from '@/components/Context';
 import Header from '@/components/Header';
 import { useDispatch } from 'react-redux';
-import { setTitle } from '@/features/presentationSlice';
+import { setTitle } from '@/features/optionSlice';
 
 import './home.css';
 

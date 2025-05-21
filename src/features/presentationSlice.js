@@ -140,21 +140,6 @@ const presentationSlice = createSlice({
       },
     },
 
-    // State Values
-    stateValues: {
-      left: false,
-      right: false,
-      reset: false,
-      view: Enums.ViewOptions.VOLUME,
-      function: Enums.FunctionOptions.MASK,
-      form: Enums.FormOptions.CYLINDER,
-      leftClick: Enums.LeftClickOptions.SELECTION,
-      rightClick: Enums.RightClickOptions.ZOOM,
-      opacity: 0.3,
-      preset: 'CT-MIP',
-      loading: false,
-    },
-
     maximumIntensityProjection: false,
 
     presets: [
@@ -191,14 +176,7 @@ const presentationSlice = createSlice({
       const initial = presentationSlice.getInitialState();
       return {
         ...initial,
-        // preserve the stateValues
-        stateValues: { ...state.stateValues },
       }
-    },
-
-    setStateValue: (state, action) => {
-      const { path, value } = action.payload;
-      state.stateValues[path] = value;
     },
 
     // Set the entire toolsConfig
@@ -314,7 +292,6 @@ const presentationSlice = createSlice({
     setStackConfig: (state, action) => {
       state.toolsConfig.viewToolGroup.visible = true;
       state.toolsConfig.viewToolGroup.defaultValue = Enums.ViewOptions.STACK;
-      // state.stateValues.view = Enums.ViewOptions.STACK;
       state.toolsConfig.viewToolGroup.visibility.stack = true;
 
       state.toolsConfig.functionToolGroup.defaultValue = Enums.FunctionOptions.BLACKOUT;
@@ -361,17 +338,6 @@ const presentationSlice = createSlice({
       return state;
     },
 
-    // Sets the title for the header display
-    setTitle: (state, action) => {
-      state.stateValues.title = action.payload;
-
-      return state;
-    },
-    setLoading: (state, action) => {
-      state.stateValues.loading = action.payload;
-
-      return state;
-    },
 
   }
 })
@@ -390,9 +356,6 @@ export const {
   setStackConfig,
   setVolumeConfig,
   setNiftiConfig,
-  setStateValue,
-  setTitle,
-  setLoading,
 } = presentationSlice.actions
 
 export default presentationSlice.reducer 

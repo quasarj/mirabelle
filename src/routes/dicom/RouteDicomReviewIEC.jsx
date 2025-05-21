@@ -21,7 +21,7 @@ export async function loader({ params }) {
 export default function RouteDicomReviewIEC() {
 
   const dispatch = useDispatch();
-  const viewState = useSelector(state => state.presentation.stateValues.view);
+  const viewState = useSelector(state => state.options.view);
 
   let { iec } = useLoaderData();
 

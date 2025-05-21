@@ -2,7 +2,8 @@ import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux'
-import { setStackConfig, setVolumeConfig, setTitle, setLoading } from '@/features/presentationSlice';
+import { setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
+import { setTitle, setLoading } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
 
 import createImageIdsAndCacheMetaData from "@/lib/createImageIdsAndCacheMetaData";
