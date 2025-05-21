@@ -28,9 +28,14 @@ export default function useToolsManager({
   defaultLeftClickMode,
   defaultRightClickMode,
 }) {
+  //const [currentLeftClickTool, setCurrentLeftClickTool] = useState(null);
+  //const [currentRightClickTool, setCurrentRightClickTool] = useState(null);
+
   console.log("defaultLeftClickMode: ", defaultLeftClickMode);
   const _maskingOperation = useSelector((state) => state.masking.operation);
   const dispatch = useDispatch();
+
+
 
   let currentLeftClickTool;
   let currentRightClickTool;
@@ -49,6 +54,7 @@ export default function useToolsManager({
   const switchLeftClickMode = (new_mode) => {
     // Always make sure we setToolPassive on the current
     // tool, otherwise it will still be trying to work
+    //console.log("currentLeftClickTool: ", currentLeftClickTool);
     if (currentLeftClickTool) {
       toolGroup.setToolDisabled(currentLeftClickTool.toolName);
     }
@@ -80,6 +86,7 @@ export default function useToolsManager({
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Primary }],
     });
     currentLeftClickTool = newTool;
+    //setCurrentLeftClickTool(newTool);
   };
 
   const switchRightClickMode = (new_mode) => {
@@ -103,7 +110,7 @@ export default function useToolsManager({
     toolGroup.setToolActive(newTool.toolName, {
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Secondary }],
     });
-    currentRightClickTool = newTool;
+    setCurrentRightClickTool(newTool)
   };
 
   useEffect(() => {
