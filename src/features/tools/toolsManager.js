@@ -129,7 +129,7 @@ export default function useToolsManager({
     switchFunctionMode: (mode) => {
       dispatch(
         setOption({
-          path: "function",
+          key: "function",
           value: mode,
         }),
       );
@@ -138,7 +138,7 @@ export default function useToolsManager({
     switchFormMode: (mode) => {
       dispatch(
         setOption({
-          path: "form",
+          key: "form",
           value: mode,
         }),
       );

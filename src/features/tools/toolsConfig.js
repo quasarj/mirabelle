@@ -14,7 +14,7 @@ export default function useToolsConfigs({ manager }) {
       icon: "deployed_code",
       action: () => dispatch(setOption(
         {
-          path: "view",
+          key: "view",
           value: Enums.ViewOptions.VOLUME,
         }
       )),
@@ -24,7 +24,7 @@ export default function useToolsConfigs({ manager }) {
       icon: "light_mode",
       action: () => dispatch(setOption(
         {
-          path: "view",
+          key: "view",
           value: Enums.ViewOptions.PROJECTION,
         }
       )),
@@ -34,7 +34,7 @@ export default function useToolsConfigs({ manager }) {
       icon: "stacks",
       action: () => dispatch(setOption(
         {
-          path: "view",
+          key: "view",
           value: Enums.ViewOptions.STACK,
         }
       )),

@@ -2,8 +2,8 @@ import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux'
-import { setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
-import { setTitle, setLoading } from '@/features/optionSlice';
+import { Enums, setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
+import { setTitle, setLoading, setOption } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
 
 import createImageIdsAndCacheMetaData from "@/lib/createImageIdsAndCacheMetaData";
@@ -111,6 +111,7 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("DICOM Volume Review"));
       dispatch(setVolumeConfig());
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
       dispatch(setLoading(false));
     };
 

@@ -33,7 +33,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   const handleOpacityChange = e => {
     const value = parseFloat(e.target.value);
-    dispatch(setOption({ path: 'opacity', value }));
+    dispatch(setOption({ key: 'opacity', value }));
   };
 
   const maskingFunction = useSelector(state => state.masking.function);
