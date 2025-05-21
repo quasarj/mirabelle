@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Enums, setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
 import { setTitle, setLoading, setOption } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
@@ -55,6 +55,8 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
   const [volumetric, setVolumetric] = useState(true);
   const [expanded, setExpanded] = useState(false);
 
+  //const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
+
   let viewer;
 
   useEffect(() => {
@@ -88,10 +90,11 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
   useEffect(() => {
     console.log("DicomReviewIEC useEffect[iec]:", iec);
 
+    const { volumetric } = getDicomDetails(iec);
+    setVolumetric(volumetric);
+
     const initializeVolume = async () => {
-      // setIsInitialized(false);
       setIsErrored(false);
-      // cornerstone.cache.purgeCache();
       let volumeId = `vol-${iec}`;
       let segmentationId = `vol-${iec}-seg`;
 
@@ -111,7 +114,10 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("DICOM Volume Review"));
       dispatch(setVolumeConfig());
+      //console.log(globalToolsConfig.leftClickToolGroup.defaultValue)
+      //dispatch(setOption({ key: "leftClick", value: globalToolsConfig.leftClickToolGroup.defaultValue }));
       dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
       dispatch(setLoading(false));
     };
 
@@ -123,13 +129,8 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
           "any",
         wadoRsRoot: "/papi/v1/wadors",
       })
-
-      const { volumetric } = getDicomDetails(iec);
-
-
       setImageIds(imageIds);
       setIsInitialized(true);
-      setVolumetric(volumetric);
 
       dispatch(setTitle("DICOM Stack Review"));
       dispatch(setStackConfig());

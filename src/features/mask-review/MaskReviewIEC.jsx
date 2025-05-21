@@ -94,10 +94,12 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
   // Load the volume into the cache
   useEffect(() => {
     console.log("MaskReviewIEC useEffect[iec]:", iec);
+
+    const { volumetric } = getDicomDetails(iec);
+    setVolumetric(volumetric);
+
     const initializeVolume = async () => {
-      // setIsInitialized(false);
       setIsErrored(false);
-      // cornerstone.cache.purgeCache();
       let volumeId = `vol-review-${iec}`;
 
       const { volumetric, frames } = await getIECInfo(iec, true); 
@@ -123,13 +125,8 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
           "any",
         wadoRsRoot: "/papi/v1/wadors",
       })
-
-      const { volumetric } = getDicomDetails(iec);
-
-
       setImageIds(imageIds);
       setIsInitialized(true);
-      setVolumetric(volumetric);
 
       dispatch(setTitle("Mask Stack"));
       dispatch(setStackConfig());

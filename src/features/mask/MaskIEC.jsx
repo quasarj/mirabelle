@@ -97,15 +97,14 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
   // Load the volume into the cache
   useEffect(() => {
     console.log("MaskIEC useEffect[iec]:", iec);
+
+    const { volumetric } = getDicomDetails(iec);
+    setVolumetric(volumetric);
+
     const initializeVolume = async () => {
-      // setIsInitialized(false);
       setIsErrored(false);
-      // cornerstone.cache.purgeCache();
       let volumeId = `vol-${iec}-${Date.now()}`;
       let segmentationId = `vol-${iec}-seg-${Date.now()}`;
-
-      // const { volumetric, frames } = await getIECInfo(iec, false); 
-      // await loadVolumeAndSegmentation(frames, volumeId, segmentationId);
 
       try {
         await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId, vr);
@@ -133,13 +132,8 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
           "any",
         wadoRsRoot: "/papi/v1/wadors",
       })
-
-      const { volumetric } = getDicomDetails(iec);
-
-
       setImageIds(imageIds);
       setIsInitialized(true);
-      setVolumetric(volumetric);
 
       dispatch(setTitle("Mask Stack"));
       dispatch(setStackConfig());
