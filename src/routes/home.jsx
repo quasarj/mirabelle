@@ -131,7 +131,7 @@ export default function Home() {
         <h2>Examples (all direct IECs)</h2>
         <ul>
           {Object.entries(iecExamples).map((entry) => (
-            <li>
+            <li key={entry[1]}>
               <Link to={`/mask/iec/${entry[1]}`}>{entry[0]}</Link>
             </li>
           ))}
@@ -150,7 +150,7 @@ export default function Home() {
         <h2>Prod example links</h2>
         <ul>
           {Object.entries(ProdIecExamples).map((entry) => (
-            <li>
+            <li key={entry[1]}>
               <Link to={`/mask/iec/${entry[1]}`}>{entry[0]}</Link>
             </li>
           ))}
