@@ -28,17 +28,11 @@ export default function useToolsManager({
   defaultLeftClickMode,
   defaultRightClickMode,
 }) {
-  //const [currentLeftClickTool, setCurrentLeftClickTool] = useState(null);
-  //const [currentRightClickTool, setCurrentRightClickTool] = useState(null);
+  const [currentLeftClickTool, setCurrentLeftClickTool] = useState(null);
+  const [currentRightClickTool, setCurrentRightClickTool] = useState(null);
 
-  console.log("defaultLeftClickMode: ", defaultLeftClickMode);
   const _maskingOperation = useSelector((state) => state.masking.operation);
   const dispatch = useDispatch();
-
-
-
-  let currentLeftClickTool;
-  let currentRightClickTool;
 
   if (!toolsLoaded) {
     // add tools globally to cornerstone, but only once ever
@@ -52,11 +46,8 @@ export default function useToolsManager({
   }
 
   const switchLeftClickMode = (new_mode) => {
-    // Always make sure we setToolPassive on the current
-    // tool, otherwise it will still be trying to work
-    //console.log("currentLeftClickTool: ", currentLeftClickTool);
     if (currentLeftClickTool) {
-      toolGroup.setToolDisabled(currentLeftClickTool.toolName);
+      toolGroup.setToolDisabled(currentLeftClickTool);
     }
     let newTool;
 
@@ -76,24 +67,20 @@ export default function useToolsManager({
 
     if (newTool === undefined) {
       // nothing to do, not sure what is going on
-      console.log("Left Click mode was invalid: ", new_mode);
+      console.error("Left Click mode was invalid: ", new_mode);
       return;
     }
-
-    console.log("Setting left click to: ", newTool.toolName);
 
     toolGroup.setToolActive(newTool.toolName, {
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Primary }],
     });
-    currentLeftClickTool = newTool;
-    //setCurrentLeftClickTool(newTool);
+
+    setCurrentLeftClickTool(newTool.toolName);
   };
 
   const switchRightClickMode = (new_mode) => {
-    // Always make sure we setToolPassive on the current
-    // tool, otherwise it will still be trying to work
     if (currentRightClickTool) {
-      toolGroup.setToolDisabled(currentRightClickTool.toolName);
+      toolGroup.setToolDisabled(currentRightClickTool);
     }
     let newTool;
 
@@ -110,7 +97,8 @@ export default function useToolsManager({
     toolGroup.setToolActive(newTool.toolName, {
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Secondary }],
     });
-    setCurrentRightClickTool(newTool)
+
+    setCurrentRightClickTool(newTool.toolName);
   };
 
   useEffect(() => {
