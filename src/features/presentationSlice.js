@@ -342,8 +342,6 @@ const presentationSlice = createSlice({
   }
 })
 
-console.log(presentationSlice);
-
 export const { 
   setPresets,
   addPreset,
