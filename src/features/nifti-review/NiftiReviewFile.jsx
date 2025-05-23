@@ -23,6 +23,7 @@ import { VolumeView } from '@/features/volume-view';
 import { ToolsPanel } from '@/features/tools';
 import OperationsPanel from '@/components/OperationsPanel';
 import NavigationPanel from '@/components/NavigationPanel';
+import { DetailsPanel } from '@/features/details';
 
 import { Context } from '@/components/Context.js';
 import RouteLayout from '@/components/RouteLayout';
@@ -35,6 +36,18 @@ const {
   Enums: csToolsEnums,
   segmentation
 } = cornerstoneTools;
+
+function transformDetails(details) {
+
+  return {
+    'File ID': details.file_id,
+    'Import File Name': details.import_name,
+    'Import File Path': details.import_path,
+    'Posda File Path': details.posda_path,
+    'download_path': details.download_path,
+    'download_name': details.import_name,
+  }
+}
 
 function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
 
@@ -55,9 +68,7 @@ function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
   const [errorMessage, setErrorMessage] = useState();
 
   const [volumetric, setVolumetric] = useState(true);
-
-  //const [loaded, setLoaded] = useState(false);
-  //const [error, setError] = useState(false);
+  const [details, setDetails] = useState(true);
 
   let viewer;
 
@@ -92,14 +103,13 @@ function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
     console.log("NiftiReviewFile useEffect[file]:", file);
 
     const initializeVolume = async () => {
-      // setIsInitialized(false);
       setIsErrored(false);
-      // cornerstone.cache.purgeCache();
       let volumeId = `vol-${file}`;
-      //let segmentationId = `vol-${file}-seg`;
+      let segmentationId = `vol-${file}-seg`;
 
       try {
         const details = await getNiftiDetails(file);
+        setDetails(details);
 
         if (details.download_path === undefined) {
           setError(true);
@@ -142,7 +152,7 @@ function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
 
       setIsInitialized(true);
       setVolumeId(volumeId);
-      //setSegmentationId(segmentationId);
+      setSegmentationId(segmentationId);
       
       dispatch(setVolumeConfig());
       dispatch(setNiftiConfig());
@@ -222,7 +232,9 @@ function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
           />
         </>
       }
-      rightPanel={null}
+      rightPanel={
+        <DetailsPanel details={transformDetails(details)} />
+      }
     />
   );
 }

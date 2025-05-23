@@ -25,6 +25,7 @@ import { StackView } from '@/features/stack-view';
 import { ToolsPanel } from '@/features/tools';
 import OperationsPanel from '@/components/OperationsPanel';
 import NavigationPanel from '@/components/NavigationPanel';
+import { DetailsPanel } from '@/features/details';
 
 import RouteLayout from '@/components/RouteLayout';
 
@@ -36,6 +37,23 @@ const {
   Enums: csToolsEnums,
   segmentation
 } = cornerstoneTools;
+
+function transformDetails(details) {
+
+  return {
+    'IEC': details.image_equivalence_class_id,
+    'Images in IEC': details.file_count,
+    'Processing Status': details.processing_status,
+    'Review Status': details.review_status,
+    'Patient ID': details.patient_id,
+    'Series Instance UID': details.series_instance_uid,
+    'Series Description': details.series_description,
+    'Body Part Examined': details.body_part_examined,
+    'Path': details.path,
+    'download_path': `/papi/v1/masking/${details.image_equivalence_class_id}/reviewfiles/download`,
+    'download_name': `mask_review_${details.image_equivalence_class_id}.zip`,
+  }
+}
 
 export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
 
@@ -55,6 +73,7 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
   const [errorMessage, setErrorMessage] = useState();
 
   const [volumetric, setVolumetric] = useState(true);
+  const [details, setDetails] = useState(true);
   const [expanded, setExpanded] = useState(false);
 
   let viewer;
@@ -96,7 +115,9 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
     console.log("MaskReviewIEC useEffect[iec]:", iec);
 
     const initialize = async () => {
-      const { volumetric } = await getDicomDetails(iec);
+      const details = await getDicomDetails(iec);
+      const { volumetric } = details;
+      setDetails(details);
       setVolumetric(volumetric); // still update state
 
       if (volumetric) {
@@ -200,7 +221,9 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
           <OperationsPanel onAction={handleAction}/>
         </>
       }
-      rightPanel={null}
+      rightPanel={
+        <DetailsPanel details={transformDetails(details)} />
+      }
     />
   )
 }

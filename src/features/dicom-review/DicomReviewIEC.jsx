@@ -21,6 +21,7 @@ import { StackView } from '@/features/stack-view';
 import { ToolsPanel } from '@/features/tools';
 import OperationsPanel from '@/components/OperationsPanel';
 import NavigationPanel from '@/components/NavigationPanel';
+import { DetailsPanel } from '@/features/details';
 
 import { Context } from '@/components/Context.js';
 import RouteLayout from '@/components/RouteLayout';
@@ -33,6 +34,45 @@ const {
   Enums: csToolsEnums,
   segmentation
 } = cornerstoneTools;
+
+function transformDetails(details) {
+
+  return {
+    'IEC': details.image_equivalence_class_id,
+    'Images in IEC': details.file_count,
+    'Processing Status': details.processing_status,
+    'Review Status': details.review_status,
+    'Patient ID': details.patient_id,
+    'Series Instance UID': details.series_instance_uid,
+    'Series Description': details.series_description,
+    'Body Part Examined': details.body_part_examined,
+    'Path': details.path,
+    'download_path': details.download_path,
+    'download_name': details.download_name,
+  }
+
+  //{
+  //  "visual_review_instance_id": 1336,
+  //  "image_equivalence_class_id": 1117950,
+  //  "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.7009.2405.207727460862016708992675978757",
+  //  "equivalence_class_number": 0,
+  //  "processing_status": "Reviewed",
+  //  "review_status": "Good",
+  //  "projection_type": "combined",
+  //  "file_id": 168096766,
+  //  "path": "/nas/public/posda/storage/3b/ba/75/3bba754f8a658bc1c6d7c2a338b647c2",
+  //  "update_user": "system",
+  //  "update_date": "2025-05-21 01:08:45 PM",
+  //  "file_count": 148,
+  //  "body_part_examined": "HEAD",
+  //  "patient_id": "ACRIN-HNSCC-FDG-PET-CT-014",
+  //  "series_description": "AC_CT",
+  //  "download_path": "/papi/v1/files/iec/1117950",
+  //  "download_name": "iec_1117950.zip",
+  //  "volumetric": true
+  //}
+}
+
 
 function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
@@ -54,6 +94,7 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
   const [errorMessage, setErrorMessage] = useState();
 
   const [volumetric, setVolumetric] = useState(true);
+  const [details, setDetails] = useState(true);
   const [expanded, setExpanded] = useState(false);
 
   //const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
@@ -93,7 +134,9 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
     let volume;
 
     const initialize = async () => {
-      const { volumetric } = await getDicomDetails(iec);
+      const details = await getDicomDetails(iec);
+      const { volumetric } = details;
+      setDetails(details);
       setVolumetric(volumetric); // still update state
 
       if (volumetric) {
@@ -234,7 +277,9 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
           />
         </>
       }
-      rightPanel={null}
+      rightPanel={
+        <DetailsPanel details={transformDetails(details)}  />
+      }
     />
   )
 }

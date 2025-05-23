@@ -190,6 +190,15 @@ export async function getIECsForVR(visual_review_id) {
 	return details;
 }
 
+export async function getFilesForNiftiVR(nifti_visual_review_id) {
+
+	const response = await fetch(
+		`/papi/v1/masking/visualreview/${nifti_visual_review_id}`);
+	const details = await response.json();
+
+	return details;
+}
+
 export async function loadIECVolumeAndSegmentation(iec, volumeId, segmentationId) {
   let imageIds;
   try {

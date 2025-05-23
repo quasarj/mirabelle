@@ -30,6 +30,7 @@ import { StackView } from '@/features/stack-view';
 import { ToolsPanel } from '@/features/tools';
 import OperationsPanel from '@/components/OperationsPanel';
 import NavigationPanel from '@/components/NavigationPanel';
+import { DetailsPanel } from '@/features/details';
 
 import { Context } from '@/components/Context.js';
 import RouteLayout from '@/components/RouteLayout';
@@ -42,6 +43,23 @@ const {
   Enums: csToolsEnums,
   segmentation
 } = cornerstoneTools;
+
+function transformDetails(details) {
+
+  return {
+    'IEC': details.image_equivalence_class_id,
+    'Images in IEC': details.file_count,
+    'Processing Status': details.processing_status,
+    'Review Status': details.review_status,
+    'Patient ID': details.patient_id,
+    'Series Instance UID': details.series_instance_uid,
+    'Series Description': details.series_description,
+    'Body Part Examined': details.body_part_examined,
+    'Path': details.path,
+    'download_path': details.download_path,
+    'download_name': details.download_name,
+  }
+}
 
 function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
@@ -62,6 +80,7 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
   const [errorMessage, setErrorMessage] = useState();
 
   const [volumetric, setVolumetric] = useState(true);
+  const [details, setDetails] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [coords, setCoords] = useState();
 
@@ -99,7 +118,9 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
     console.log("MaskIEC useEffect[iec]:", iec);
 
     const initialize = async () => {
-      const { volumetric } = await getDicomDetails(iec);
+      const details = await getDicomDetails(iec);
+      const { volumetric } = details;
+      setDetails(details);
       setVolumetric(volumetric); // still update state
 
       if (volumetric) {
@@ -166,7 +187,6 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
         console.log("Unknown action:", action);
     }
   }
-
   async function handleExpand() {
     if (!expanded && isSegFlat(segmentationId)) {
       alert("Cannot expand a flat selection! You must draw in at least two planes.");
@@ -281,7 +301,9 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
           />
         </>
       }
-      rightPanel={null}
+      rightPanel={
+        <DetailsPanel details={transformDetails(details)} />
+      }
     />
   )
 }
