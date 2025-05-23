@@ -26,6 +26,7 @@ const {
 const { MouseBindings } = csToolsEnums;
 
 function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, toolGroup3d }) {
+  const [voiSynchronizer, setVoiSynchronizer] = useState();
   const [renderingEngine, setRenderingEngine] = useState();
   const [preset3d, setPreset3d] = useState(defaultPreset3d);
 
@@ -38,6 +39,10 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
     cornerstoneTools.addTool(BrushTool);
     cornerstoneTools.addTool(RectangleScissorsTool);
     cornerstoneTools.addTool(StackScrollTool);
+
+    if (!voiSynchronizer) {
+      setVoiSynchronizer(cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer"));
+    }
 
     // Only create a new rendering engine if one doesn't already exist
     let renderingEngine = cornerstone.getRenderingEngine("re1");
@@ -87,6 +92,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
         viewportId="axial2d"
         volumeId={volumeId}
         renderingEngine={renderingEngine}
+        voiSynchronizer={voiSynchronizer}
         toolGroup={toolGroup}
         segmentationId={segmentationId}
         orientation="AXIAL"
@@ -95,6 +101,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
         viewportId="coronal2d"
         volumeId={volumeId}
         renderingEngine={renderingEngine}
+        voiSynchronizer={voiSynchronizer}
         toolGroup={toolGroup}
         segmentationId={segmentationId}
         orientation="CORONAL"
@@ -103,6 +110,7 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
         viewportId="sagittal2d"
         volumeId={volumeId}
         renderingEngine={renderingEngine}
+        voiSynchronizer={voiSynchronizer}
         toolGroup={toolGroup}
         segmentationId={segmentationId}
         orientation="SAGITTAL"

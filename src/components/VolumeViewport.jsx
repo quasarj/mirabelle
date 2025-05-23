@@ -27,7 +27,15 @@ const { segmentation: segmentationUtils } = cstUtils;
 
 const { ViewportType } = Enums;
 
-function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orientation, segmentationId }) {
+function VolumeViewport({
+  viewportId,
+  renderingEngine,
+  voiSynchronizer,
+  toolGroup,
+  volumeId,
+  orientation,
+  segmentationId
+}) {
   const mip = useSelector(state => state.presentation.maximumIntensityProjection);
 
   console.log("[VolumeViewport] rendering, volumeId=", volumeId)
@@ -60,7 +68,12 @@ function VolumeViewport({ viewportId, renderingEngine, toolGroup, volumeId, orie
         },
       }
 
-      renderingEngine.enableElement(viewportInput)
+      renderingEngine.enableElement(viewportInput);
+
+      voiSynchronizer.add({
+        renderingEngineId: renderingEngine.id,
+        viewportId,
+      });
 
       // Get the stack viewport that was created
       const viewport = renderingEngine.getViewport(viewportId);
