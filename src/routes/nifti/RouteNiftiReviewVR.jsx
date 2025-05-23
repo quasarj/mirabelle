@@ -1,34 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
-
-import Header from '@/components/Header';
-
-import { Context } from '@/components/Context';
-
-import useConfigState from '@/hooks/useConfigState';
-import { getUsername, getNiftiDetails } from '@/visualreview';
-import { TASK_CONFIGS } from '@/config/config';
+import { useDispatch } from 'react-redux'
 
 import NiftiReviewVR from '@/features/nifti-review/NiftiReviewVR';
+
+import { getFilesForNiftiVR } from '@/utilities';
+
+import { setVisualReviewConfig, reset } from '@/features/presentationSlice'
 
 import './RouteNiftiReviewVR.css';
 
 export async function loader({ params }) {
-  return { vr: params.vr };
+  const files = await getFilesForNiftiVR(params.nifti_visual_review_instance_id);
+
+  return { vr: params.nifti_visual_review_instance_id, files };
 }
 
 export default function RouteNiftiReviewVR() {
-    const { vr } = useLoaderData();
+  const { vr, files } = useLoaderData();
+  const dispatch = useDispatch();
 
-    return (
-      <div id="RouteNiftiReviewVR">
-        <Context.Provider value={{ title: "Nifti Review VR" }}>
-          <Header />
-          <p>Route: Nifti Review: VR ({vr})</p>
-          <section>
-            <NiftiReviewVR vr={vr} />
-          </section>
-        </Context.Provider>
-      </div>
-    );
+  useEffect(() => {
+    dispatch(reset());
+    dispatch(setVisualReviewConfig());
+  }, []);
+
+  return (
+    <NiftiReviewVR vr={vr} files={files} />
+  );
 }

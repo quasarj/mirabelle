@@ -1,58 +1,55 @@
-import React, { useState } from 'react';
-
-//import NiftiReviewFile from './NiftiReviewFile';
-import Slider from '@/components/Slider';
+import React, { useState, useEffect } from 'react';
+import MaterialButtonSet from '@/components/MaterialButtonSet';
+import NiftiReviewFile from '@/features/nifti-review/NiftiReviewFile';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/features/optionSlice';
 
 import './NiftiReviewVR.css';
 
+export default function NiftiReviewVR({ vr, files }) {
+  const [file, setFile] = useState(0);
+  const [offset, setOffset] = useState(null);
+  const dispatch = useDispatch();
 
-export default function NiftiReviewVR({ vr }) {
-  const good = 13;
-  const bad = 17;
-  const [offset, setOffset] = useState(good);
+  useEffect(() => {
+    if (Array.isArray(files) && file.length) {
+      setOffset(0);
+      setIec(file[0]);
+    }
+  }, [files]);
 
-  const fakeVRFiles = [
-     151939350,
-     151939351,
-     151939696,
-     151939697,
-     151940237,
-     151940238,
-     151940277,
-     151940278,
-     151940637,
-     151940638,
-     151940983,
-     151940984,
-     155149760,
-     155149761,
-     155149762,
-     155149763,
-     155149764,
-     165610811,
-     165610818,
-     165610819,
-     165610820,
-     165610821,
-     165610822,
-  ];
+	const handleNext = () => {
+		let currentOffset = 0;
+		if (offset != null) {
+			currentOffset = offset + 1;
+		}
+		console.log("setting to", currentOffset);
+		dispatch(setLoading(true));
+		setFile(files[currentOffset]);
+		setOffset(currentOffset);
+	};
 
-  return (
-    <div id="NiftiReviewVR">
-      <p>NiftiReviewVR: ({vr})</p>
-      <Slider 
-        max={fakeVRFiles.length} 
-        initial={offset}
-        onChange={setOffset} 
-      />
-      <section>
-        Current: {fakeVRFiles[offset]} / {offset}
-        <button onClick={() => setOffset(offset - 1)}>Previous</button>
-        <button onClick={() => setOffset(offset + 1)}>Next</button>
-      </section>
-      <section>
-        {/*<NiftiReviewFile file={fakeVRFiles[offset]} />*/}
-      </section>
-    </div>
-  );
+	const handlePrevious = () => {
+		let currentOffset = 0;
+		if (offset != null) {
+			currentOffset = offset - 1;
+		}
+		console.log("setting to", currentOffset);
+		dispatch(setLoading(true));
+		setFile(files[currentOffset]);
+		setOffset(currentOffset);
+	};
+
+	return (
+		<>
+			{file && (
+				<NiftiReviewFile
+					vr={vr}
+					file={file}
+					onNext={handleNext}
+					onPrevious={handlePrevious}
+				/>
+			)}
+		</>
+	);
 }

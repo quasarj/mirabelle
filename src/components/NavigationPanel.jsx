@@ -7,7 +7,8 @@ import './NavigationPanel.css';
 function NavigationPanel({
   onNext = () => { },
   onPrevious = () => { },
-  currentIec,
+  currentId,
+  idLabel = 'IEC',
 }) {
 
   const navButtons = [
@@ -17,7 +18,7 @@ function NavigationPanel({
 
   return (
     <div id="navigation-panel" className="side-panel">
-      {currentIec && <p>IEC: {currentIec}</p>}
+      {currentId && <p>{idLabel}: {currentId}</p>}
       <MaterialButtonSet buttonConfig={navButtons} />
     </div>
   )

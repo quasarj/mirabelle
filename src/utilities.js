@@ -193,7 +193,7 @@ export async function getIECsForVR(visual_review_id) {
 export async function getFilesForNiftiVR(nifti_visual_review_id) {
 
 	const response = await fetch(
-		`/papi/v1/masking/visualreview/${nifti_visual_review_id}`);
+		`/papi/v1/nifti/visualreview/${nifti_visual_review_id}`);
 	const details = await response.json();
 
 	return details;
