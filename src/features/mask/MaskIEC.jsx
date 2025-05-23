@@ -267,6 +267,7 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
           }
           <ToolsPanel
             toolGroup={toolGroup}
+            toolGroup3d={toolGroup3d}
             defaultPreset={preset3d}
             onPresetChange={setPreset3d}
           />

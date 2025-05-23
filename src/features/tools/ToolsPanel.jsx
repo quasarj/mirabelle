@@ -20,7 +20,7 @@ function toTitleCase(some_string) {
   );
 };
 
-function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
+function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'CT-MIP' }) {
   const dispatch = useDispatch();
 
   const presets = useSelector(state => state.presentation.presets);
@@ -43,6 +43,7 @@ function ToolsPanel({ toolGroup, onPresetChange, defaultPreset = 'CT-MIP' }) {
 
   const manager = useToolsManager({
     toolGroup,
+    toolGroup3d,
     defaultLeftClickMode: globalToolsConfig.leftClickToolGroup.defaultValue,
     defaultRightClickMode: globalToolsConfig.rightClickToolGroup.defaultValue,
   });

@@ -23,14 +23,34 @@ const {
 
 const { MouseBindings } = csToolsEnums;
 
+
+
+/**
+ * Get the active tools for a given tool group and mouse button
+ * @param {object} toolGroup - The tool group to check
+ * @param {number} mouseButton - The mouse button to check (1 for left, 2 for right)
+ * @return {array} - An array of active tool names for the given mouse button
+ */
+function getActiveTools(toolGroup, mouseButton) {
+  let bindings = Object.keys(toolGroup.toolOptions)
+    .map((key) => [
+      key,
+      toolGroup.toolOptions[key].bindings
+        .map((binding) => binding.mouseButton)
+        .filter((binding) => binding === mouseButton),
+    ])
+    .filter(([key, binding]) => binding.length > 0)
+    .map(([key]) => key);
+
+  return bindings;
+}
+
 export default function useToolsManager({
   toolGroup,
+  toolGroup3d,
   defaultLeftClickMode,
   defaultRightClickMode,
 }) {
-  const [currentLeftClickTool, setCurrentLeftClickTool] = useState(null);
-  const [currentRightClickTool, setCurrentRightClickTool] = useState(null);
-
   const _maskingOperation = useSelector((state) => state.masking.operation);
   const dispatch = useDispatch();
 
@@ -46,9 +66,9 @@ export default function useToolsManager({
   }
 
   const switchLeftClickMode = (new_mode) => {
-    if (currentLeftClickTool) {
-      toolGroup.setToolDisabled(currentLeftClickTool);
-    }
+    getActiveTools(toolGroup, MouseBindings.Primary).forEach((tool) => {
+      toolGroup.setToolDisabled(tool);
+    });
     let newTool;
 
     switch (new_mode) {
@@ -74,14 +94,18 @@ export default function useToolsManager({
     toolGroup.setToolActive(newTool.toolName, {
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Primary }],
     });
-
-    setCurrentLeftClickTool(newTool.toolName);
   };
 
   const switchRightClickMode = (new_mode) => {
-    if (currentRightClickTool) {
-      toolGroup.setToolDisabled(currentRightClickTool);
+    getActiveTools(toolGroup, MouseBindings.Secondary).forEach((tool) => {
+      toolGroup.setToolDisabled(tool);
+    });
+    if (toolGroup3d) {
+      getActiveTools(toolGroup3d, MouseBindings.Secondary).forEach((tool) => {
+        toolGroup3d.setToolDisabled(tool);
+      });
     }
+
     let newTool;
 
     switch (new_mode) {
@@ -97,8 +121,11 @@ export default function useToolsManager({
     toolGroup.setToolActive(newTool.toolName, {
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Secondary }],
     });
-
-    setCurrentRightClickTool(newTool.toolName);
+    if (toolGroup3d) {
+      toolGroup3d.setToolActive(newTool.toolName, {
+        bindings: [{ mouseButton: csToolsEnums.MouseBindings.Secondary }],
+      });
+    }
   };
 
   useEffect(() => {
@@ -110,11 +137,22 @@ export default function useToolsManager({
     toolGroup.addTool(PanTool.toolName);
     toolGroup.addTool(ZoomTool.toolName);
 
+    if (toolGroup3d) {
+      toolGroup3d.addTool(ZoomTool.toolName);
+      toolGroup3d.addTool(PanTool.toolName);
+    }
+
     toolGroup.setToolActive(StackScrollTool.toolName, {
       bindings: [{ mouseButton: csToolsEnums.MouseBindings.Wheel }],
     });
+    if (toolGroup3d) {
+      toolGroup3d.setToolActive(ZoomTool.toolName, {
+        bindings: [{ mouseButton: csToolsEnums.MouseBindings.Wheel }],
+      });
+    }
 
     switchLeftClickMode(defaultLeftClickMode);
+    switchRightClickMode(defaultRightClickMode);
 
   }, [toolGroup]);
 

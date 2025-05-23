@@ -36,6 +36,7 @@ const {
 
 function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
+  const options = useSelector(state => state.options);
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
 
   const dispatch = useDispatch();
@@ -89,6 +90,7 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
     // Load the volume into the cache
   useEffect(() => {
     console.log("DicomReviewIEC useEffect[iec]:", iec);
+    let volume;
 
     const initialize = async () => {
       const { volumetric } = await getDicomDetails(iec);
@@ -107,7 +109,7 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
       let segmentationId = `vol-${iec}-seg`;
 
       try {
-        await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId, vr);
+        volume = await loadIECVolumeAndSegmentation(iec, volumeId, segmentationId, vr);
       } catch (error) {
         console.log(error);
         // TODO: set an isError status here and display an error message?
@@ -145,7 +147,6 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
     };
         
     initialize();
-
   }, [iec]);
 
   async function handleOperationsAction(action) {
@@ -219,6 +220,7 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
           }
           <ToolsPanel
             toolGroup={toolGroup}
+            toolGroup3d={toolGroup3d}
             defaultPreset={preset3d}
             onPresetChange={setPreset3d}
           />

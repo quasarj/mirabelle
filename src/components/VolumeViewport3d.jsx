@@ -128,6 +128,7 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
     <div
       id={viewportId}
       ref={elementRef}
+      onContextMenu={(e) => e.preventDefault()}
       className="volume-viewport viewport"
     ></div>
   )
