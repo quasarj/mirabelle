@@ -25,7 +25,7 @@ const {
 
 const { MouseBindings } = csToolsEnums;
 
-function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, toolGroup3d }) {
+export default function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, toolGroup3d }) {
   const [voiSynchronizer, setVoiSynchronizer] = useState();
   const [renderingEngine, setRenderingEngine] = useState();
   const [preset3d, setPreset3d] = useState(defaultPreset3d);

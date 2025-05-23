@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { setVolumeConfig, setNiftiConfig } from '@/features/presentationSlice';
 import { setTitle, setLoading } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
