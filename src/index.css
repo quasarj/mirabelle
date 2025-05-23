@@ -105,7 +105,10 @@ button:focus-visible {
 }
 
 
-/* Custom CSS to hide the scrollbar */
+/* ------------------------- */
+/* Hide all scrollbars but keep scrolling */
+/* ------------------------- */
+
 .no-scrollbars::-webkit-scrollbar {
   width: 0;
   height: 0;
@@ -114,4 +117,19 @@ button:focus-visible {
 .no-scrollbars {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+html,
+body {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE10+ */
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
 }
