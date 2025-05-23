@@ -50,31 +50,10 @@ function transformDetails(details) {
     'download_path': details.download_path,
     'download_name': details.download_name,
   }
-
-  //{
-  //  "visual_review_instance_id": 1336,
-  //  "image_equivalence_class_id": 1117950,
-  //  "series_instance_uid": "1.3.6.1.4.1.14519.5.2.1.7009.2405.207727460862016708992675978757",
-  //  "equivalence_class_number": 0,
-  //  "processing_status": "Reviewed",
-  //  "review_status": "Good",
-  //  "projection_type": "combined",
-  //  "file_id": 168096766,
-  //  "path": "/nas/public/posda/storage/3b/ba/75/3bba754f8a658bc1c6d7c2a338b647c2",
-  //  "update_user": "system",
-  //  "update_date": "2025-05-21 01:08:45 PM",
-  //  "file_count": 148,
-  //  "body_part_examined": "HEAD",
-  //  "patient_id": "ACRIN-HNSCC-FDG-PET-CT-014",
-  //  "series_description": "AC_CT",
-  //  "download_path": "/papi/v1/files/iec/1117950",
-  //  "download_name": "iec_1117950.zip",
-  //  "volumetric": true
-  //}
 }
 
 
-function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
+export default function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
   const options = useSelector(state => state.options);
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
@@ -95,9 +74,6 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
   const [volumetric, setVolumetric] = useState(true);
   const [details, setDetails] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-
-  //const globalToolsConfig = useSelector(state => state.presentation.toolsConfig);
 
   let viewer;
 
@@ -258,7 +234,8 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
             <NavigationPanel
               onNext={onNext}
               onPrevious={onPrevious}
-              currentIec={iec}
+              currentId={iec}
+              idLabel='IEC'
             />
           }
           <ToolsPanel
@@ -283,5 +260,3 @@ function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
     />
   )
 }
-
-export default DicomReviewIEC

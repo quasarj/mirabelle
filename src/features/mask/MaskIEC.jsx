@@ -61,7 +61,7 @@ function transformDetails(details) {
   }
 }
 
-function MaskIEC({ iec, vr, onNext, onPrevious }) {
+export default function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
 
@@ -288,7 +288,8 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
             <NavigationPanel
               onNext={onNext}
               onPrevious={onPrevious}
-              currentIec={iec}
+              currentId={iec}
+              idLabel='IEC'
             />
           }
           <ToolsPanel
@@ -314,5 +315,3 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
     />
   )
 }
-
-export default MaskIEC

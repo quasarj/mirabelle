@@ -20,7 +20,7 @@ function toTitleCase(some_string) {
   );
 };
 
-function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'CT-MIP', renderingEngine }) {
+export default function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'CT-MIP', renderingEngine }) {
   const dispatch = useDispatch();
 
   const presets = useSelector(state => state.presentation.presets);
@@ -145,5 +145,3 @@ function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'C
     </div>
   );
 }
-
-export default ToolsPanel;

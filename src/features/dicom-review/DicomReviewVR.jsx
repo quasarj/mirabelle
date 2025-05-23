@@ -6,7 +6,7 @@ import { setLoading } from '@/features/optionSlice';
 
 import './DicomReviewVR.css';
 
-function DicomReviewVR({ vr, iecs }) {
+export default function DicomReviewVR({ vr, iecs }) {
 	const [iec, setIec] = useState(0);
 	const [offset, setOffset] = useState(null);
 	const dispatch = useDispatch();
@@ -36,6 +36,7 @@ function DicomReviewVR({ vr, iecs }) {
 			currentOffset = offset - 1;
 		}
 		console.log("setting to", currentOffset);
+		dispatch(setLoading(true));
 		setIec(iecs[currentOffset]);
 		setOffset(currentOffset);
 	};
@@ -53,5 +54,3 @@ function DicomReviewVR({ vr, iecs }) {
 		</>
 	);
 }
-
-export default DicomReviewVR

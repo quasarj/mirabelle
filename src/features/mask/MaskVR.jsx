@@ -36,6 +36,7 @@ export default function MaskVR({ vr, iecs }) {
 			currentOffset = offset - 1;
 		}
 		console.log("setting to", currentOffset);
+		dispatch(setLoading(true));
 		setIec(iecs[currentOffset]);
 		setOffset(currentOffset);
 	};

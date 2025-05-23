@@ -125,5 +125,3 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
     </div >
   );
 }
-
-export default VolumeView;

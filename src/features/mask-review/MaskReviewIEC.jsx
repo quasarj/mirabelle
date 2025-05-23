@@ -204,7 +204,8 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
             <NavigationPanel
               onNext={onNext}
               onPrevious={onPrevious}
-              currentIec={iec}
+              currentId={iec}
+              idLabel = 'IEC'
             />
           }
           <ToolsPanel

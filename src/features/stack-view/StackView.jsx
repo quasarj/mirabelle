@@ -24,7 +24,7 @@ const { MouseBindings } = csToolsEnums;
 const toolGroupId = 'STACK_TOOL_GROUP_ID';
 
 
-function StackView({ frames, toolGroup }) {
+export default function StackView({ frames, toolGroup }) {
   const [renderingEngine, setRenderingEngine] = useState();
 
   const [mip, setMip] = useState(false);
@@ -72,5 +72,3 @@ function StackView({ frames, toolGroup }) {
     </div>
   );
 }
-
-export default StackView;

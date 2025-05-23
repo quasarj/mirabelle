@@ -34,7 +34,7 @@ function download(details) {
 }
 
 
-function DetailsPanel({ details }) {
+export default function DetailsPanel({ details }) {
   const title = useSelector(state => state.options.title);
 
   const ignoredKeys = ["download_path", "download_name"];
@@ -60,14 +60,3 @@ function DetailsPanel({ details }) {
     </div>
   );
 }
-
-export default DetailsPanel;
-
-
-
-//useEffect(() => {
-//  (async () => {
-//    const un = await getUsername();
-//    setUsername(un);
-//  })();
-//}, []);
