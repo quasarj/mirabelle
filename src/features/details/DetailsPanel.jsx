@@ -53,7 +53,8 @@ function DetailsPanel({ details }) {
         .filter(([key]) => !ignoredKeys.includes(key))
         .map(([key, value]) => (
           <div key={key} className="detail-item">
-            <strong>{key}:</strong> {value}
+            <p id="key">{key}:</p>
+            <p id="value">{value}</p>
           </div>
         ))}
     </div>

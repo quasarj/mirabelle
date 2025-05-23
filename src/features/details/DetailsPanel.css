@@ -11,8 +11,26 @@
 #details-panel .detail-item {
     @apply
         break-words
-        border-b 
-        border-gray-300
+        /*border-b 
+        border-gray-300*/
         pb-4
     ;
+}
+
+#details-panel p#key {
+    @apply
+        font-bold
+    ;
+}
+
+#details-panel p#value {
+    @apply 
+    bg-white
+    bg-opacity-50
+    dark:bg-opacity-5
+    pr-2
+    pt-1
+    pb-1
+    pl-2
+    rounded-lg;
 }
