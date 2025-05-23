@@ -82,7 +82,7 @@ const router = createBrowserRouter(
 					loader: routeMaskReviewIECLoader,
 				},
 				{
-					path: "mask/review/vr/:vr",
+					path: "mask/review/vr/:visual_review_instance_id",
 					element: <RouteMaskReviewVR />,
 				HydrateFallback: LoadingSpinner,
 					loader: routeMaskerReviewVRLoader,

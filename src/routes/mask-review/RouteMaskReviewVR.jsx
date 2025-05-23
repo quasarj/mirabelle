@@ -1,34 +1,31 @@
-import React, { useState } from 'react';
-import { useLoaderData, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLoaderData } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
 
-import { Context } from '@/components/Context';
+import MaskReviewVR from '@/features/mask-review/MaskReviewVR';
 
-import OperationsPanel from '@/components/OperationsPanel';
-import Header from '@/components/Header';
+import { getIECsForVR } from '@/utilities';
+
+import { setMaskerReviewConfig, reset } from '@/features/presentationSlice'
 
 import './RouteMaskReviewVR.css';
 
 export async function loader({ params }) {
+  const iecs = await getIECsForVR(params.visual_review_instance_id);
 
-  return { vr: params.vr };
-
+  return { vr: params.visual_review_instance_id, iecs };
 }
 
 export default function RouteMaskReviewVR() {
-  const { vr } = useLoaderData();
-  // An example of how you could read the params without having
-  // to use a dataLoader
-  const { vr: vr2 } = useParams();
+  const { vr, iecs } = useLoaderData();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(reset());
+    dispatch(setMaskerReviewConfig());
+  }, []);
 
   return (
-    <div id="RouteMaskReviewIEC">
-      <Context.Provider value={{ title: "Route Mask Review VR" }}>
-        <Header />
-        <p>
-          Route: Mask Review: VR ({vr})
-          <OperationsPanel />
-        </p>
-      </Context.Provider>
-    </div>
+    <MaskReviewVR vr={vr} iecs={iecs} />
   );
 }
