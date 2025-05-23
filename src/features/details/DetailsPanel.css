@@ -1,3 +1,18 @@
+/* This file contains the CSS styles for the DetailsPanel component */
+
 #details-panel button {
-    @apply text-white bg-green-700 hover:bg-green-800 mb-4;
+    @apply 
+        text-white 
+        bg-green-700 
+        hover:bg-green-800 
+    ;
+}
+
+#details-panel .detail-item {
+    @apply
+        break-words
+        border-b 
+        border-gray-300
+        pb-4
+    ;
 }

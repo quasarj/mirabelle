@@ -27,7 +27,7 @@ function download(details) {
   const link = document.createElement("a");
   link.href = download_path;
   //link.target = "_blank";
-/*  link.download = details["download_name"];*/
+  /*  link.download = details["download_name"];*/
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -42,7 +42,7 @@ function DetailsPanel({ details }) {
   const handleDownload = 'File ID' in details ? downloadFile : download;
 
   return (
-    <div id="details-panel">
+    <div id="details-panel" className="side-panel">
       <button
         id="download"
         onClick={() => handleDownload(details)}
@@ -64,9 +64,9 @@ export default DetailsPanel;
 
 
 
-  //useEffect(() => {
-  //  (async () => {
-  //    const un = await getUsername();
-  //    setUsername(un);
-  //  })();
-  //}, []);
+//useEffect(() => {
+//  (async () => {
+//    const un = await getUsername();
+//    setUsername(un);
+//  })();
+//}, []);
