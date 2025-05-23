@@ -86,16 +86,22 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
   let viewer;
 
+  console.log("MaskIEC renderingEngine:", renderingEngine);
+
+  function handlePresetChange(newPreset) {
+    const viewport = renderingEngine.getViewport("t3d_coronal");
+    viewport.setProperties({ preset: context.presetToolValue });
+  }
   useEffect(() => {
     // Only create a new rendering engine if one doesn't already exist
     if (renderingEngine === undefined) {
+      console.log("Creating new rendering engine");
       setRenderingEngine(new cornerstone.RenderingEngine("re1"));
     }
 
     let toolGroup = ToolGroupManager.createToolGroup("toolGroup2d");
     let toolGroup3d = ToolGroupManager.createToolGroup("toolGroup3d");
 
-    setRenderingEngine(renderingEngine);
     setToolGroup(toolGroup);
     setToolGroup3d(toolGroup3d);
 
@@ -290,6 +296,7 @@ function MaskIEC({ iec, vr, onNext, onPrevious }) {
             toolGroup3d={toolGroup3d}
             defaultPreset={preset3d}
             onPresetChange={setPreset3d}
+            renderingEngine={renderingEngine}
           />
         </>
       }

@@ -5,7 +5,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as cornerstone from '@cornerstonejs/core';
 import * as cornerstoneTools from '@cornerstonejs/tools';
 import { RenderingEngine, Enums, volumeLoader } from "@cornerstonejs/core";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setPresets } from '@/features/presentationSlice';
 
 import './VolumeViewport3d.css';
 
@@ -31,6 +32,7 @@ const { segmentation: segmentationUtils } = cstUtils;
 const { ViewportType } = Enums;
 
 function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, orientation, preset3d }) {
+  const dispatch = useDispatch();
   const elementRef = useRef(null);
 
   const opacity = useSelector(state => state.options.opacity);
@@ -115,13 +117,13 @@ function VolumeViewport3d({ viewportId, renderingEngine, toolGroup, volumeId, or
     viewport.render();
   }, [renderingEngine, viewportId, opacity]);
 
-  useEffect(() => {
-    const viewport = renderingEngine.getViewport(viewportId);
-    viewport.setProperties({
-      preset: preset3d,
-    });
-    viewport.render();
-  }, [preset3d]);
+  // useEffect(() => {
+  //   const viewport = renderingEngine.getViewport(viewportId);
+  //   viewport.setProperties({
+  //     preset: preset3d,
+  //   });
+  //   viewport.render();
+  // }, [preset3d]);
 
 
   return (

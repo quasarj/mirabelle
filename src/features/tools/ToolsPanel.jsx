@@ -20,7 +20,7 @@ function toTitleCase(some_string) {
   );
 };
 
-function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'CT-MIP' }) {
+function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'CT-MIP', renderingEngine }) {
   const dispatch = useDispatch();
 
   const presets = useSelector(state => state.presentation.presets);
@@ -46,6 +46,7 @@ function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'C
     toolGroup3d,
     defaultLeftClickMode: globalToolsConfig.leftClickToolGroup.defaultValue,
     defaultRightClickMode: globalToolsConfig.rightClickToolGroup.defaultValue,
+    renderingEngine,
   });
   const toolsConfigs = useToolsConfigs({ manager });
 
@@ -128,7 +129,7 @@ function ToolsPanel({ toolGroup, toolGroup3d, onPresetChange, defaultPreset = 'C
             {/* <label htmlFor="preset-select">Preset:</label> */}
             <select
               id="preset-select"
-              value={globalStateValues.preset}
+              value={selectedPreset}
               onChange={handlePresetChange}
               className="preset-select"
             >

@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+import * as cornerstone from '@cornerstonejs/core';
 
 export const Enums = {
   ViewOptions: Object.freeze({
@@ -142,34 +143,7 @@ const presentationSlice = createSlice({
 
     maximumIntensityProjection: false,
 
-    presets: [
-        "CT-AAA",
-        "CT-AAA2",
-        "CT-Bone",
-        "CT-Bones",
-        "CT-Cardiac",
-        "CT-Cardiac2",
-        "CT-Cardiac3",
-        "CT-Chest-Contrast-Enhanced",
-        "CT-Chest-Vessels",
-        "CT-Coronary-Arteries",
-        "CT-Coronary-Arteries-2",
-        "CT-Coronary-Arteries-3",
-        "CT-Cropped-Volume-Bone",
-        "CT-Fat",
-        "CT-Liver-Vasculature",
-        "CT-Lung",
-        "CT-MIP",
-        "CT-Muscle",
-        "CT-Pulmonary-Arteries",
-        "CT-Soft-Tissue",
-        "CT-Air",
-        "MR-Angio",
-        "MR-Default",
-        "MR-MIP",
-        "MR-T2-Brain",
-        "DTI-FA-Brain",
-    ] // Initial presets matching those in ToolsPanel
+    presets: cornerstone.CONSTANTS.VIEWPORT_PRESETS.map((preset) => preset.name),
   },
   reducers: {
     reset: (state, action) => {

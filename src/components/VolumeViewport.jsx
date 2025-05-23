@@ -70,6 +70,8 @@ function VolumeViewport({
 
       renderingEngine.enableElement(viewportInput);
 
+      console.log("voi sync", voiSynchronizer);
+
       voiSynchronizer.add({
         renderingEngineId: renderingEngine.id,
         viewportId,

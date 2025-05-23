@@ -41,8 +41,15 @@ function VolumeView({ volumeId, segmentationId, defaultPreset3d, toolGroup, tool
     cornerstoneTools.addTool(StackScrollTool);
 
     if (!voiSynchronizer) {
-      setVoiSynchronizer(cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer"));
+      let voiSync = cornerstoneTools.SynchronizerManager.getSynchronizer("vol_voi_syncronizer");
+      if (!voiSync) {
+        voiSync = cornerstoneTools.synchronizers.createVOISynchronizer("vol_voi_syncronizer");
+      }
+      setVoiSynchronizer(voiSync);
     }
+
+
+
 
     // Only create a new rendering engine if one doesn't already exist
     let renderingEngine = cornerstone.getRenderingEngine("re1");
