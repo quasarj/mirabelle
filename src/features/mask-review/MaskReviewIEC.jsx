@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
-import { setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
-import { setTitle, setLoading } from '@/features/optionSlice';
+import { useSelector, useDispatch } from 'react-redux'
+import { Enums, setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
+import { setTitle, setLoading, setOption } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
 
 import createImageIdsAndCacheMetaData from "@/lib/createImageIdsAndCacheMetaData";
@@ -57,6 +57,7 @@ function transformDetails(details) {
 
 export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
 
+  const options = useSelector(state => state.options);
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
 
   const dispatch = useDispatch();
@@ -143,6 +144,11 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("Mask Review Volume"));
       dispatch(setVolumeConfig());
+
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.VOLUME }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
+
       dispatch(setLoading(false));
     };
 
@@ -159,6 +165,12 @@ export default function MaskReviewIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("Mask Stack"));
       dispatch(setStackConfig());
+
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.STACK }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
+
+      dispatch(setLoading(false));
     };
 
     initialize();

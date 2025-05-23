@@ -2,8 +2,8 @@ import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { setVolumeConfig, setNiftiConfig } from '@/features/presentationSlice';
-import { setTitle, setLoading } from '@/features/optionSlice';
+import { Enums, setVolumeConfig, setNiftiConfig } from '@/features/presentationSlice';
+import { setTitle, setLoading, setOption } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
 
 import {
@@ -155,9 +155,14 @@ export default function NiftiReviewFile({ file, vr, onNext, onPrevious }) {
       setVolumeId(volumeId);
       setSegmentationId(segmentationId);
 
+      dispatch(setTitle("Nifti File Review"));
       dispatch(setVolumeConfig());
       dispatch(setNiftiConfig());
-      dispatch(setTitle("Nifti File Review"));
+
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.VOLUME }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
+
       dispatch(setLoading(false));
     };
 

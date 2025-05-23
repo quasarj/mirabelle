@@ -145,6 +145,7 @@ export default function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
       dispatch(setVolumeConfig());
       //console.log(globalToolsConfig.leftClickToolGroup.defaultValue)
       //dispatch(setOption({ key: "leftClick", value: globalToolsConfig.leftClickToolGroup.defaultValue }));
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.VOLUME }));
       dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
       dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
       dispatch(setLoading(false));
@@ -163,6 +164,12 @@ export default function DicomReviewIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("DICOM Stack Review"));
       dispatch(setStackConfig());
+
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.STACK }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
+
+      dispatch(setLoading(false));
     };
         
     initialize();

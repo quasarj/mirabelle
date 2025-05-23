@@ -1,10 +1,9 @@
 import React from 'react';
 
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
-import { setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
-import { setLoading } from '@/features/optionSlice';
-import { setTitle } from '@/features/optionSlice';
+import { useSelector, useDispatch } from 'react-redux'
+import { Enums, setStackConfig, setVolumeConfig } from '@/features/presentationSlice';
+import { setTitle, setLoading, setOption } from '@/features/optionSlice';
 import toast from 'react-hot-toast';
 
 import createImageIdsAndCacheMetaData from "@/lib/createImageIdsAndCacheMetaData";
@@ -63,6 +62,7 @@ function transformDetails(details) {
 
 export default function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
+  const options = useSelector(state => state.options);
   const [renderingEngine, setRenderingEngine] = useState(cornerstone.getRenderingEngine("re1"));
 
   const dispatch = useDispatch();
@@ -156,6 +156,14 @@ export default function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("Mask Volume"));
       dispatch(setVolumeConfig());
+
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.VOLUME }));
+      dispatch(setOption({ key: "function", value: Enums.FunctionOptions.MASK }));
+      dispatch(setOption({ key: "form", value: Enums.FormOptions.CYLINDER }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
+      dispatch(setLoading(false));
+
       dispatch(setLoading(false));
     };
 
@@ -172,6 +180,15 @@ export default function MaskIEC({ iec, vr, onNext, onPrevious }) {
 
       dispatch(setTitle("Mask Stack"));
       dispatch(setStackConfig());
+
+      dispatch(setOption({ key: "view", value: Enums.ViewOptions.STACK }));
+      dispatch(setOption({ key: "function", value: Enums.FunctionOptions.BLACKOUT }));
+      dispatch(setOption({ key: "form", value: Enums.FormOptions.CUBOID }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
+
+      dispatch(setLoading(false));
+
     };
 
     initialize();
