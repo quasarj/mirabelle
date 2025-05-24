@@ -160,7 +160,7 @@ export default function MaskIEC({ iec, vr, onNext, onPrevious }) {
       dispatch(setOption({ key: "view", value: Enums.ViewOptions.VOLUME }));
       dispatch(setOption({ key: "function", value: Enums.FunctionOptions.MASK }));
       dispatch(setOption({ key: "form", value: Enums.FormOptions.CYLINDER }));
-      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.SELECTION }));
       dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
       dispatch(setLoading(false));
 
@@ -184,7 +184,7 @@ export default function MaskIEC({ iec, vr, onNext, onPrevious }) {
       dispatch(setOption({ key: "view", value: Enums.ViewOptions.STACK }));
       dispatch(setOption({ key: "function", value: Enums.FunctionOptions.BLACKOUT }));
       dispatch(setOption({ key: "form", value: Enums.FormOptions.CUBOID }));
-      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.WINDOW_LEVEL }));
+      dispatch(setOption({ key: "leftClick", value: Enums.LeftClickOptions.SELECTION }));
       dispatch(setOption({ key: "rightClick", value: Enums.RightClickOptions.ZOOM }));
 
       dispatch(setLoading(false));
